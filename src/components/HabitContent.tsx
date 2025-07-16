@@ -2,20 +2,16 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  ChevronRight,
-  Dumbbell,
-  Sparkles,
-  Users,
-  Clock,
-  AppleIcon,
-  ShieldIcon,
   Swords,
 } from "lucide-react";
+import { CARD_CONTENT } from "@/constants";
+
 
 const HabitContent = () => {
   return (
     <div className="w-full pb-24 pt-35 relative">
-      <div className="container mx-auto max-w-6xl px-4">
+      <div className="container mx-auto max-w-7xl px-4">
+
         {/* HEADER- PROGRAM GALLERY */}
         <div className="bg-card/90 backdrop-blur-sm border border-border rounded-lg overflow-hidden mb-16">
           {/* HEADER BAR */}
@@ -38,7 +34,80 @@ const HabitContent = () => {
               A friendly habit‑tracker that turns your daily tasks into fun “quests.” 
               Complete chores, workouts, or study goals to earn XP, level up your avatar, and track your progress—all in a game‑style interface.
             </p>
+
+            <div className="flex items-center justify-center gap-16 m-10 mt-15 font-mono">
+              <div className="flex flex-col items-center flex-1 basis-0">
+                <img
+                  src="/avatar1.png"
+                  alt="AI Fitness Coach"
+                  className="size-full object-cover object-center m-5"       
+                />
+                <p className="text-xl text-primary">Define Your Goals</p>
+                <p className="text-sm text-muted-foreground  tracking-wide mt-1">
+                  Input daily/weekly tasks and aspirations.
+                </p>
+              </div>
+              <div className="w-px h-12 bg-border"></div>
+              <div className="flex flex-col items-center flex-1 basis-0">
+                <img
+                  src="/avatar1.png"
+                  alt="AI Fitness Coach"
+                  className="size-full object-cover object-center m-5"       
+                />
+                <p className="text-xl text-primary">Train Like a Hero</p>
+                <p className="text-sm text-muted-foreground tracking-wide mt-1">
+                  Complete quests, build streaks, and grow your stats.
+                </p>
+              </div>
+              <div className="w-px h-12 bg-border"></div>
+              <div className="flex flex-col items-center flex-1 basis-0">
+                <img
+                  src="/avatar1.png"
+                  alt="AI Fitness Coach"
+                  className="size-full object-cover object-center m-5"       
+                />
+                <p className="text-xl text-primary">Conquer Bosses</p>
+                <p className="text-sm text-muted-foreground tracking-wide mt-1">
+                  Face monthly bosses, earn gear, and customize your character.
+                </p>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div className="p-8 text-center pt-20">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <span className="text-foreground">Key </span>
+            <span className="text-primary">Features</span>
+          </h2>
+        </div>
+
+        {/* CARD CONTENT */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 gap-y-35 pt-5">
+          {CARD_CONTENT.map((program) => (
+            <Card
+              key={program.id}
+              className="bg-card/90 backdrop-blur-sm border border-border hover:border-primary/50 tranistion-colors overflow-hidden"
+            >
+              <CardHeader>
+              <div className="flex flex-col items-center flex-1 basis-0">
+                <img
+                  src={program.img}
+                  alt="AI Fitness Coach"
+                  className="size-full object-cover object-center m-5"       
+                />
+              </div>
+              </CardHeader>
+              <CardContent
+                className="text-center"
+              >
+                <p className="text-xl text-primary">{program.title}</p>
+                <p className="text-sm text-muted-foreground  tracking-wide mt-1">
+                  {program.desc}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* BUTTON SECTION */}
