@@ -4,6 +4,7 @@ import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
+import { HomeIcon, Sword, UserIcon } from 'lucide-react'
 
 const Navbar = () => {
   const {isSignedIn} = useUser()
@@ -12,29 +13,48 @@ const Navbar = () => {
       <div className="container mx-auto flex items-center justify-between">
 
         { /* LOGO */ }
-        <Link href="/">
-          <span>
-            HabitRPG
-          </span>
-        </Link>
+          <Link href="/" className="flex items-center gap-2">
+            <div className="p-1 bg-primary/10 ">
+              <Sword className="w-4 h-4 text-primary"/>
+            </div>
+            <span className="text-xl font-bold font-mono">
+              Habit<span className="text-primary">RPG</span>
+            </span>
+            </Link>
         
 
         {/* NAVIGATION */}
         <nav className="flex items-center gap-3">
           {isSignedIn ? (
             <>
-            <Link href="/">
-              <span>Home</span>
-            </Link>
-            <Link href="/profile">
-              <span>Profile</span>
-            </Link>
-            <UserButton />
+              <Link
+                href="/"
+                className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors"
+              >
+                <HomeIcon size={16} />
+                <span>Home</span>
+              </Link>
+              <Link
+                href="/profile"
+                className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors"
+              >
+                <UserIcon size={16} />
+                <span>Profile</span>
+              </Link>
+                <Button
+                   asChild
+                   variant="outline"
+                   className="ml-2 mr-2 border-primary/50 text-primary hover:text-white hover:bg-primary/10"
+                >
+                  <Link href="/profile">Get Started</Link>
+                  </Button>
+              <UserButton />
             </>
           ) : (
             <>
               <SignInButton>
                 <Button
+
                   variant={"outline"}
                   className="border-primary/50 text-primary hover:text-white hover:bg-primary/10"
                 >
