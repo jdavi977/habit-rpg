@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+// import Image from "next/Image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 // import { CardFooter, CardTitle } from "@/components/ui/card";
@@ -39,7 +39,7 @@ const HabitContent = () => {
 
             <div className="flex items-center justify-center gap-16 m-10 mt-15 font-mono">
               <div className="flex flex-col items-center flex-1 basis-0">
-                <Image
+                <img
                   src="/avatar1.png"
                   alt="AI Fitness Coach"
                   className="size-full object-cover object-center m-5"       
@@ -51,7 +51,7 @@ const HabitContent = () => {
               </div>
               <div className="w-px h-12 bg-border"></div>
               <div className="flex flex-col items-center flex-1 basis-0">
-                <Image
+                <img
                   src="/avatar1.png"
                   alt="AI Fitness Coach"
                   className="size-full object-cover object-center m-5"       
@@ -63,7 +63,7 @@ const HabitContent = () => {
               </div>
               <div className="w-px h-12 bg-border"></div>
               <div className="flex flex-col items-center flex-1 basis-0">
-                <Image
+                <img
                   src="/avatar1.png"
                   alt="AI Fitness Coach"
                   className="size-full object-cover object-center m-5"       
@@ -93,8 +93,8 @@ const HabitContent = () => {
             >
               <CardHeader>
               <div className="flex flex-col items-center flex-1 basis-0">
-                <Image
-                  src={program.Image}
+                <img
+                  src={program.img}
                   alt="AI Fitness Coach"
                   className="size-full object-cover object-center m-5"       
                 />
