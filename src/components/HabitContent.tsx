@@ -1,6 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+// import { CardFooter, CardTitle } from "@/components/ui/card";
 import {
   Swords,
 } from "lucide-react";
@@ -37,7 +39,7 @@ const HabitContent = () => {
 
             <div className="flex items-center justify-center gap-16 m-10 mt-15 font-mono">
               <div className="flex flex-col items-center flex-1 basis-0">
-                <img
+                <Image
                   src="/avatar1.png"
                   alt="AI Fitness Coach"
                   className="size-full object-cover object-center m-5"       
@@ -49,7 +51,7 @@ const HabitContent = () => {
               </div>
               <div className="w-px h-12 bg-border"></div>
               <div className="flex flex-col items-center flex-1 basis-0">
-                <img
+                <Image
                   src="/avatar1.png"
                   alt="AI Fitness Coach"
                   className="size-full object-cover object-center m-5"       
@@ -61,7 +63,7 @@ const HabitContent = () => {
               </div>
               <div className="w-px h-12 bg-border"></div>
               <div className="flex flex-col items-center flex-1 basis-0">
-                <img
+                <Image
                   src="/avatar1.png"
                   alt="AI Fitness Coach"
                   className="size-full object-cover object-center m-5"       
@@ -91,8 +93,8 @@ const HabitContent = () => {
             >
               <CardHeader>
               <div className="flex flex-col items-center flex-1 basis-0">
-                <img
-                  src={program.img}
+                <Image
+                  src={program.Image}
                   alt="AI Fitness Coach"
                   className="size-full object-cover object-center m-5"       
                 />

@@ -4,7 +4,7 @@ import { useSession, useUser } from '@clerk/nextjs'
 import { createClient } from '@supabase/supabase-js'
 
 export default function Home() {
-  const [tasks, setTasks] = useState<any[]>([])
+  const [tasks, setTasks] = useState<Record<string, unknown>[]>([])
   const [loading, setLoading] = useState(true)
   const [name, setName] = useState('')
   // The `useUser()` hook is used to ensure that Clerk has loaded data about the signed in user
@@ -59,7 +59,7 @@ export default function Home() {
 
       {loading && <p>Loading...</p>}
 
-      {!loading && tasks.length > 0 && tasks.map((task: any) => <p key={task.id}>{task.name}</p>)}
+      {!loading && tasks.length > 0 && tasks.map((task: Record<string, unknown>) => <p key={task.id}>{task.name}</p>)}
 
       {!loading && tasks.length === 0 && <p>No tasks found</p>}
 
