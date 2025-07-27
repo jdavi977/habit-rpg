@@ -2,15 +2,19 @@
 import { useEffect, useState } from 'react'
 import { useSession, useUser } from '@clerk/nextjs'
 import { createClient } from '@supabase/supabase-js'
+import { Button } from '@/components/ui/button'
 
 export default function Home() {
   const [tasks, setTasks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [name, setName] = useState('')
+
   // The `useUser()` hook is used to ensure that Clerk has loaded data about the signed in user
   const { user } = useUser()
+
   // The `useSession()` hook is used to get the Clerk session object
   // The session object is used to get the Clerk session token
+
   const { session } = useSession()
 
   // Create a custom Supabase client that injects the Clerk session token into the request headers
@@ -44,6 +48,7 @@ export default function Home() {
     loadTasks()
   }, [user])
 
+
   async function createTask(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     // Insert task into the "tasks" database
@@ -53,15 +58,22 @@ export default function Home() {
     window.location.reload()
   }
 
+  async function removeTask(id: string) {
+    await client.from('tasks').delete().eq('id', id)
+    window.location.reload()
+  }
+
+  async function completedTask(id: string) {
+    window.location.reload()
+  }
+
   return (
     <div>
       <h1>Tasks</h1>
 
       {loading && <p>Loading...</p>}
 
-      {!loading && tasks.length > 0 && tasks.map((task: any) => <p key={task.id}>{task.name}</p>)}
-
-      {!loading && tasks.length === 0 && <p>No tasks found</p>}
+      {!loading && tasks.length === 0 && <p>Add a task here</p>}
 
       <form onSubmit={createTask}>
         <input
@@ -72,7 +84,33 @@ export default function Home() {
           onChange={(e) => setName(e.target.value)}
           value={name}
         />
-        <button type="submit">Add</button>
+        <Button
+          type='submit'
+        >
+          Add
+        </Button>
+
+        {!loading && tasks.length > 0 && tasks.map((task: any) => (
+        <div
+          key={task.id}
+          className="flex "
+        >
+          <Button
+            type="button"
+            onClick={() => completedTask(task.id)}
+          >
+            C
+          </Button>
+          <p>{task.name}</p>
+          <Button
+            type="button"
+            onClick={() => removeTask(task.id)}
+          >
+            Remove
+          </Button>
+        </div>
+      ))}
+
       </form>
     </div>
   )
