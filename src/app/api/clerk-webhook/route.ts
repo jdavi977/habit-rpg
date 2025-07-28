@@ -22,6 +22,8 @@ export async function POST(req: NextRequest) {
         id,
         email,
         username,
+        gold: 0,
+        mana: 0
       });
 
       if (error) {
