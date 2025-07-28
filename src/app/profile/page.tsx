@@ -90,7 +90,7 @@ export default function Home() {
           Add
         </Button>
 
-        {!loading && tasks.length > 0 && tasks.map((task: any) => (
+        {!loading && tasks.length > 0 && tasks.map((task: { id: string; name: string }) => (
         <div
           key={task.id}
           className="flex "
