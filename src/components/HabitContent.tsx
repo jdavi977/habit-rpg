@@ -1,6 +1,8 @@
 import Link from "next/link";
+// import Image from "next/Image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+// import { CardFooter, CardTitle } from "@/components/ui/card";
 import {
   Swords,
 } from "lucide-react";
