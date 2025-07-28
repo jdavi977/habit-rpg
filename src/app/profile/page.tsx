@@ -52,7 +52,7 @@ export default function Home() {
     }
 
     loadTasks()
-  }, [user])
+  }, [user, client])
 
 
   async function createTask(e: React.FormEvent<HTMLFormElement>) {
@@ -69,7 +69,7 @@ export default function Home() {
     window.location.reload()
   }
 
-  async function completedTask(id: string) {
+  async function completedTask() {
     window.location.reload()
   }
 
@@ -104,7 +104,7 @@ export default function Home() {
         >
           <Button
             type="button"
-            onClick={() => completedTask(task.id)}
+            onClick={() => completedTask()}
           >
             C
           </Button>
