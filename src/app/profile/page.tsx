@@ -4,8 +4,14 @@ import { useSession, useUser } from '@clerk/nextjs'
 import { createClient } from '@supabase/supabase-js'
 import { Button } from '@/components/ui/button'
 
+type Task = {
+  id: string;
+  name: string;
+
+};
+
 export default function Home() {
-  const [tasks, setTasks] = useState<any[]>([])
+  const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [name, setName] = useState('')
 
@@ -68,6 +74,7 @@ export default function Home() {
   }
 
   return (
+  <>
     <div>
       <h1>Tasks</h1>
 
@@ -113,5 +120,6 @@ export default function Home() {
 
       </form>
     </div>
+  </>
   )
 }
