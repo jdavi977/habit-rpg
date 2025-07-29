@@ -52,7 +52,7 @@ export default function Home() {
     }
 
     loadTasks()
-  }, [user, client])
+  }, [user])
 
 
   async function createTask(e: React.FormEvent<HTMLFormElement>) {
@@ -70,7 +70,12 @@ export default function Home() {
   }
 
   async function completedTask() {
-    window.location.reload()
+    console.log("Clerk user ID:", user?.id);
+    const { data, error } = await client
+    .from('users').update({gold: 100}).eq('id', user?.id).select();
+
+    console.log("Update data:", data);  
+    console.log("Update error:", error);
   }
 
   return (
@@ -81,6 +86,11 @@ export default function Home() {
       {loading && <p>Loading...</p>}
 
       {!loading && tasks.length === 0 && <p>Add a task here</p>}
+      <Button
+        onClick={() => console.log("Clerk user.id:", user?.id)}
+      >
+        test
+      </Button>
 
       <form onSubmit={createTask}>
         <input
@@ -106,7 +116,7 @@ export default function Home() {
             type="button"
             onClick={() => completedTask()}
           >
-            C
+            Add Gold
           </Button>
           <p>{task.name}</p>
           <Button

@@ -90,7 +90,7 @@ export default function Start() {
               {/* IMAGE CONTAINER */}
               <div className="relative aspect-square max-w-lg mx-auto">
                 <div className="relative overflow-hidden rounded-lg bg-cyber-black">
-                  <Image
+                  <img
                     src="/codehealth.png"
                     alt="AI Fitness Coach"
                     className="size-full object-cover object-center"                  
