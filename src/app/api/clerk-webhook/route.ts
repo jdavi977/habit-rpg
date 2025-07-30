@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { useClerkSupabaseClient } from "@/lib/supabaseClient";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! 
-);
+const client = useClerkSupabaseClient()
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,7 +15,7 @@ export async function POST(req: NextRequest) {
       const email = user.email_addresses[0]?.email_address;
       const username = user.username ?? null;
 
-      const { error } = await supabase.from("users").upsert({
+      const { error } = await client.from("users").upsert({
         id,
         email,
         username,
