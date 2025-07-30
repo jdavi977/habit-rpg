@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
+import CreateTask from '@/components/CreateTask'
 
 type Task = {
   id: string;
@@ -138,8 +139,9 @@ async function completedTask() {
           </Button>
         </div>
       ))}
-
       </form>
+      <CreateTask />
+      
     </div>
   </>
   )
