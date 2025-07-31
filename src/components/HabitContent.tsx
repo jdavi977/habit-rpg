@@ -22,7 +22,6 @@ const HabitContent = () => {
               <div className="w-2.5 h-2.5 rounded-full bg-primary"></div>
               <span className="text-sm text-primary font-medium">HabitRPG - Ascend</span>
             </div>
-
           </div>
 
           {/* HEADER CONTENT */}
