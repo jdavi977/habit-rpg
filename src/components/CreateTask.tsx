@@ -3,8 +3,6 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
 
-
-
 const CreateTask = () => {
     const [title, setTitle] = useState("");
     const [difficulty, setDifficulty] = useState("")
@@ -17,10 +15,10 @@ const CreateTask = () => {
       setDays((prev) => 
           prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
       )
-    }
+    };
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-      e.preventDefault
+      e.preventDefault();
       if (!title.trim()) return alert("Please enter a task title");
       if (!difficulty) return alert("Please select a difficulty");
       if (days.length === 0) return alert("Please select at least one day");
@@ -30,9 +28,7 @@ const CreateTask = () => {
       setTitle("");
       setDifficulty("");
       setDays([]);
-    }
-
-
+    };
 
   return (
     <div className="w-full pb-24 pt-35 relative">
