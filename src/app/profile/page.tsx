@@ -7,7 +7,7 @@ import CreateTask from '@/components/CreateTask'
 
 type Task = {
   id: string;
-  name: string;
+  title: string;
 
 };
 
@@ -16,7 +16,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [gold, setGold] = useState<number | null>(null)
   const [mana, setMana] = useState<number | null>(null)
-  const [name, setName] = useState('')
+  const [title, setTitle] = useState('')
 
   // The `useUser()` hook is used to ensure that Clerk has loaded data about the signed in user
   const { user } = useUser()
@@ -57,15 +57,6 @@ export default function Home() {
   }, [user])
 
 
-  async function createTask(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    // Insert task into the "tasks" database
-    await client.from('tasks').insert({
-      name,
-    })
-    window.location.reload()
-  }
-
   async function removeTask(id: string) {
     console.log(gold)
     await client.from('tasks').delete().eq('id', id)
@@ -89,13 +80,13 @@ async function completedTask() {
 
   return (
   <>
-    <div>
+    <div className="justify-center">
 
       {!loading && (
-        <>
+        <div>
           <p>Gold: {gold ?? "not avail"}</p>
           <p>Mana: {mana ?? "not avail"}</p>
-        </>
+        </div>
       )}
 
       <h1>Tasks</h1>
@@ -104,22 +95,7 @@ async function completedTask() {
 
       {!loading && tasks.length === 0 && <p>Add a task here</p>}
 
-      <form onSubmit={createTask}>
-        <input
-          autoFocus
-          type="text"
-          name="name"
-          placeholder="Enter new task"
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-        />
-        <Button
-          type='submit'
-        >
-          Add
-        </Button>
-
-        {!loading && tasks.length > 0 && tasks.map((task: { id: string; name: string }) => (
+        {!loading && tasks.length > 0 && tasks.map((task: { id: string; title: string }) => (
         <div
           key={task.id}
           className="flex "
@@ -130,7 +106,7 @@ async function completedTask() {
           >
             Complete task
           </Button>
-          <p>{task.name}</p>
+          <p>{task.title}</p>
           <Button
             type="button"
             onClick={() => removeTask(task.id)}
@@ -139,9 +115,8 @@ async function completedTask() {
           </Button>
         </div>
       ))}
-      </form>
-      <CreateTask />
       
+      <CreateTask />
     </div>
   </>
   )

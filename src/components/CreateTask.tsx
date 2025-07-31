@@ -1,6 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
-import { useUser } from '@clerk/nextjs'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
 
@@ -9,13 +8,30 @@ import { useClerkSupabaseClient } from '@/lib/supabaseClient'
 const CreateTask = () => {
     const [title, setTitle] = useState("");
     const [difficulty, setDifficulty] = useState("")
-    const [days, setDays] = useState([""])
+    const [days, setDays] = useState<string[]>([])
+
+    const client = useClerkSupabaseClient();
 
     const handleDayToggle = (day: string) => {
-        setDays((prev) => 
-            prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
-        )
+      if (!day) return;
+      setDays((prev) => 
+          prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+      )
     }
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+      e.preventDefault
+      if (!title.trim()) return alert("Please enter a task title");
+      if (!difficulty) return alert("Please select a difficulty");
+      if (days.length === 0) return alert("Please select at least one day");
+
+      await client.from("tasks").insert({title, difficulty, days})
+
+      setTitle("");
+      setDifficulty("");
+      setDays([]);
+    }
+
 
 
   return (
@@ -34,13 +50,16 @@ const CreateTask = () => {
           </div>
 
           {/* HEADER CONTENT */}
-          <div className="p-8 text-center">
+          <div className="flex p-8 justify-center">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               <span className="text-foreground">Add Your </span>
               <span className="text-primary">Task</span>
             </h2>
           </div>
-          <form>
+
+          <form
+            onSubmit={handleSubmit}
+          >
             <div>
                 <label className="flex gap-2 justify-center">Task Title</label>
                 <div className="flex flex-wrap gap-2 justify-center">
@@ -53,8 +72,8 @@ const CreateTask = () => {
                 />
                 </div>
             </div>
-            <div className="flex gap-2 justify-center">
-                <label>Task Difficulty</label>
+            <div>
+                <label className="flex gap-2 justify-center">Task Difficulty</label>
                 <div className="flex gap-2 justify-center">
                     {["Easy", "Medium", "Hard"].map((level) => (
                         <Button
@@ -71,7 +90,7 @@ const CreateTask = () => {
                 </div>
             </div>
             <div>
-                <label className="block font-medium mb-2">Days</label>
+                <label className="flex font-medium mb-2 justify-center">Days</label>
                 <div className="flex flex-wrap gap-2 justify-center">
                 {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
                     <Button
@@ -89,17 +108,14 @@ const CreateTask = () => {
                     </Button>
                 ))}
                 </div>
-                {days.length > 0 && (
-                <p className="mt-3 text-sm text-gray-600">
-                    Selected: {days.join(", ")}
-                </p>
-                )}
             </div>
-            <Button
-                type="submit"
-            >
-                Create 
-            </Button>
+            <div className='flex justify-center'>
+              <Button
+                  type="submit"
+              >
+                  Create 
+              </Button>
+            </div>
           </form>
         </div>
       </div>
