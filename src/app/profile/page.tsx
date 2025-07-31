@@ -16,7 +16,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [gold, setGold] = useState<number | null>(null)
   const [mana, setMana] = useState<number | null>(null)
-  const [title, setTitle] = useState('')
 
   // The `useUser()` hook is used to ensure that Clerk has loaded data about the signed in user
   const { user } = useUser()
@@ -93,7 +92,7 @@ async function completedTask() {
 
       {loading && <p>Loading...</p>}
 
-      {!loading && tasks.length === 0 && <p>Add a task here</p>}
+      {!loading && tasks.length === 0}
 
         {!loading && tasks.length > 0 && tasks.map((task: { id: string; title: string }) => (
         <div
