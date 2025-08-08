@@ -78,7 +78,7 @@ async function completedTask() {
 }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_center,_#0b1220_1px,_#0a0f1a_1px)] [background-size:32px_32px] text-slate-200">
+    <div className="min-h-screen [background-size:32px_32px] text-slate-200">
       <div className="container mx-auto max-w-7xl px-4 py-10 grid grid-cols-1 lg:grid-cols-[520px_1fr] gap-10">
 
           {/* LEFT SIDE CONTENT*/}
