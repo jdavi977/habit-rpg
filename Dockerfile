@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 #build the application
-RUN npm run build
+RUN npm run dev
 
 # Set port environment variable
 ENV PORT=3000
