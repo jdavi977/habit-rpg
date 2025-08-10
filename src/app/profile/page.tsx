@@ -4,11 +4,12 @@ import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
 import CreateTask from '@/components/CreateTask'
+import { dailyCompletion, dailyTaskCheck, getTaskData, getTasks, getUserStats, goldReward, removeTaskDb } from '@/lib/db'
+import { diffMultiplier, streakMultiplier } from '@/lib/reward'
 
 type Task = {
   id: string;
   title: string;
-
 };
 
 export default function Profile() {
@@ -24,8 +25,8 @@ export default function Profile() {
   // Create a `client` object for accessing Supabase data using the Clerk token
   const client = useClerkSupabaseClient()
 
+  // The unique identifier of the authenticated user.
   const id = user?.id;
-
 
   // This `useEffect` will wait for the User object to be loaded before requesting
   // the tasks for the signed in user
@@ -34,26 +35,18 @@ export default function Profile() {
 
     async function loadData() {
       setLoading(true)
-
-      const { data: tasksData} = await client.from('tasks').select()
+      const tasksData = await getTasks(client)    
+      const userStats = await getUserStats(client, (id ?? ""))
+      
       if (tasksData) setTasks(tasksData)
 
-      const { data: userStats, error } = await client
-        .from('users')
-        .select('gold, mana, level')
-        .eq('id', user?.id)
-        .maybeSingle()
-
-      if (error) {
-        console.error("Error fetching user stats:", error.message)
-      } else if (userStats) {
+      if (userStats) {
         setLevel(userStats.level)
         setGold(userStats.gold)
         setMana(userStats.mana)
       } else {
         console.log("No user row found yet for", user?.id)
       }
-
       setLoading(false)
     }
 
@@ -61,61 +54,26 @@ export default function Profile() {
   }, [user])
 
 
-  async function removeTask(id: string) {
-    console.log(gold)
-    await client.from('tasks').delete().eq('id', id)
+  async function removeTask(task_id: string) {
+    removeTaskDb(client, task_id)
     window.location.reload()
   }
 
   async function completedTask(task_id: string) {
     const today = new Date().toISOString().slice(0, 10)
     const taskIdNum = Number(task_id)
+    const completedTaskCheck = await dailyTaskCheck(client, (id ?? ""), taskIdNum, today)
 
-    const { count } = 
-      await client.from('task_completions')
-      .select('*', { count: 'exact', head: true})
-      .eq('user_id', id)
-      .eq('task_id', taskIdNum)
-      .eq('date', today);
-
-    const completed = (count ?? 0) > 0;
-
-    if (!completed) {
-      await client.from('task_completions').upsert([{ user_id: id, task_id: taskIdNum, date: today}],
-        { onConflict: 'user_id, task_id, date', ignoreDuplicates: true},
-      )
-    }
-
-    if (!completed) {
+    reward(task_id)
+    if (!completedTaskCheck) {
+      dailyCompletion(client, (id ?? ""), taskIdNum, today)
       reward(task_id)
     }
   }
 
   async function reward(task_id: string) {
-    const {data: userData} = await client
-      .from('tasks')
-      .select('difficulty, streak')
-      .eq('id', task_id)
-      .maybeSingle()
-
-    console.log("test", userData?.difficulty, userData?.streak)
-
-    const streakMultiplier = (s: number) => 1 + Math.min(s / 7, 0.5);
-    const diffMultiplier = (d: string) => { if (d == "Easy") {
-      return 5
-    } else if (d == "Medium") {
-      return 8
-    } else if (d == "Hard") {
-      return 10
-    }}
-
-    await client
-      .from('users')
-      .update({ gold: (gold ?? 0) + Math.round((diffMultiplier(userData?.difficulty) ?? 0) * streakMultiplier(userData?.streak)), mana: (mana ?? 0) + 5 })
-      .eq('id', id)
-      .select()
-      .single()
-
+    const userData = await getTaskData(client, task_id)
+    await goldReward(client, (id ?? ""), (diffMultiplier(userData?.difficulty) ?? 0), streakMultiplier(userData?.streak), (gold ?? 0))
     window.location.reload()
   }
 
