@@ -11,7 +11,7 @@ type Task = {
 
 };
 
-export default function Home() {
+export default function Profile() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [gold, setGold] = useState<number | null>(null)
@@ -62,20 +62,40 @@ export default function Home() {
     window.location.reload()
   }
 
-async function completedTask() {
-  const id = user?.id;
-  const { data, error } = await client
-    .from('users')
-    .update({ gold: (gold ?? 0) + 10, mana: (mana ?? 0) + 5 })
-    .eq('id', id)
-    .select()
-    .single()
+  async function completedTask(task_id: string) {
+    const id = user?.id;
+    const today = new Date().toISOString().slice(0, 10)
+    const taskIdNum = Number(task_id)
+    
+    const { count } = 
+      await client.from('task_completions')
+      .select('*', { count: 'exact', head: true})
+      .eq('user_id', id)
+      .eq('task_id', taskIdNum)
+      .eq('date', today);
 
-  if (!error && data) {
-    setGold(data.gold) //
-    setMana(data.mana)
+    const completed = (count ?? 0) > 0;
+
+    if (!completed) {
+      await client.from('task_completions').upsert([{ user_id: id, task_id: taskIdNum, date: today}],
+        { onConflict: 'user_id, task_id, date', ignoreDuplicates: true},
+      )
+    }
+
+    console.log(completed, count)
+
+    const { data, error } = await client
+      .from('users')
+      .update({ gold: (gold ?? 0) + 10, mana: (mana ?? 0) + 5 })
+      .eq('id', id)
+      .select()
+      .single()
+ 
+    if (!error && data) {
+      setGold(data.gold) //
+      setMana(data.mana)
+    }
   }
-}
 
   return (
     <div className="min-h-screen [background-size:32px_32px] text-slate-200">
@@ -121,7 +141,7 @@ async function completedTask() {
                       type="button"
                       size="sm" 
                       className="bg-primary text-black"
-                      onClick={() => completedTask()}
+                      onClick={() => completedTask(task.id)}
                     >
                       Done
                     </Button>
