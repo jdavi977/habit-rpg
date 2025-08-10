@@ -4,11 +4,12 @@ import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
 import CreateTask from '@/components/CreateTask'
+import { dailyCompletion, dailyTaskCheck, getTaskData, getTasks, getUserStats, goldReward, removeTaskDb } from '@/lib/db'
+import { diffMultiplier, streakMultiplier } from '@/lib/reward'
 
 type Task = {
   id: string;
   title: string;
-
 };
 
 export default function Profile() {
@@ -16,12 +17,16 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [gold, setGold] = useState<number | null>(null)
   const [mana, setMana] = useState<number | null>(null)
+  const [level, setLevel] = useState<number | 1>(1)
 
   // The `useUser()` hook is used to ensure that Clerk has loaded data about the signed in user
   const { user } = useUser()
 
   // Create a `client` object for accessing Supabase data using the Clerk token
   const client = useClerkSupabaseClient()
+
+  // The unique identifier of the authenticated user.
+  const id = user?.id;
 
   // This `useEffect` will wait for the User object to be loaded before requesting
   // the tasks for the signed in user
@@ -30,25 +35,18 @@ export default function Profile() {
 
     async function loadData() {
       setLoading(true)
-
-      const { data: tasksData} = await client.from('tasks').select()
+      const tasksData = await getTasks(client)    
+      const userStats = await getUserStats(client, (id ?? ""))
+      
       if (tasksData) setTasks(tasksData)
 
-      const { data: userStats, error } = await client
-        .from('users')
-        .select('gold, mana')
-        .eq('id', user?.id)
-        .maybeSingle()
-
-      if (error) {
-        console.error("Error fetching user stats:", error.message)
-      } else if (userStats) {
+      if (userStats) {
+        setLevel(userStats.level)
         setGold(userStats.gold)
         setMana(userStats.mana)
       } else {
         console.log("No user row found yet for", user?.id)
       }
-
       setLoading(false)
     }
 
@@ -56,45 +54,27 @@ export default function Profile() {
   }, [user])
 
 
-  async function removeTask(id: string) {
-    console.log(gold)
-    await client.from('tasks').delete().eq('id', id)
+  async function removeTask(task_id: string) {
+    removeTaskDb(client, task_id)
     window.location.reload()
   }
 
   async function completedTask(task_id: string) {
-    const id = user?.id;
     const today = new Date().toISOString().slice(0, 10)
     const taskIdNum = Number(task_id)
-    
-    const { count } = 
-      await client.from('task_completions')
-      .select('*', { count: 'exact', head: true})
-      .eq('user_id', id)
-      .eq('task_id', taskIdNum)
-      .eq('date', today);
+    const completedTaskCheck = await dailyTaskCheck(client, (id ?? ""), taskIdNum, today)
 
-    const completed = (count ?? 0) > 0;
-
-    if (!completed) {
-      await client.from('task_completions').upsert([{ user_id: id, task_id: taskIdNum, date: today}],
-        { onConflict: 'user_id, task_id, date', ignoreDuplicates: true},
-      )
+    reward(task_id)
+    if (!completedTaskCheck) {
+      dailyCompletion(client, (id ?? ""), taskIdNum, today)
+      reward(task_id)
     }
+  }
 
-    console.log(completed, count)
-
-    const { data, error } = await client
-      .from('users')
-      .update({ gold: (gold ?? 0) + 10, mana: (mana ?? 0) + 5 })
-      .eq('id', id)
-      .select()
-      .single()
- 
-    if (!error && data) {
-      setGold(data.gold) //
-      setMana(data.mana)
-    }
+  async function reward(task_id: string) {
+    const userData = await getTaskData(client, task_id)
+    await goldReward(client, (id ?? ""), (diffMultiplier(userData?.difficulty) ?? 0), streakMultiplier(userData?.streak), (gold ?? 0))
+    window.location.reload()
   }
 
   return (
@@ -109,6 +89,10 @@ export default function Profile() {
               <h2 className="text-sm uppercase tracking-wider opacity-70 mb-3">Stats</h2>
               {!loading && (
                 <div className="flex gap-6">
+                  <div>
+                    <div className="text-xs opacity-70">Level: </div>                                
+                    <div className="text-xl font-semibold">{level ?? "not avail"}</div>
+                  </div>
                   <div>
                     <div className="text-xs opacity-70">Gold: </div>                                
                     <div className="text-xl font-semibold">{gold ?? "not avail"}</div>
