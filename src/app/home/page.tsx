@@ -55,9 +55,16 @@ export default function Home() {
     loadData()
   }, [user])
 
-
+  async function selectDays(days: string) {
+    const { data: taskDays, error} = await client.from('tasks').select().contains('days', [days])
+    
+    if (error) {
+      console.error("Error fetching tasks:", error);
+      return;
+    }
+    if (taskDays) setTasks(taskDays)
+  }
   async function removeTask(id: string) {
-    console.log(gold)
     await client.from('tasks').delete().eq('id', id)
     window.location.reload()
   }
@@ -129,6 +136,69 @@ export default function Home() {
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm uppercase tracking-wider opacity-70">Tasks</h2>
               </div>
+              
+              { /* Days Selector */}
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xs opacity-70 mb-3">Select a day to see your tasks</h3>
+                </div>
+                <div id = "days">
+                  <Button
+                    type="button"
+                      size="sm" 
+                      className="bg-primary text-black"
+                      onClick={() => selectDays('Sun')}
+                      >
+                        Sun
+                      </Button>
+                      <Button
+                    type="button"
+                      size="sm" 
+                      className="bg-primary text-black"
+                      onClick={() => selectDays('Mon')}
+                      >
+                        Mon
+                      </Button>
+                  <Button
+                    type="button"
+                      size="sm" 
+                      className="bg-primary text-black"
+                      onClick={() => selectDays('Tue')}
+                      >
+                        Tue
+                      </Button>
+                  <Button
+                    type="button"
+                      size="sm" 
+                      className="bg-primary text-black"
+                      onClick={() => selectDays('Wed')}
+                      >
+                        Wed
+                      </Button>
+                      <Button
+                    type="button"
+                      size="sm" 
+                      className="bg-primary text-black"
+                      onClick={() => selectDays('Thu')}
+                      >
+                        Thu
+                      </Button>
+                      <Button
+                    type="button"
+                      size="sm" 
+                      className="bg-primary text-black"
+                      onClick={() => selectDays('Fri')}
+                      >
+                        Fri
+                      </Button>
+                      <Button
+                    type="button"
+                      size="sm" 
+                      className="bg-primary text-black"
+                      onClick={() => selectDays('Sat')}
+                      >
+                        Sat
+                      </Button>
+                </div>
 
               <ul className="space-y-3">
               {loading && <p>Loading...</p>}
