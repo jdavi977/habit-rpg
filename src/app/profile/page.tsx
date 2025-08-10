@@ -11,7 +11,7 @@ type Task = {
 
 };
 
-export default function Home() {
+export default function Profile() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [gold, setGold] = useState<number | null>(null)
@@ -62,61 +62,106 @@ export default function Home() {
     window.location.reload()
   }
 
-async function completedTask() {
-  const id = user?.id;
-  const { data, error } = await client
-    .from('users')
-    .update({ gold: (gold ?? 0) + 10, mana: (mana ?? 0) + 5 })
-    .eq('id', id)
-    .select()
-    .single()
+  async function completedTask(task_id: string) {
+    const id = user?.id;
+    const today = new Date().toISOString().slice(0, 10)
+    const taskIdNum = Number(task_id)
+    
+    const { count } = 
+      await client.from('task_completions')
+      .select('*', { count: 'exact', head: true})
+      .eq('user_id', id)
+      .eq('task_id', taskIdNum)
+      .eq('date', today);
 
-  if (!error && data) {
-    setGold(data.gold) //
-    setMana(data.mana)
+    const completed = (count ?? 0) > 0;
+
+    if (!completed) {
+      await client.from('task_completions').upsert([{ user_id: id, task_id: taskIdNum, date: today}],
+        { onConflict: 'user_id, task_id, date', ignoreDuplicates: true},
+      )
+    }
+
+    console.log(completed, count)
+
+    const { data, error } = await client
+      .from('users')
+      .update({ gold: (gold ?? 0) + 10, mana: (mana ?? 0) + 5 })
+      .eq('id', id)
+      .select()
+      .single()
+ 
+    if (!error && data) {
+      setGold(data.gold) //
+      setMana(data.mana)
+    }
   }
-}
 
   return (
-  <>
-    <div className="justify-center">
+    <div className="min-h-screen [background-size:32px_32px] text-slate-200">
+      <div className="container mx-auto max-w-7xl px-4 py-10 grid grid-cols-1 lg:grid-cols-[520px_1fr] gap-10">
 
-      {!loading && (
-        <div>
-          <p>Gold: {gold ?? "not avail"}</p>
-          <p>Mana: {mana ?? "not avail"}</p>
+          {/* LEFT SIDE CONTENT*/}
+          <aside className="space-y-6">
+
+            {/* STATS */}
+            <section className="rounded-2xl border border-border bg-card/90 backdrop-blur-sm p-5">
+              <h2 className="text-sm uppercase tracking-wider opacity-70 mb-3">Stats</h2>
+              {!loading && (
+                <div className="flex gap-6">
+                  <div>
+                    <div className="text-xs opacity-70">Gold: </div>                                
+                    <div className="text-xl font-semibold">{gold ?? "not avail"}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs opacity-70">Mana: </div>
+                    <div className="text-xl font-semibold">{mana ?? "not avail"}</div>
+                  </div>
+                </div>
+              )}
+            </section>
+
+            {/* TASKS */}
+            <section className="rounded-2xl border border-border bg-card/90 backdrop-blur-sm p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm uppercase tracking-wider opacity-70">Tasks</h2>
+              </div>
+
+              <ul className="space-y-3">
+              {loading && <p>Loading...</p>}
+
+              {!loading && tasks.length === 0}
+                {!loading && tasks.length > 0 && tasks.map((task: { id: string; title: string }) => (
+                <li 
+                  className="flex items-center justify-between rounded-xl bg-black/20 px-3 py-2"
+                  key={task.id}>
+                  <span className="truncate pr-3">{task.title}</span>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      size="sm" 
+                      className="bg-primary text-black"
+                      onClick={() => completedTask(task.id)}
+                    >
+                      Done
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm" 
+                      variant="secondary"
+                      onClick={() => removeTask(task.id)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </li>
+              ))}
+              </ul>
+            </section>
+          </aside>
+
+          <CreateTask/>
+          </div>
         </div>
-      )}
-
-      <h1>Tasks</h1>
-
-      {loading && <p>Loading...</p>}
-
-      {!loading && tasks.length === 0}
-
-        {!loading && tasks.length > 0 && tasks.map((task: { id: string; title: string }) => (
-        <div
-          key={task.id}
-          className="flex "
-        >
-          <Button
-            type="button"
-            onClick={() => completedTask()}
-          >
-            Complete task
-          </Button>
-          <p>{task.title}</p>
-          <Button
-            type="button"
-            onClick={() => removeTask(task.id)}
-          >
-            Remove
-          </Button>
-        </div>
-      ))}
-      
-      <CreateTask />
-    </div>
-  </>
   )
 }

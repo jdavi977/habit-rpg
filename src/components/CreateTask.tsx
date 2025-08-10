@@ -28,12 +28,12 @@ const CreateTask = () => {
       setTitle("");
       setDifficulty("");
       setDays([]);
+
+      window.location.reload()
     };
 
   return (
-    <div className="w-full pb-24 pt-35 relative">
-      <div className="container mx-auto max-w-7xl px-4">
-
+    <div>
         {/* HEADER- PROGRAM GALLERY */}
         <div className="bg-card/90 backdrop-blur-sm border border-border rounded-lg overflow-hidden mb-16">
           {/* HEADER BAR */}
@@ -46,67 +46,71 @@ const CreateTask = () => {
           </div>
 
           {/* HEADER CONTENT */}
-          <div className="flex p-8 justify-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <div className="p-8">
+            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-center">
               <span className="text-foreground">Add Your </span>
               <span className="text-primary">Task</span>
             </h2>
           </div>
 
           <form
+            className="space-y-6"
             onSubmit={handleSubmit}
           >
             <div>
-                <label className="flex gap-2 justify-center">Task Title</label>
+                <label className="block text-sm font-medium mb-2 text-center">Task Title</label>
                 <div className="flex flex-wrap gap-2 justify-center">
-                <input 
-                    type="text"
-                    value={title}
-                    placeholder='Enter task title'
-                    onChange={(e) => setTitle(e.target.value)}
-                    required
-                />
+                  <input 
+                      className="w-150 rounded-xl bg-black/30 border border-border px-4 py-3 outline-none focus:border-primary"
+                      type="text"
+                      value={title}
+                      placeholder='Enter task title'
+                      onChange={(e) => setTitle(e.target.value)}
+                      required
+                  />
                 </div>
             </div>
+
             <div>
-                <label className="flex gap-2 justify-center">Task Difficulty</label>
-                <div className="flex gap-2 justify-center">
+                <label className="block text-sm font-medium mb-2 text-center">Task Difficulty</label>
+                <div className="flex gap-3 justify-center">
                     {["Easy", "Medium", "Hard"].map((level) => (
                         <Button
                             type="button"
                             key={level}
                             onClick={() => setDifficulty(level)}
-                            className={`px-4 py-2 rounded-lg border 
-                            ${difficulty === level ? "bg-primary text-black" : "bg-gray-100"}
-                `}
+                            className={`px-4 py-2 rounded-full ${
+                              difficulty === level ? "bg-primary text-black" : "bg-white/70 hover:bg-white/100"
+                            }`}
                         >
                             {level}
                         </Button>
                     ))}
                 </div>
             </div>
+
             <div>
-                <label className="flex font-medium mb-2 justify-center">Days</label>
-                <div className="flex flex-wrap gap-2 justify-center">
+                <label className="block text-sm font-medium mb-2 text-center">Days</label>
+                <div className="flex flex-wrap gap-3 justify-center">
                 {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
                     <Button
                     type="button"
                     key={day}
                     onClick={() => handleDayToggle(day)}
-                    className={`px-3 py-1 rounded-lg border transition
-                        ${
-                        days.includes(day)
-                            ? "bg-green-500 text-white border-green-600"
-                            : "bg-gray-100 hover:bg-gray-200"
-                        }`}
+                    className={`px-4 py-2 rounded-full transition ${
+                         days.includes(day)
+                           ? "bg-primary text-black"
+                           : "bg-white/70 hover:bg-white/100"
+                       }`}
                     >
                     {day}
                     </Button>
                 ))}
                 </div>
             </div>
-            <div className='flex justify-center'>
+            <div className='flex justify-center pb-10'>
               <Button
+                  className="px-6 py-3 rounded-xl bg-primary text-black font-semibold"
                   type="submit"
               >
                   Create 
@@ -115,7 +119,6 @@ const CreateTask = () => {
           </form>
         </div>
       </div>
-    </div>
   );
 };
 
