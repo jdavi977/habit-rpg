@@ -16,12 +16,16 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [gold, setGold] = useState<number | null>(null)
   const [mana, setMana] = useState<number | null>(null)
+  const [level, setLevel] = useState<number | 1>(1)
 
   // The `useUser()` hook is used to ensure that Clerk has loaded data about the signed in user
   const { user } = useUser()
 
   // Create a `client` object for accessing Supabase data using the Clerk token
   const client = useClerkSupabaseClient()
+
+  const id = user?.id;
+
 
   // This `useEffect` will wait for the User object to be loaded before requesting
   // the tasks for the signed in user
@@ -36,13 +40,14 @@ export default function Profile() {
 
       const { data: userStats, error } = await client
         .from('users')
-        .select('gold, mana')
+        .select('gold, mana, level')
         .eq('id', user?.id)
         .maybeSingle()
 
       if (error) {
         console.error("Error fetching user stats:", error.message)
       } else if (userStats) {
+        setLevel(userStats.level)
         setGold(userStats.gold)
         setMana(userStats.mana)
       } else {
@@ -63,10 +68,9 @@ export default function Profile() {
   }
 
   async function completedTask(task_id: string) {
-    const id = user?.id;
     const today = new Date().toISOString().slice(0, 10)
     const taskIdNum = Number(task_id)
-    
+
     const { count } = 
       await client.from('task_completions')
       .select('*', { count: 'exact', head: true})
@@ -82,19 +86,37 @@ export default function Profile() {
       )
     }
 
-    console.log(completed, count)
+    if (!completed) {
+      reward(task_id)
+    }
+  }
 
-    const { data, error } = await client
+  async function reward(task_id: string) {
+    const {data: userData} = await client
+      .from('tasks')
+      .select('difficulty, streak')
+      .eq('id', task_id)
+      .maybeSingle()
+
+    console.log("test", userData?.difficulty, userData?.streak)
+
+    const streakMultiplier = (s: number) => 1 + Math.min(s / 7, 0.5);
+    const diffMultiplier = (d: string) => { if (d == "Easy") {
+      return 5
+    } else if (d == "Medium") {
+      return 8
+    } else if (d == "Hard") {
+      return 10
+    }}
+
+    await client
       .from('users')
-      .update({ gold: (gold ?? 0) + 10, mana: (mana ?? 0) + 5 })
+      .update({ gold: (gold ?? 0) + Math.round((diffMultiplier(userData?.difficulty) ?? 0) * streakMultiplier(userData?.streak)), mana: (mana ?? 0) + 5 })
       .eq('id', id)
       .select()
       .single()
- 
-    if (!error && data) {
-      setGold(data.gold) //
-      setMana(data.mana)
-    }
+
+    window.location.reload()
   }
 
   return (
@@ -109,6 +131,10 @@ export default function Profile() {
               <h2 className="text-sm uppercase tracking-wider opacity-70 mb-3">Stats</h2>
               {!loading && (
                 <div className="flex gap-6">
+                  <div>
+                    <div className="text-xs opacity-70">Level: </div>                                
+                    <div className="text-xl font-semibold">{level ?? "not avail"}</div>
+                  </div>
                   <div>
                     <div className="text-xs opacity-70">Gold: </div>                                
                     <div className="text-xl font-semibold">{gold ?? "not avail"}</div>
