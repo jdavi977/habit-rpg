@@ -4,7 +4,7 @@ import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
 import CreateTask from '@/components/CreateTask'
-import { dailyCompletion, dailyTaskCheck, getTaskData, getTasks, getUserStats, goldReward, removeTaskDb } from '@/lib/db'
+import { dailyCompletion, dailyTaskCheck, getTaskData, getUserStats, goldReward, removeTaskDb } from '@/lib/db'
 import { diffMultiplier, streakMultiplier } from '@/lib/reward'
 
 type Task = {
