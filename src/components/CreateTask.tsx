@@ -92,7 +92,7 @@ const CreateTask = () => {
             <div>
                 <label className="block text-sm font-medium mb-2 text-center">Days</label>
                 <div className="flex flex-wrap gap-3 justify-center">
-                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                     <Button
                     type="button"
                     key={day}
