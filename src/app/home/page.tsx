@@ -56,14 +56,38 @@ export default function Home() {
   }, [user])
 
   async function selectDays(days: string) {
+    // pulls day selection from database and compares it to buttons
     const { data: taskDays, error} = await client.from('tasks').select().contains('days', [days])
-    
+
+    // hides/shows tasks based on day(s) selected
     if (error) {
       console.error("Error fetching tasks:", error);
       return;
     }
     if (taskDays) setTasks(taskDays)
   }
+
+  async function currDay(){
+    // constants for highlighting buttons based on the day
+    const weekday = new Array('Sun', 'Mon', 'Tues', 'Wed', 'Thu', 'Fri', 'Sat')
+    const today = new Date()
+    const day = weekday[today.getDay()]
+  
+    // makes current day a different color
+    const todayButton = document.querySelector(`#${day}`);
+    if (!todayButton) {
+      console.error("Today button not found");
+      return;
+    }
+    if (todayButton) {
+      todayButton.setAttribute('style', 'background-color: #ffcc00; color: black;')
+    }    
+  }
+
+    useEffect(() => {
+        currDay();
+    });
+
   async function removeTask(id: string) {
     await client.from('tasks').delete().eq('id', id)
     window.location.reload()
@@ -147,6 +171,7 @@ export default function Home() {
                       size="sm" 
                       className="bg-primary text-black"
                       onClick={() => selectDays('Sun')}
+                      id = "Sun"
                       >
                         Sun
                       </Button>
@@ -155,6 +180,7 @@ export default function Home() {
                       size="sm" 
                       className="bg-primary text-black"
                       onClick={() => selectDays('Mon')}
+                      id = "Mon"
                       >
                         Mon
                       </Button>
@@ -163,6 +189,7 @@ export default function Home() {
                       size="sm" 
                       className="bg-primary text-black"
                       onClick={() => selectDays('Tue')}
+                      id = "Tue"
                       >
                         Tue
                       </Button>
@@ -171,6 +198,7 @@ export default function Home() {
                       size="sm" 
                       className="bg-primary text-black"
                       onClick={() => selectDays('Wed')}
+                      id = "Wed"
                       >
                         Wed
                       </Button>
@@ -179,6 +207,7 @@ export default function Home() {
                       size="sm" 
                       className="bg-primary text-black"
                       onClick={() => selectDays('Thu')}
+                      id = "Thu"
                       >
                         Thu
                       </Button>
@@ -187,6 +216,7 @@ export default function Home() {
                       size="sm" 
                       className="bg-primary text-black"
                       onClick={() => selectDays('Fri')}
+                      id = "Fri"
                       >
                         Fri
                       </Button>
@@ -195,6 +225,7 @@ export default function Home() {
                       size="sm" 
                       className="bg-primary text-black"
                       onClick={() => selectDays('Sat')}
+                      id = "Sat"
                       >
                         Sat
                       </Button>
