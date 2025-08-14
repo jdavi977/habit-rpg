@@ -1,23 +1,27 @@
-// app/api/clerk-webhook/route.ts
+// src/app/api/clerk-webhook/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+// Minimal types for the bits we use
 type ClerkEmailAddress = { email_address: string };
-type ClerkUserCreated = {
-  type: "user.created";
-  data?: {
-    id?: string;
-    email_addresses?: ClerkEmailAddress[];
-    username?: string | null;
-  };
+type ClerkUserData = {
+  id?: string;
+  email_addresses?: ClerkEmailAddress[];
+  username?: string | null;
 };
+type ClerkEvent = { type: string; data?: ClerkUserData };
 
-// narrow unknown → ClerkUserCreated | {type:string} | nullish
-function isClerkEvent(obj: unknown): obj is { type: string; data?: unknown } {
-  return !!obj && typeof (obj as any).type === "string";
+// Type guard without `any`
+function hasType(obj: unknown): obj is { type: unknown } {
+  return typeof obj === "object" && obj !== null && "type" in obj;
+}
+function isClerkEvent(obj: unknown): obj is ClerkEvent {
+  if (!hasType(obj)) return false;
+  const t = (obj as { type: unknown }).type;
+  return typeof t === "string";
 }
 
 export async function POST(req: NextRequest) {
@@ -34,23 +38,23 @@ export async function POST(req: NextRequest) {
   }
 
   if (!isClerkEvent(body)) {
-    return NextResponse.json({ error: "Missing event type" }, { status: 400 });
+    return NextResponse.json({ error: "Missing or invalid event type" }, { status: 400 });
   }
 
   const eventType = body.type;
-  // 2) Ignore non-user.created
+  // 2) Ignore other events
   if (eventType !== "user.created") {
     console.log("ℹ️ Ignored event:", eventType);
     return NextResponse.json({ ok: true, ignored: eventType }, { status: 200 });
   }
 
-  // 3) Extract minimal fields
-  const userData = (body as ClerkUserCreated).data ?? {};
-  const id = userData.id;
-  const email = userData.email_addresses?.[0]?.email_address;
-  const username = userData.username ?? null;
+  // 3) Extract fields
+  const user = body.data ?? {};
+  const id = user.id;
+  const email = user.email_addresses?.[0]?.email_address;
+  const username = user.username ?? null;
 
-  if (!id)   return NextResponse.json({ error: "Missing user id" }, { status: 400 });
+  if (!id)    return NextResponse.json({ error: "Missing user id" }, { status: 400 });
   if (!email) return NextResponse.json({ error: "Missing email"   }, { status: 400 });
 
   console.log("👤 user.created:", { id, email, username });
