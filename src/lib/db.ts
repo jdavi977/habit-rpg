@@ -19,9 +19,9 @@ export async function getTasks(client: SupabaseClient) {
  */
 export async function getUserStats(client: SupabaseClient, userId: string) {
   const { data, error } = await client
-    .from("users")
+    .from("user_stats")
     .select("gold, mana, level")
-    .eq("id", userId)
+    .eq("user_id", userId)
     .maybeSingle();
   if (error) throw error;
   return data;
@@ -63,9 +63,9 @@ export async function removeTaskDb(client: SupabaseClient, taskId: string) {
  * @returns A Promise to the result of the update operation.
  */
 export async function goldReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, gold: number) {
-    return client.from('users')
+    return client.from('user_stats')
       .update({ gold: (gold ?? 0) + Math.round((diffMultiplier) * streakMultiplier)})
-      .eq('id', userId)
+      .eq('user_id', userId)
       .select()
       .single()
 }
