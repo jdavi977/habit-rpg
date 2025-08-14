@@ -19,7 +19,6 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [gold, setGold] = useState<number | null>(null)
   const [mana, setMana] = useState<number | null>(null)
-  const [exp, setExp] = useState<number | null>(null)
   const [level, setLevel] = useState<number | 1>(1)
   const [rolloverTime, setRolloverTime] = useState({ hour: 12, minute: 0, period: 'AM' as 'AM' | 'PM' })
   const [selectedDay, setSelectedDay] = useState<string>('')
@@ -50,7 +49,6 @@ export default function Profile() {
         setLevel(userStats.level)
         setGold(userStats.gold)
         setMana(userStats.mana)
-        setExp(userStats.exp)
       } else {
         console.log("No user stats found yet for", user?.id)
       }
