@@ -37,6 +37,23 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  
+  /* Custom Cyberpunk Colors */
+  --color-cyber-black: var(--cyber-black);
+  --color-cyber-dark: var(--cyber-dark);
+  --color-cyber-blue-bright: var(--cyber-blue-bright);
+  --color-cyber-blue: var(--cyber-blue);
+  --color-cyber-blue-dark: var(--cyber-blue-dark);
+  --color-cyber-blue-glow: var(--cyber-blue-glow);
+  --color-cyber-accent: var(--cyber-accent);
+  --color-cyber-text-bright: var(--cyber-text-bright);
+  --color-cyber-text-muted: var(--cyber-text-muted);
+  --color-cyber-text-dim: var(--cyber-text-dim);
+  --color-cyber-line-color: var(--cyber-line-color);
+  --color-cyber-glow-primary: var(--cyber-glow-primary);
+  --color-cyber-glow-strong: var(--cyber-glow-strong);
+  --color-cyber-terminal-bg: var(--cyber-terminal-bg);
+  
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
