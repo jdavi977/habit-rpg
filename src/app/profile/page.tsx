@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
 import CreateTask from '@/components/CreateTask'
 import TimeSelector from '@/components/TimeSelector'
-import { dailyCompletion, dailyTaskCheck, getTaskData, goldReward, removeTaskDb } from '@/lib/db' //getUserStats
+import { dailyCompletion, dailyTaskCheck, getTaskData, getUserStats, goldReward, removeTaskDb } from '@/lib/db' //getUserStats
 import { diffMultiplier, streakMultiplier } from '@/lib/reward'
 
 type Task = {
@@ -37,30 +37,38 @@ export default function Profile() {
   useEffect(() => {
     if (!user) return
 
-    async function loadData() {
+    const initializeUser = async () => {
       setLoading(true)
 
       const todayShort = new Date().toLocaleDateString('en-US', { weekday: 'short' });
       setSelectedDay(todayShort)
       selectDays(todayShort)
 
-      setLevel(1)
-      setGold(0)
-      setMana(0)
+      // First ensure user exists
+      const {data: userExists} = await client.from('users').select('id').eq('id', user.id).maybeSingle();
 
-      // const userStats = await getUserStats(client, (id ?? ""))
-      // if (userStats) {
-      //   setLevel(userStats.level)
-      //   setGold(userStats.gold)
-      //   setMana(userStats.mana)
-      // } else {
-      //   console.log("No user stats found yet for", user?.id)
-      // }
-      // setLoading(false)
+      if (userExists) {
+        loadUserStats();
+      }
+      
+      setLoading(false);
     }
 
-    loadData()
-  }, [user])
+    const loadUserStats = async () => {
+      try {
+        const userStats = await getUserStats(client, (id ?? ""))
+        if (userStats) {
+          setLevel(userStats.level)
+          setGold(userStats.gold)
+          setMana(userStats.mana)
+        }
+      } catch (error) {
+        console.log("Failed to load user stats: ", error)
+      }
+    };
+
+    initializeUser()
+  }, [user, client, id])
 
   async function selectDays(days: string) {
     setSelectedDay(days)

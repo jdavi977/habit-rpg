@@ -17,51 +17,13 @@ export async function getTasks(client: SupabaseClient) {
  * @param userId The unique identifier of the user.
  * @returns A Promise to the data of the user's stats.
  */
-export async function getUserStats(client: SupabaseClient, userId: string) {
-  console.log("🔍 getUserStats called for userId:", userId);
-  
-  // First try to get existing stats
+export async function getUserStats(client: SupabaseClient, userId: string) {  
   const { data, error } = await client
     .from("user_stats")
-    .select("gold, mana, level, exp")
+    .select("level, exp, gold, mana")
     .eq("user_id", userId)
     .maybeSingle();
-  
-  console.log("📊 Database query result - data:", data, "error:", error);
-  
-  if (error) {
-    console.error("❌ Database error in getUserStats:", error);
-    throw error;
-  }
-  
-  // If stats don't exist, create default stats
-  if (!data) {
-    console.log("📝 No stats found, creating default stats for user:", userId);
-    const defaultStats = {
-      user_id: userId,
-      gold: 0,
-      mana: 0,
-      level: 1,
-      exp: 0,
-    };
-    
-    const { data: newStats, error: createError } = await client
-      .from("user_stats")
-      .insert(defaultStats)
-      .select("gold, mana, level, exp")
-      .single();
-    
-    if (createError) {
-      console.error("❌ Failed to create default user stats:", createError.message);
-      // Return default values if creation fails
-      return { gold: 0, mana: 0, level: 1, exp: 0 };
-    }
-    
-    console.log("✅ Default stats created successfully:", newStats);
-    return newStats;
-  }
-  
-  console.log("✅ Returning existing stats:", data);
+  if (error) throw error;
   return data;
 }
 
