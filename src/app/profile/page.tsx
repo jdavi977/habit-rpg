@@ -17,9 +17,9 @@ type Task = {
 export default function Profile() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
-  // const [gold, setGold] = useState<number | null>(null)
-  // const [mana, setMana] = useState<number | null>(null)
-  // const [level, setLevel] = useState<number | 1>(1)
+  const [gold, setGold] = useState<number | null>(null)
+  const [mana, setMana] = useState<number | null>(null)
+  const [level, setLevel] = useState<number | 1>(1)
   const [rolloverTime, setRolloverTime] = useState({ hour: 12, minute: 0, period: 'AM' as 'AM' | 'PM' })
   const [selectedDay, setSelectedDay] = useState<string>('')
 
@@ -43,6 +43,10 @@ export default function Profile() {
       const todayShort = new Date().toLocaleDateString('en-US', { weekday: 'short' });
       setSelectedDay(todayShort)
       selectDays(todayShort)
+
+      setLevel(1)
+      setGold(0)
+      setMana(0)
 
       // const userStats = await getUserStats(client, (id ?? ""))
       // if (userStats) {
