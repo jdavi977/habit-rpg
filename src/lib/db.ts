@@ -1,17 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
 /**
- * Provides all the tasks of the user.
- * @param client An authenticated Supabase client instance.
- * @returns A Promise to the data of all the user's tasks.
- */
-export async function getTasks(client: SupabaseClient) {
-  const { data, error } = await client.from("tasks").select();
-  if (error) throw error;
-  return data ?? [];
-}
-
-/**
  * Provides the stats of the user.
  * @param client An authenticated Supabase client instance.
  * @param userId The unique identifier of the user.
@@ -23,6 +12,33 @@ export async function getUserStats(client: SupabaseClient, userId: string) {
     .select("level, exp, gold, mana")
     .eq("user_id", userId)
     .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Provides all the tasks of the user.
+ * @param client An authenticated Supabase client instance.
+ * @returns A Promise to the data of all the user's tasks.
+ */
+export async function getTasks(client: SupabaseClient) {
+  const { data, error } = await client.from("tasks").select();
+  if (error) throw error;
+  return data ?? [];
+}
+
+/**
+ * Inserts a task with the following data into the database.
+ * @param client An authenticated Supabase client instance.
+ * @param userId The unique identifer of the user.
+ * @param title The title of the task.
+ * @param difficulty The difficulty of the task.
+ * @param days The days the tasks will appear.
+ * @returns The promise to the creation of the task.
+ */
+export async function createTask(client: SupabaseClient, userId: string, title: string, difficulty: string, days: string[]) {
+  const { data, error} = await client.from("tasks")
+    .insert({user_id: userId, title: title, difficulty: difficulty, days: days})
   if (error) throw error;
   return data;
 }

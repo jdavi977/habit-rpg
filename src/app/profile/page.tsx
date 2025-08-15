@@ -32,8 +32,8 @@ export default function Profile() {
   // The unique identifier of the authenticated user.
   const id = user?.id;
 
-  // This `useEffect` will wait for the User object to be loaded before requesting
-  // the tasks for the signed in user
+
+  // This is used to load user data
   useEffect(() => {
     if (!user) return
 
@@ -44,16 +44,15 @@ export default function Profile() {
       setSelectedDay(todayShort)
       selectDays(todayShort)
 
-      // First ensure user exists
+      // Makes sure that user is created before fetching user stats
       const {data: userExists} = await client.from('users').select('id').eq('id', user.id).maybeSingle();
-
       if (userExists) {
         loadUserStats();
       }
       
       setLoading(false);
     }
-
+    
     const loadUserStats = async () => {
       try {
         const userStats = await getUserStats(client, (id ?? ""))
@@ -68,7 +67,7 @@ export default function Profile() {
     };
 
     initializeUser()
-  }, [user, client, id])
+  }, [id])
 
   async function selectDays(days: string) {
     setSelectedDay(days)
@@ -247,7 +246,7 @@ export default function Profile() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <CreateTask />
+                <CreateTask userId={id ?? ""}/>
               </CardContent>
             </Card>
           </div>

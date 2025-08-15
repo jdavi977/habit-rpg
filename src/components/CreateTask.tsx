@@ -2,8 +2,9 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
+import { createTask } from '@/lib/db';
 
-const CreateTask = () => {
+const CreateTask = ({ userId }: { userId: string }) => {
     const [title, setTitle] = useState("");
     const [difficulty, setDifficulty] = useState("")
     const [days, setDays] = useState<string[]>([])
@@ -23,8 +24,8 @@ const CreateTask = () => {
       if (!difficulty) return alert("Please select a difficulty");
       if (days.length === 0) return alert("Please select at least one day");
 
-      await client.from("tasks").insert({title, difficulty, days})
-
+      createTask(client, userId, title, difficulty, days )
+      
       setTitle("");
       setDifficulty("");
       setDays([]);
