@@ -42,13 +42,6 @@ const Navbar = () => {
                 <span>Profile</span>
               </Link>
               <UserButton />
-                            <Link
-                href="/home"
-                className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors"
-              >
-                <HomeIcon size={16} />
-                <span>Test</span>
-              </Link>
             </>
           ) : (
             <>

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
 import CreateTask from '@/components/CreateTask'
 import TimeSelector from '@/components/TimeSelector'
-import { dailyCompletion, dailyTaskCheck, getTaskData, getUserStats, goldReward, removeTaskDb } from '@/lib/db'
+import { dailyCompletion, dailyTaskCheck, getTaskData, goldReward, removeTaskDb } from '@/lib/db' //getUserStats
 import { diffMultiplier, streakMultiplier } from '@/lib/reward'
 
 type Task = {
@@ -44,15 +44,15 @@ export default function Profile() {
       setSelectedDay(todayShort)
       selectDays(todayShort)
 
-      const userStats = await getUserStats(client, (id ?? ""))
-      if (userStats) {
-        setLevel(userStats.level)
-        setGold(userStats.gold)
-        setMana(userStats.mana)
-      } else {
-        console.log("No user stats found yet for", user?.id)
-      }
-      setLoading(false)
+      // const userStats = await getUserStats(client, (id ?? ""))
+      // if (userStats) {
+      //   setLevel(userStats.level)
+      //   setGold(userStats.gold)
+      //   setMana(userStats.mana)
+      // } else {
+      //   console.log("No user stats found yet for", user?.id)
+      // }
+      // setLoading(false)
     }
 
     loadData()
