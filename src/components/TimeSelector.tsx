@@ -3,11 +3,22 @@ import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { ChevronUp, ChevronDown } from 'lucide-react'
 
+/**
+ * Interfac for the TimsSelector props
+ * 
+ * @property onTimeChange - optional callback that is triggered when the user selects a new time.
+ * @property initialTime - optional initial time to display when the object is first rendered.
+ */
 interface TimeSelectorProps {
   onTimeChange?: (time: { hour: number; minute: number; period: 'AM' | 'PM' }) => void
   initialTime?: { hour: number; minute: number; period: 'AM' | 'PM' }
 }
 
+/**
+ * 
+ * @param param0 
+ * @returns 
+ */
 export default function TimeSelector({ onTimeChange, initialTime }: TimeSelectorProps) {
   const [selectedHour, setSelectedHour] = useState(initialTime?.hour || 12)
   const [selectedMinute, setSelectedMinute] = useState(initialTime?.minute || 0)

@@ -120,3 +120,24 @@ export async function dailyCompletion(client: SupabaseClient, userId: string, ta
     { onConflict: "user_id, task_id, date", ignoreDuplicates: true }
   );
 }
+
+export async function getSelectedDayTasks(client: SupabaseClient, days: string) {
+  const { data, error } = await client.from('tasks').select().contains('days', [days])
+  if (error) throw error;
+  return data;
+}
+
+export async function checkUserExists(client: SupabaseClient, userId: string) {
+  const { data, error } = await client.from('users').select('id').eq('id', userId).maybeSingle()
+  if (error) throw error;
+  return data;
+}
+
+export async function saveUserRollover(client: SupabaseClient, userId: string, rolloverTime: string) {
+  console.log(rolloverTime)
+  return client.from('user_settings')
+    .update({rollover_time: rolloverTime})
+    .eq('user_id', userId)
+    .select()
+    .single()
+}
