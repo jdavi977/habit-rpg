@@ -7,9 +7,10 @@ import { useClerkSupabaseClient } from '@/lib/supabaseClient'
 import CreateTask from '@/components/profile/CreateTask'
 import { checkUserExists, dailyCompletion, dailyTaskCheck, getUserSettings, getSelectedDayTasks, getTaskData, getUserStats, goldReward, removeTaskDb, deleteTaskCompleted, undoGoldReward } from '@/lib/db'
 import { diffMultiplier, streakMultiplier } from '@/lib/reward'
-import RolloutSelector from '@/components/profile/RolloutSelector'
 import useUserStats from '@/components/hooks/useUserStats';
 import StatsCard from '@/components/profile/StatsCard'
+import SettingsCard from '@/components/profile/SettingsCard'
+import useUserSettings from '@/components/hooks/useUserSettings'
 
 /**
  * Represents a task in the system
@@ -21,20 +22,6 @@ type Task = {
   id: string;
   title: string;
 };
-
-/**
- * Time configuration for daily rollover
- * @typedef {Object} RolloverTime
- * @property {number} hour - Hour in 12-hour format (1-12)
- * @property {number} minute - Minute (0-59)
- * @property {'AM' | 'PM'} period - Time period (AM or PM)
- */
-type RolloverTime = {
-  hour: number;
-  minute: number;
-  period: 'AM' | 'PM';
-};
-
 /**
  * Profile page component that displays user statistics, daily tasks, and task management
  * 
@@ -62,14 +49,14 @@ export default function Profile() {
   // State for managing tasks and user data
   const [tasks, setTasks] = useState<Task[]>([])
   const { loading, level, gold, mana } = useUserStats(client, id)
+  const convertedTime = useUserSettings(client, id)
 
   // Available days for task selection
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   const [selectedDay, setSelectedDay] = useState<string>('')
 
-  const [rolloverTime, setRolloverTime] = useState<RolloverTime>({ hour: 12, minute: 0, period: 'AM' })
+  // const [rolloverTime, setRolloverTime] = useState<RolloverTime>({ hour: 12, minute: 0, period: 'AM' })
 
-  // Maps tasks and
   const [taskWithStatus, setTaskWithStatus] = useState<{id: string; title: string; isDone: boolean}[]>([]);
 
   const today = new Date().toISOString().slice(0, 10)
@@ -78,7 +65,6 @@ export default function Profile() {
   // This useEffect will create a new array of tasks but with isDone boolean added to see if the task is completed
   useEffect(() => {
     if (!id || tasks.length === 0) { setTaskWithStatus([]); return; }
-
     let alive = true;
     (async () => {
       const results = await Promise.all(tasks.map(async t => ({
@@ -95,50 +81,13 @@ export default function Profile() {
   useEffect(() => {
     if (!id) return
     let alive = true;
-
     (async () => {
       const todayShort = new Date().toLocaleDateString('en-US', { weekday: 'short' });
       setSelectedDay(todayShort)
       await selectDays(todayShort)
-
-      const userExists = await checkUserExists(client, user.id)
-      if (alive && userExists) {
-        await loadUserSettings();
-    }
   })();
     return () => { alive = false; };
   }, [id, client])
-
-  /**
-   * This function takes the user settings data and loads it onto the page
-   */
-  const loadUserSettings = async () => {
-    if (!id)
-      return;
-    const settingsInfo = await getUserSettings(client, id)
-    const convertedTime = from24HourString(settingsInfo.rollover_time)
-    setRolloverTime(convertedTime)
-  }
-
-  /**
-   * Converts the rollover time in the database to match the RolloverTime type fields 
-   * @param pgTime The database time being coverted
-   * @returns The database time converted to match RolloverTime type
-   */
-    function from24HourString(pgTime: string) {
-      const [hh, mm] = pgTime.split(':').map(Number);
-    
-      let period: 'AM' | 'PM' = hh >= 12 ? 'PM' : 'AM';
-    
-      let hour = hh % 12;
-      if (hour === 0) hour = 12; 
-    
-      return {
-        hour,
-        minute: mm,
-        period,
-      };
-    }
 
   /**
    * Select tasks for a specific day of the week
@@ -232,24 +181,11 @@ export default function Profile() {
               gold={gold}
               mana={mana}
             />
-                {/* Daily Reset Time Configuration */}
-                <div className="pt-4">
-                  <h3 className="text-sm font-semibold text-cyber-text-bright mb-3">Daily Reset Time</h3>
-                  <div>
-                    Current Reset Time
-                  </div>
-                  <div>
-                    {rolloverTime.hour}:
-                    {(rolloverTime.minute == 0 ? "00" : rolloverTime.minute)}
-                    {rolloverTime.period}
-                  </div>
-                  <RolloutSelector 
-                    initialTime={rolloverTime}
-                    onTimeChange={setRolloverTime}
-                    userId={id}
-                  />
-                </div>
-
+            <SettingsCard 
+              client={client}
+              id={id}
+              convertedTime={convertedTime}
+            />
             {/* TASKS CARD - Task management and completion interface */}
             <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20">
               <CardHeader className="pb-4">

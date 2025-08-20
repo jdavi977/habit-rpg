@@ -43,7 +43,7 @@ const StatsCard = ({loading, level, gold, mana}: StatsCardProps) => {
                   </div>
                 )}
               </CardContent>
-            </Card>
+    </Card>
   )
 }
 

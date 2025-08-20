@@ -297,7 +297,8 @@ export default function Home() {
                     {rolloverTime.minute}
                     {rolloverTime.period}
                   </div>
-                  <RolloutSelector 
+                  <RolloutSelector
+                    client={client}
                     initialTime={rolloverTime}
                     onTimeChange={setRolloverTime}
                     userId={id}

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '../ui/button'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { saveUserRollover } from '@/lib/db'
-import { useClerkSupabaseClient } from '@/lib/supabaseClient'
+import { SupabaseClient } from '@supabase/supabase-js'
 
 /**
  * Interface that defines the shape of these props
@@ -11,7 +11,8 @@ import { useClerkSupabaseClient } from '@/lib/supabaseClient'
 interface TimeSelectorProp {
     onTimeChange?: (time: {hour: number, minute: number, period: 'AM' | 'PM'}) => void
     initialTime?: {hour: number, minute: number, period: 'AM' | 'PM'}
-    userId?: string
+    userId?: string | null 
+    client: SupabaseClient
 }
 
 /**
@@ -19,10 +20,7 @@ interface TimeSelectorProp {
  * @param param0 
  * @returns 
  */
-const RolloutSelector = ({onTimeChange, initialTime, userId} : TimeSelectorProp) => {
-    // Supabase client for database operations
-    const client = useClerkSupabaseClient()
-
+const RolloutSelector = ({client, onTimeChange, initialTime, userId} : TimeSelectorProp) => {
     // The daily reset time selected by the user
     const [selectedHour, setSelectedHour] = useState(initialTime?.hour || 12)
     const [selectedMinute, setSelectedMinute] = useState(initialTime?.minute || 0)
@@ -32,6 +30,17 @@ const RolloutSelector = ({onTimeChange, initialTime, userId} : TimeSelectorProp)
     const [displayHour, setDisplayHour] = useState(initialTime?.hour || 12)
     const [displayMinute, setDisplayMinute] = useState(initialTime?.minute || 0)
     const [displayPeriod, setDisplayPeriod] = useState(initialTime?.period || 'AM')
+
+    // When initialTime changes (after async load), sync local state
+    useEffect(() => {
+      if (!initialTime) return;
+      setSelectedHour(initialTime.hour)
+      setSelectedMinute(initialTime.minute)
+      setSelectedPeriod(initialTime.period)
+      setDisplayHour(initialTime.hour)
+      setDisplayMinute(initialTime.minute)
+      setDisplayPeriod(initialTime.period)
+    }, [initialTime])
 
     /**
      * Once there is a change to either selectedHour, selectedMinute, or selectedPeriod it will check and run onTimeChange
