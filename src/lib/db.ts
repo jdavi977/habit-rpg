@@ -86,6 +86,14 @@ export async function goldReward(client: SupabaseClient, userId: string, diffMul
       .single()
 }
 
+export async function undoGoldReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, gold: number) {
+  return client.from('user_stats')
+    .update({ gold: (gold ?? 0) - Math.round((diffMultiplier) * streakMultiplier)})
+    .eq('user_id', userId)
+    .select()
+    .single()
+}
+
 /**
  * This function is to check if the task is already in the daily completed task table.
  * @param client An authenticated Supabase client instance.
@@ -140,4 +148,16 @@ export async function saveUserRollover(client: SupabaseClient, userId: string, r
     .eq('user_id', userId)
     .select()
     .single()
+}
+
+export async function getUserSettings(client: SupabaseClient, userId: string) {
+  const {data, error} = await client.from('user_settings').select('rollover_time').eq("user_id", userId).single()
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteTaskCompleted(client: SupabaseClient, userId: string, taskId: number, date: string) {
+  const {data, error} = await client.from('task_completions').delete().match({"user_id": userId, "task_id": taskId, "date": date})
+  if (error) throw error;
+  return data;
 }

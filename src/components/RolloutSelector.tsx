@@ -1,4 +1,4 @@
-'use-client'
+'use client'
 import { useState, useEffect } from 'react'
 import { Button } from './ui/button'
 import { ChevronDown, ChevronUp } from 'lucide-react'
@@ -15,7 +15,7 @@ interface TimeSelectorProp {
 }
 
 /**
- * 
+ * RolloutSelector component where the user is able to update their daily reset time
  * @param param0 
  * @returns 
  */
@@ -25,14 +25,13 @@ const RolloutSelector = ({onTimeChange, initialTime, userId} : TimeSelectorProp)
 
     // The daily reset time selected by the user
     const [selectedHour, setSelectedHour] = useState(initialTime?.hour || 12)
-    const [selectedMinute, setSelectedminute] = useState(initialTime?.minute || 0)
+    const [selectedMinute, setSelectedMinute] = useState(initialTime?.minute || 0)
     const [selectedPeriod, setSelectedPeriod] = useState(initialTime?.period || 'AM')
 
     // The display reset time shown to the user
     const [displayHour, setDisplayHour] = useState(initialTime?.hour || 12)
     const [displayMinute, setDisplayMinute] = useState(initialTime?.minute || 0)
     const [displayPeriod, setDisplayPeriod] = useState(initialTime?.period || 'AM')
-
 
     /**
      * Once there is a change to either selectedHour, selectedMinute, or selectedPeriod it will check and run onTimeChange
@@ -47,34 +46,26 @@ const RolloutSelector = ({onTimeChange, initialTime, userId} : TimeSelectorProp)
      * Function to apply the save time
      */
     const applyChanges = () => {
+      if (!userId)
+        return
       setSelectedHour(displayHour)
-      setSelectedminute(displayMinute)
+      setSelectedMinute(displayMinute)
       setSelectedPeriod(displayPeriod)
-      const timeConversion = to24HourString(selectedHour, selectedMinute, selectedPeriod)
-      console.log(timeConversion)
-      saveUserRollover(client, userId ?? "", timeConversion)
+      const timeConversion = to24HourString(displayHour, displayMinute, displayPeriod)
+      saveUserRollover(client, userId, timeConversion)
     }
 
     /**
-     * 
-     * @param hour 
-     * @param minute 
-     * @param period 
-     * @returns 
+     * Function to convert to time on database
      */
     const to24HourString = (hour: number, minute: number, period: 'AM' | 'PM') => {
       let h = hour % 12;
       if (period === "PM") h += 12;
       return `${h.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}:00`;
     }
+
   return (
     <div>
-      <div>
-        <p>Current Reset Time</p>
-        {selectedHour}:
-        {(selectedMinute == 0 ? "00" : selectedMinute )}
-        {selectedPeriod}
-      </div>
       <div className="flex items-center justify-center gap-2">
         {/* Hour Selector */}
         <div className='flex flex-col items-center'>
