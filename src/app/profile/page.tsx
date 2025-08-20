@@ -4,10 +4,12 @@ import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
-import CreateTask from '@/components/CreateTask'
+import CreateTask from '@/components/profile/CreateTask'
 import { checkUserExists, dailyCompletion, dailyTaskCheck, getUserSettings, getSelectedDayTasks, getTaskData, getUserStats, goldReward, removeTaskDb, deleteTaskCompleted, undoGoldReward } from '@/lib/db'
 import { diffMultiplier, streakMultiplier } from '@/lib/reward'
-import RolloutSelector from '@/components/RolloutSelector'
+import RolloutSelector from '@/components/profile/RolloutSelector'
+import useUserStats from '@/components/hooks/useUserStats';
+import StatsCard from '@/components/profile/StatsCard'
 
 /**
  * Represents a task in the system
@@ -48,13 +50,18 @@ type RolloverTime = {
  * 
  */
 export default function Profile() {
+  // Clerk authentication hook
+  const { user } = useUser()
+
+  // Supabase client for database operations
+  const client = useClerkSupabaseClient()
+  
+  // Extract user ID from Clerk user object
+  const id = user?.id;
+
   // State for managing tasks and user data
   const [tasks, setTasks] = useState<Task[]>([])
-  const [loading, setLoading] = useState(true)
-
-  const [gold, setGold] = useState<number | null>(null)
-  const [mana, setMana] = useState<number | null>(null)
-  const [level, setLevel] = useState<number | 1>(1)
+  const { loading, level, gold, mana } = useUserStats(client, id)
 
   // Available days for task selection
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -65,29 +72,42 @@ export default function Profile() {
   // Maps tasks and
   const [taskWithStatus, setTaskWithStatus] = useState<{id: string; title: string; isDone: boolean}[]>([]);
 
-  // Date today in year-month-day
   const today = new Date().toISOString().slice(0, 10)
 
 
   // This useEffect will create a new array of tasks but with isDone boolean added to see if the task is completed
   useEffect(() => {
+    if (!id || tasks.length === 0) { setTaskWithStatus([]); return; }
+
+    let alive = true;
     (async () => {
       const results = await Promise.all(tasks.map(async t => ({
         ...t,
         isDone: await isTaskCompletedToday(t.id),
       })));
-      setTaskWithStatus(results)
+      if (alive) setTaskWithStatus(results)
     })();
-  }, [tasks])
 
-  // Clerk authentication hook
-  const { user } = useUser()
+    return () => { alive = false; };
+  }, [id, tasks])
 
-  // Supabase client for database operations
-  const client = useClerkSupabaseClient()
 
-  // Extract user ID from Clerk user object
-  const id = user?.id;
+  useEffect(() => {
+    if (!id) return
+    let alive = true;
+
+    (async () => {
+      const todayShort = new Date().toLocaleDateString('en-US', { weekday: 'short' });
+      setSelectedDay(todayShort)
+      await selectDays(todayShort)
+
+      const userExists = await checkUserExists(client, user.id)
+      if (alive && userExists) {
+        await loadUserSettings();
+    }
+  })();
+    return () => { alive = false; };
+  }, [id, client])
 
   /**
    * This function takes the user settings data and loads it onto the page
@@ -105,68 +125,20 @@ export default function Profile() {
    * @param pgTime The database time being coverted
    * @returns The database time converted to match RolloverTime type
    */
-  function from24HourString(pgTime: string) {
-    const [hh, mm] = pgTime.split(':').map(Number);
-  
-    let period: 'AM' | 'PM' = hh >= 12 ? 'PM' : 'AM';
-  
-    let hour = hh % 12;
-    if (hour === 0) hour = 12; 
-  
-    return {
-      hour,
-      minute: mm,
-      period,
-    };
-  }
-
-  /**
-   * Initialize user data and load initial state
-   * Sets up the selected day to today and loads user statistics
-   */
-  useEffect(() => {
-    if (!user) return
-
-    const initializeUser = async () => {
-      setLoading(true)
-
-      // Set selected day to current day
-      const todayShort = new Date().toLocaleDateString('en-US', { weekday: 'short' });
-      setSelectedDay(todayShort)
-
-      // Call selectDays which updates tasks to current day
-      selectDays(todayShort)
-
-
-      // Ensure user exists in database before fetching stats
-      const userExists = await checkUserExists(client, user.id)
-      if (userExists) {
-        loadUserStats();
-        loadUserSettings();
-      }
-      
-      setLoading(false);
-    }
+    function from24HourString(pgTime: string) {
+      const [hh, mm] = pgTime.split(':').map(Number);
     
-    /**
-     * Load user statistics from the database
-     * Updates level, gold, and mana state with user data
-     */
-    const loadUserStats = async () => {
-      try {
-        const userStats = await getUserStats(client, (id ?? ""))
-        if (userStats) {
-          setLevel(userStats.level)
-          setGold(userStats.gold)
-          setMana(userStats.mana)
-        }
-      } catch (error) {
-        console.log("Failed to load user stats: ", error)
-      }
-    };
-
-    initializeUser()
-  }, [id])
+      let period: 'AM' | 'PM' = hh >= 12 ? 'PM' : 'AM';
+    
+      let hour = hh % 12;
+      if (hour === 0) hour = 12; 
+    
+      return {
+        hour,
+        minute: mm,
+        period,
+      };
+    }
 
   /**
    * Select tasks for a specific day of the week
@@ -254,42 +226,14 @@ export default function Profile() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-8">
           {/* LEFT SIDE CONTENT - User stats and task management */}
           <div className="space-y-6">
-            {/* STATS CARD - Displays character level, gold, and mana */}
-            <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-xl font-bold text-cyber-blue-bright flex items-center gap-2">
-                  <div className="w-2 h-2 bg-cyber-blue-bright rounded-full animate-pulse"></div>
-                  Character Stats
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {!loading ? (
-                  <div className="grid grid-cols-3 gap-4">
-                    {/* Level Display */}
-                    <div className="text-center p-4 rounded-xl bg-gradient-to-br from-cyber-blue/10 to-cyber-blue/5 border border-cyber-line-color">
-                      <div className="text-2xl font-bold text-cyber-blue-bright mb-1">{level ?? "1"}</div>
-                      <div className="text-xs text-cyber-text-muted uppercase tracking-wider">Level</div>
-                    </div>
-                    {/* Gold Display */}
-                    <div className="text-center p-4 rounded-xl bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border border-yellow-500/20">
-                      <div className="text-2xl font-bold text-yellow-400 mb-1">{gold ?? "0"}</div>
-                      <div className="text-xs text-cyber-text-muted uppercase tracking-wider">Gold</div>
-                    </div>
-                    {/* Mana Display */}
-                    <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20">
-                      <div className="text-2xl font-bold text-purple-400 mb-1">{mana ?? "0"}</div>
-                      <div className="text-xs text-cyber-text-muted uppercase tracking-wider">Mana</div>
-                    </div>
-                  </div>
-                ) : (
-                  // Loading spinner while stats are being fetched
-                  <div className="flex items-center justify-center h-20">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyber-blue-bright"></div>
-                  </div>
-                )}
-                
+            <StatsCard 
+              loading={loading}
+              level={level}
+              gold={gold}
+              mana={mana}
+            />
                 {/* Daily Reset Time Configuration */}
-                <div className="pt-4 border-t border-cyber-line-color">
+                <div className="pt-4">
                   <h3 className="text-sm font-semibold text-cyber-text-bright mb-3">Daily Reset Time</h3>
                   <div>
                     Current Reset Time
@@ -305,8 +249,6 @@ export default function Profile() {
                     userId={id}
                   />
                 </div>
-              </CardContent>
-            </Card>
 
             {/* TASKS CARD - Task management and completion interface */}
             <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20">

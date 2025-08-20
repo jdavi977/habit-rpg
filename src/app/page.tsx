@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Swords } from "lucide-react";
-import HabitContent from "@/components/HabitContent";
+import HabitContent from "@/components/start/HabitContent";
 
 export default function Start() {
   return (

@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Button } from './ui/button'
+import { Button } from '../ui/button'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { saveUserRollover } from '@/lib/db'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient'

@@ -4,10 +4,10 @@ import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
-import CreateTask from '@/components/CreateTask'
+import CreateTask from '@/components/profile/CreateTask'
 import { checkUserExists, dailyCompletion, dailyTaskCheck, getUserSettings, getSelectedDayTasks, getTaskData, getUserStats, goldReward, removeTaskDb, deleteTaskCompleted, undoGoldReward } from '@/lib/db'
 import { diffMultiplier, streakMultiplier } from '@/lib/reward'
-import RolloutSelector from '@/components/RolloutSelector'
+import RolloutSelector from '@/components/profile/RolloutSelector'
 
 /**
  * Represents a task in the system
