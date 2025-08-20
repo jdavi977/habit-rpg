@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
 import CreateTask from '@/components/CreateTask'
-import TimeSelector from '@/components/TimeSelector'
 import { checkUserExists, dailyCompletion, dailyTaskCheck, getUserSettings, getSelectedDayTasks, getTaskData, getUserStats, goldReward, removeTaskDb, deleteTaskCompleted, undoGoldReward } from '@/lib/db'
 import { diffMultiplier, streakMultiplier } from '@/lib/reward'
 import RolloutSelector from '@/components/RolloutSelector'
@@ -292,14 +291,12 @@ export default function Profile() {
                 {/* Daily Reset Time Configuration */}
                 <div className="pt-4 border-t border-cyber-line-color">
                   <h3 className="text-sm font-semibold text-cyber-text-bright mb-3">Daily Reset Time</h3>
-                  <TimeSelector 
-                    initialTime={rolloverTime}
-                    onTimeChange={setRolloverTime}
-                  />
                   <div>
-                    Current Reset Time: --
-                    {rolloverTime.hour}
-                    {rolloverTime.minute}
+                    Current Reset Time
+                  </div>
+                  <div>
+                    {rolloverTime.hour}:
+                    {(rolloverTime.minute == 0 ? "00" : rolloverTime.minute)}
                     {rolloverTime.period}
                   </div>
                   <RolloutSelector 

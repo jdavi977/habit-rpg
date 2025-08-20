@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useClerkSupabaseClient } from '@/lib/supabaseClient' 
 import CreateTask from '@/components/CreateTask'
-import TimeSelector from '@/components/TimeSelector'
-import { checkUserExists, dailyCompletion, dailyTaskCheck, getUserSettings, getSelectedDayTasks, getTaskData, getUserStats, goldReward, removeTaskDb } from '@/lib/db'
+import { checkUserExists, dailyCompletion, dailyTaskCheck, getUserSettings, getSelectedDayTasks, getTaskData, getUserStats, goldReward, removeTaskDb, deleteTaskCompleted, undoGoldReward } from '@/lib/db'
 import { diffMultiplier, streakMultiplier } from '@/lib/reward'
 import RolloutSelector from '@/components/RolloutSelector'
 
@@ -62,6 +61,24 @@ export default function Home() {
   const [selectedDay, setSelectedDay] = useState<string>('')
 
   const [rolloverTime, setRolloverTime] = useState<RolloverTime>({ hour: 12, minute: 0, period: 'AM' })
+
+  // Maps tasks and
+  const [taskWithStatus, setTaskWithStatus] = useState<{id: string; title: string; isDone: boolean}[]>([]);
+
+  // Date today in year-month-day
+  const today = new Date().toISOString().slice(0, 10)
+
+
+  // This useEffect will create a new array of tasks but with isDone boolean added to see if the task is completed
+  useEffect(() => {
+    (async () => {
+      const results = await Promise.all(tasks.map(async t => ({
+        ...t,
+        isDone: await isTaskCompletedToday(t.id),
+      })));
+      setTaskWithStatus(results)
+    })();
+  }, [tasks])
 
   // Clerk authentication hook
   const { user } = useUser()
@@ -180,15 +197,32 @@ export default function Home() {
    * 
    * @param {string} task_id - Unique identifier of the completed task
    */
-  async function completedTask(task_id: string) {
-    const today = new Date().toISOString().slice(0, 10)
+  async function markTaskCompletedToday(task_id: string) {
     const taskIdNum = Number(task_id)
     const completedTaskCheck = await dailyTaskCheck(client, (id ?? ""), taskIdNum, today)
 
     if (!completedTaskCheck) {
-      dailyCompletion(client, (id ?? ""), taskIdNum, today)
-      reward(task_id)
+      await dailyCompletion(client, (id ?? ""), taskIdNum, today)
+      await reward(task_id)
     }
+  }
+
+  async function isTaskCompletedToday(task_id: string) {
+    const taskIdNum = Number(task_id)
+    const completedTaskCheck = await dailyTaskCheck(client, (id ?? ""), taskIdNum, today)
+    return completedTaskCheck;
+  }
+
+  async function undoTaskCompletion(task_id: string) {
+    const taskIdNum = Number(task_id)
+    deleteTaskCompleted(client, (id ?? ""), taskIdNum, today)
+    undoReward(task_id)
+  }
+
+  async function undoReward(task_id: string) {
+    const userData = await getTaskData(client, task_id)
+    await undoGoldReward(client, (id ?? ""), (diffMultiplier(userData?.difficulty) ?? 0), streakMultiplier(userData?.streak), (gold ?? 0))
+    window.location.reload()
   }
 
   /**
@@ -257,10 +291,6 @@ export default function Home() {
                 {/* Daily Reset Time Configuration */}
                 <div className="pt-4 border-t border-cyber-line-color">
                   <h3 className="text-sm font-semibold text-cyber-text-bright mb-3">Daily Reset Time</h3>
-                  <TimeSelector 
-                    initialTime={rolloverTime}
-                    onTimeChange={setRolloverTime}
-                  />
                   <div>
                     Current Reset Time: --
                     {rolloverTime.hour}
@@ -325,22 +355,32 @@ export default function Home() {
                   ) : (
                     // Task list with completion and removal actions
                     <ul className="space-y-3">
-                      {tasks.map((task: { id: string; title: string }) => (
+                      {taskWithStatus.map(task => (
                         <li 
                           key={task.id}
-                          className="group flex items-center justify-between rounded-xl bg-gradient-to-r from-cyber-blue/10 to-cyber-blue/5 border border-cyber-line-color p-4 transition-all duration-200 hover:shadow-lg hover:shadow-cyber-glow-primary/20 hover:border-cyber-blue/40"
+                          className={`group flex items-center justify-between rounded-xl border border-cyber-line-color p-4 transition-all duration-200 hover:shadow-lg hover:shadow-cyber-glow-primary/20 hover:border-cyber-blue/40
+                            ${task.isDone ? "bg-cyber-blue/300" : "bg-cyber-blue/100"}
+                          `}
                         >
                           <span className="truncate pr-3 text-cyber-text-bright font-medium">{task.title}</span>
                           {/* Action buttons that appear on hover */}
-                          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                            <Button
+                          <div className="flex gap-2">
+                            {!task.isDone ? <Button
                               type="button"
                               size="sm"
                               className="bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/30"
-                              onClick={() => completedTask(task.id)}
+                              onClick={() => markTaskCompletedToday(task.id)}
                             >
                               ✓ Complete
+                            </Button> : <Button
+                              type="button"
+                              size="sm"
+                              className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-green-600/30"
+                              onClick={() => undoTaskCompletion(task.id)} // TO DO
+                            >
+                              Undo
                             </Button>
+                            }
                             <Button
                               type="button"
                               size="sm"
