@@ -2,40 +2,32 @@
 
 import { getUserStats } from '@/lib/db'
 import { SupabaseClient } from '@supabase/supabase-js'
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
+
+type UserStats = {level: number, gold: number, mana: number}
 
 const useUserStats = (client: SupabaseClient, userId?: string) => {
-    const [loading, setLoading] = useState(true)
-    const [gold, setGold] = useState<number | null>(null)
-    const [mana, setMana] = useState<number | null>(null)
-    const [level, setLevel] = useState<number | null>(null)
+    const [stats, setStats] = useState<UserStats>()
+    const reqIdRef = useRef(0);
 
-    const clientRef = useRef(client);
-    useEffect(() => { clientRef.current = client }, [client]);
-    
-    const fetchStats = useCallback(async () => {
-      if (!userId) return;
-      let alive = true;
-      setLoading(true);
-      try {
-        const stats = await getUserStats(clientRef.current, userId);
-        if (!alive) return;
-        setLevel(stats?.level ?? 1);
-        setGold(stats?.gold ?? 0);
-        setMana(stats?.mana ?? 0);
-      } finally {
-        if (alive) setLoading(false);
-      }
-    }, [userId]);
-    
     useEffect(() => {
       if (!userId) return;
-      let alive = true;
-      fetchStats();
-      return () => { alive = false };
-    }, [userId, fetchStats]);
+      const myReqId = ++reqIdRef.current;
+      (async () => {
+        try {
+          const stats = await getUserStats(client, userId)
+          if (myReqId !== reqIdRef.current) return;
+          setStats({
+            level: stats?.level ?? 1,
+            gold: stats?.gold ?? 0,
+            mana: stats?.mana ?? 0,
+          }) 
+        } catch {}
+      })()
+      return () => { reqIdRef.current++ }
+    }, [userId, client])
 
-    return { loading, gold, mana, level }
-}
+    return { stats }
+    }
 
 export default useUserStats;

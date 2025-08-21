@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -48,8 +48,9 @@ export default function Profile() {
 
   // State for managing tasks and user data
   const [tasks, setTasks] = useState<Task[]>([])
-  const { loading, level, gold, mana } = useUserStats(client, id)
+  const { stats } = useUserStats(client, id)
   const convertedTime = useUserSettings(client, id)
+  const loading = false;
 
   // Available days for task selection
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -60,7 +61,15 @@ export default function Profile() {
   const [taskWithStatus, setTaskWithStatus] = useState<{id: string; title: string; isDone: boolean}[]>([]);
 
   const today = new Date().toISOString().slice(0, 10)
+  
+  const prev = useRef(client);
 
+  useEffect(() => {
+    if (prev.current !== client) {
+      console.log('Supabase client identity CHANGED');
+      prev.current = client;
+    }
+  }, [client]);
 
   // This useEffect will create a new array of tasks but with isDone boolean added to see if the task is completed
   useEffect(() => {
@@ -142,7 +151,7 @@ export default function Profile() {
 
   async function undoReward(task_id: string) {
     const userData = await getTaskData(client, task_id)
-    await undoGoldReward(client, (id ?? ""), (diffMultiplier(userData?.difficulty) ?? 0), streakMultiplier(userData?.streak), (gold ?? 0))
+    await undoGoldReward(client, (id ?? ""), (diffMultiplier(userData?.difficulty) ?? 0), streakMultiplier(userData?.streak), (stats?.gold ?? 0))
     window.location.reload()
   }
 
@@ -154,7 +163,7 @@ export default function Profile() {
    */
   async function reward(task_id: string) {
     const userData = await getTaskData(client, task_id)
-    await goldReward(client, (id ?? ""), (diffMultiplier(userData?.difficulty) ?? 0), streakMultiplier(userData?.streak), (gold ?? 0))
+    await goldReward(client, (id ?? ""), (diffMultiplier(userData?.difficulty) ?? 0), streakMultiplier(userData?.streak), (stats?.gold ?? 0))
     window.location.reload()
   }
 
@@ -176,12 +185,11 @@ export default function Profile() {
           {/* LEFT SIDE CONTENT - User stats and task management */}
           <div className="space-y-6">
             <StatsCard 
-              loading={loading}
-              level={level}
-              gold={gold}
-              mana={mana}
+              level={stats?.level}
+              gold={stats?.gold}
+              mana={stats?.mana}
             />
-            <SettingsCard 
+            <SettingsCard
               client={client}
               id={id}
               convertedTime={convertedTime}

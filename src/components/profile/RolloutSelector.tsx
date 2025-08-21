@@ -31,17 +31,6 @@ const RolloutSelector = ({client, onTimeChange, initialTime, userId} : TimeSelec
     const [displayMinute, setDisplayMinute] = useState(initialTime?.minute || 0)
     const [displayPeriod, setDisplayPeriod] = useState(initialTime?.period || 'AM')
 
-    // When initialTime changes (after async load), sync local state
-    useEffect(() => {
-      if (!initialTime) return;
-      setSelectedHour(initialTime.hour)
-      setSelectedMinute(initialTime.minute)
-      setSelectedPeriod(initialTime.period)
-      setDisplayHour(initialTime.hour)
-      setDisplayMinute(initialTime.minute)
-      setDisplayPeriod(initialTime.period)
-    }, [initialTime])
-
     /**
      * Once there is a change to either selectedHour, selectedMinute, or selectedPeriod it will check and run onTimeChange
      */

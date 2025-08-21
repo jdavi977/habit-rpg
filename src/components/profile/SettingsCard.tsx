@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import RolloutSelector from './RolloutSelector';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Card } from '../ui/card';
+import { Card, CardContent } from '../ui/card';
 
 /**
  * Time configuration for daily rollover
@@ -23,35 +23,43 @@ type SettingsCardProp = {
     convertedTime?: {hour: number, minute: number, period: 'AM' | 'PM'}
 }
   
-const SettingsCard = ({client, id, convertedTime}: SettingsCardProp) => {
+const SettingsCard = ({client, id, convertedTime, }: SettingsCardProp) => {
     const [rolloverTime, setRolloverTime] = useState<RolloverTime>({ hour: 12, minute: 0, period: 'AM' })
-    // Sync incoming convertedTime once it's loaded
+    const [loading, setLoading] = useState(true)
+
     React.useEffect(() => {
         if (convertedTime) {
             setRolloverTime(convertedTime)
+            setLoading(false)
         }
     }, [convertedTime])
         return (
-        <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20">
-            <div className="p-5">
-                <h3 className="text-sm font-semibold text-cyber-text-bright mb-3">Daily Reset Time</h3>
-            <div>
-                Current Reset Time
-            </div>
-            <div>
-                {rolloverTime.hour}:
-                {(rolloverTime.minute == 0 ? "00" : rolloverTime.minute)}
-                {rolloverTime.period}
-            </div>
-            <RolloutSelector 
-                client={client}
-                initialTime={convertedTime}
-                onTimeChange={setRolloverTime}
-                userId={id}
-            />
-            </div>
-        </Card>
+            <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20">
+                {!loading ? (
+                    <div className="p-5">
+                        <h3 className="text-sm font-semibold text-cyber-text-bright mb-3">Daily Reset Time</h3>
+                    <div>
+                        Current Reset Time
+                    </div>
+                    <div>
+                        {rolloverTime.hour}:
+                        {(rolloverTime.minute == 0 ? "00" : rolloverTime.minute)}
+                        {rolloverTime.period}
+                    </div>
+                    <RolloutSelector 
+                        client={client}
+                        initialTime={rolloverTime}
+                        onTimeChange={setRolloverTime}
+                        userId={id}
+                    />
+                    </div>
+                ) : (
+                    // Loading spinner while stats are being fetched
+                    <div className="flex items-center justify-center h-20">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyber-blue-bright"></div>
+                    </div>
+                  )}
+            </Card>
         )
     }
-
 export default SettingsCard

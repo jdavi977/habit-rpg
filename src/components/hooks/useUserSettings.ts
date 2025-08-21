@@ -1,7 +1,7 @@
 'use client'
 import { getUserSettings } from '@/lib/db';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 type RolloverTime = {
     hour: number;
@@ -10,16 +10,8 @@ type RolloverTime = {
   };
 
 const useUserSettings = (client: SupabaseClient, userId?: string) => {
-    const [convertedTime, setConvertedTime] = useState<RolloverTime>({ hour: 12, minute: 0, period: 'AM' })
-
-    /**
-   * This function takes the user settings data and loads it onto the page
-   */
-  const loadUserSettings = useCallback(async () => {
-    if (!userId) return;
-    const settingsInfo = await getUserSettings(client, userId)
-    setConvertedTime(from24HourString(settingsInfo.rollover_time))
-    }, [userId, client])
+  const [convertedTime, setConvertedTime] = useState<RolloverTime>()
+  const reqIdRef = useRef(0);
 
     /**
    * Converts the rollover time in the database to match the RolloverTime type fields 
@@ -40,13 +32,19 @@ const useUserSettings = (client: SupabaseClient, userId?: string) => {
       }
 
     useEffect(() => {
-        if(!userId) return;
-        let alive = true;
-        loadUserSettings();
-        return () => {alive = false};
-    }, [userId, client, loadUserSettings])
+      if (!userId) return
+      const myReqId = ++ reqIdRef.current;
+      (async () => {
+        try {
+          const settingsInfo = await getUserSettings(client, userId)
+          if (myReqId !== reqIdRef.current) return;
+          setConvertedTime(from24HourString(settingsInfo.rollover_time))
+        } catch {}
+      })()
+      return () => { reqIdRef.current++ }
+    }, [userId, client])
 
   return ( convertedTime )
-}
+  }
 
 export default useUserSettings

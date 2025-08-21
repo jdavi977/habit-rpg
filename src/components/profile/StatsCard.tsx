@@ -1,14 +1,22 @@
-import React from 'react'
+'use client'
+import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 
 type StatsCardProps = {
-    loading: boolean;
     level: number | null | undefined;
     gold: number | null | undefined;
     mana: number | null | undefined;
 }
 
-const StatsCard = ({loading, level, gold, mana}: StatsCardProps) => {
+const StatsCard = ({level, gold, mana}: StatsCardProps) => {
+  const [loading, setLoading] = useState(true)
+
+    React.useEffect(() => {
+      if (level || gold || mana) {
+          setLoading(false)
+      }
+  }, [level])
+
   return (
     <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20">
               <CardHeader className="pb-4">
