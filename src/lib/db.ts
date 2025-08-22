@@ -79,7 +79,7 @@ export async function removeTaskDb(client: SupabaseClient, taskId: string) {
  * @returns A Promise to the result of the update operation.
  */
 export async function goldReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, gold: number) {
-    return client.from('user_stats')
+  return client.from('user_stats')
       .update({ gold: (gold ?? 0) + Math.round((diffMultiplier) * streakMultiplier)})
       .eq('user_id', userId)
       .select()
@@ -87,6 +87,7 @@ export async function goldReward(client: SupabaseClient, userId: string, diffMul
 }
 
 export async function undoGoldReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, gold: number) {
+  console.log("undo", gold)
   return client.from('user_stats')
     .update({ gold: (gold ?? 0) - Math.round((diffMultiplier) * streakMultiplier)})
     .eq('user_id', userId)
