@@ -20,7 +20,7 @@ const useUserSettings = (client: SupabaseClient, userId?: string) => {
    */
     function from24HourString(pgTime: string) {
         const [hh, mm] = pgTime.split(':').map(Number);
-        let period: 'AM' | 'PM' = hh >= 12 ? 'PM' : 'AM';
+        const period: 'AM' | 'PM' = hh >= 12 ? 'PM' : 'AM';
         let hour = hh % 12;
         if (hour === 0) hour = 12; 
       

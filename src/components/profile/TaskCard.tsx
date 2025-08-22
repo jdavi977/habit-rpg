@@ -11,7 +11,7 @@ type TaskCardProps = {
   stats?: { level: number; gold: number; mana: number };
 };
 
-const TaskCard = ({ client, userId, stats }: TaskCardProps) => {
+const TaskCard = ({ client, userId }: TaskCardProps) => {
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const todayShort = new Date().toLocaleDateString("en-US", {
     weekday: "short",
