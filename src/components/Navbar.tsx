@@ -4,7 +4,7 @@ import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
-import { HomeIcon, Sword, UserIcon } from 'lucide-react'
+import { HomeIcon, Sword } from 'lucide-react'
 
 const Navbar = () => {
   const {isSignedIn} = useUser()
@@ -31,15 +31,15 @@ const Navbar = () => {
                 href="/"
                 className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors"
               >
-                <HomeIcon size={16} />
-                <span>Home</span>
+                <Sword size={16} />
+                <span>Start</span>
               </Link>
               <Link
-                href="/profile"
+                href="/home"
                 className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors"
               >
-                <UserIcon size={16} />
-                <span>Profile</span>
+                <HomeIcon size={16} />
+                <span>Home</span>
               </Link>
               <UserButton />
             </>
