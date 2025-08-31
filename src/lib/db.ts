@@ -95,6 +95,24 @@ export async function undoGoldReward(client: SupabaseClient, userId: string, dif
     .single()
 }
 
+export async function increaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
+  console.log("streak")
+  return client.from('tasks')
+    .update({ streak: (currentStreak ?? 0) + 1})
+    .eq('id', taskId)
+    .select()
+    .single()
+}
+
+export async function decreaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
+  console.log("streak")
+  return client.from('tasks')
+    .update({ streak: (currentStreak ?? 0) - 1})
+    .eq('id', taskId)
+    .select()
+    .single()
+}
+
 /**
  * This function is to check if the task is already in the daily completed task table.
  * @param client An authenticated Supabase client instance.
@@ -142,10 +160,10 @@ export async function checkUserExists(client: SupabaseClient, userId: string) {
   return data;
 }
 
-export async function saveUserRollover(client: SupabaseClient, userId: string, rolloverTime: string) {
+export async function saveUserRollover(client: SupabaseClient, tz: string, userId: string, rolloverTime: string) {
   console.log(rolloverTime)
   return client.from('user_settings')
-    .update({rollover_time: rolloverTime})
+    .update({tz: tz, rollover_time: rolloverTime})
     .eq('user_id', userId)
     .select()
     .single()

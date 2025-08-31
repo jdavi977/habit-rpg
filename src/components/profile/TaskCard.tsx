@@ -40,7 +40,8 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
         <TaskList
           tasks={tasks}
           loading={loading}
-          selectedDay={todayShort}
+          selectedDay={selectedDay}
+          currentDay={todayShort}
           completeTask={completeTask}
           undoTask={undoTask}
           removeTask={removeTask}

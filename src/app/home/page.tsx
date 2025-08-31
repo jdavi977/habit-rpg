@@ -8,6 +8,7 @@ import StatsCard from "@/components/profile/StatsCard";
 import SettingsCard from "@/components/profile/SettingsCard";
 import useUserSettings from "@/components/hooks/useUserSettings";
 import TaskCard from "@/components/profile/TaskCard";
+import { getLocalTimeZone } from "@/lib/localTimezone";
 
 /**
  * Profile page component that displays user statistics, daily tasks, and task management
@@ -27,12 +28,13 @@ export default function Home() {
   const client = useClerkSupabaseClient();
   const prev = useRef(client);
 
-
   const { user } = useUser();
   const id = user?.id;
 
   const { stats } = useUserStats(client, id);
   const convertedTime = useUserSettings(client, id);
+
+  const tz = getLocalTimeZone();
 
   {/* TESTING */}
   useEffect(() => {
@@ -68,6 +70,7 @@ export default function Home() {
             <SettingsCard
               client={client}
               id={id}
+              tz={tz}
               convertedTime={convertedTime}
             />
             {/* TASKS CARD */}

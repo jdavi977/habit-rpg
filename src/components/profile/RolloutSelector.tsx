@@ -10,6 +10,7 @@ import { SupabaseClient } from '@supabase/supabase-js'
  */
 interface TimeSelectorProp {
     onTimeChange?: (time: {hour: number, minute: number, period: 'AM' | 'PM'}) => void
+    tz: string;
     initialTime?: {hour: number, minute: number, period: 'AM' | 'PM'}
     userId?: string | null 
     client: SupabaseClient
@@ -20,7 +21,7 @@ interface TimeSelectorProp {
  * @param param0 
  * @returns 
  */
-const RolloutSelector = ({client, onTimeChange, initialTime, userId} : TimeSelectorProp) => {
+const RolloutSelector = ({client, tz, onTimeChange, initialTime, userId} : TimeSelectorProp) => {
     // The daily reset time selected by the user
     const [selectedHour, setSelectedHour] = useState(initialTime?.hour || 12)
     const [selectedMinute, setSelectedMinute] = useState(initialTime?.minute || 0)
@@ -50,7 +51,7 @@ const RolloutSelector = ({client, onTimeChange, initialTime, userId} : TimeSelec
       setSelectedMinute(displayMinute)
       setSelectedPeriod(displayPeriod)
       const timeConversion = to24HourString(displayHour, displayMinute, displayPeriod)
-      saveUserRollover(client, userId, timeConversion)
+      saveUserRollover(client, tz, userId, timeConversion)
     }
 
     /**

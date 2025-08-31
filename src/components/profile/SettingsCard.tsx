@@ -20,10 +20,11 @@ type RolloverTime = {
 type SettingsCardProp = {
   client: SupabaseClient;
   id: string | null | undefined;
+  tz: string;
   convertedTime?: { hour: number; minute: number; period: "AM" | "PM" };
 };
 
-const SettingsCard = ({ client, id, convertedTime }: SettingsCardProp) => {
+const SettingsCard = ({ client, id, tz, convertedTime }: SettingsCardProp) => {
   const [rolloverTime, setRolloverTime] = useState<RolloverTime>({
     hour: 12,
     minute: 0,
@@ -49,6 +50,7 @@ const SettingsCard = ({ client, id, convertedTime }: SettingsCardProp) => {
       {!loading ? (
         <div>
           <div>Current Reset Time</div>
+          <div>{tz}</div>
           <div>
             {rolloverTime.hour}:
             {rolloverTime.minute == 0 ? "00" : rolloverTime.minute}
@@ -56,6 +58,7 @@ const SettingsCard = ({ client, id, convertedTime }: SettingsCardProp) => {
           </div>
           <RolloutSelector
             client={client}
+            tz={tz}
             initialTime={rolloverTime}
             onTimeChange={setRolloverTime}
             userId={id}
