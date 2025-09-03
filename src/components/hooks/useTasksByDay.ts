@@ -49,7 +49,6 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
   }, [client, userId, today])
 
   const undoTask = useCallback(async (taskId: string) => {
-    console.log("went")
     if (!userId) return
     await deleteTaskCompleted(client, userId, Number(taskId), today)
     const taskData = await getTaskData(client, taskId)

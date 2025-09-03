@@ -160,10 +160,10 @@ export async function checkUserExists(client: SupabaseClient, userId: string) {
   return data;
 }
 
-export async function saveUserRollover(client: SupabaseClient, tz: string, userId: string, rolloverTime: string) {
+export async function saveUserRollover(client: SupabaseClient, tz: string, userId: string, rolloverTime: string, nextRollover: string) {
   console.log(rolloverTime)
   return client.from('user_settings')
-    .update({tz: tz, rollover_time: rolloverTime})
+    .update({tz: tz, rollover_time: rolloverTime, next_rollover_utc: nextRollover})
     .eq('user_id', userId)
     .select()
     .single()
