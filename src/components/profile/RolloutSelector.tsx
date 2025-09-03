@@ -4,12 +4,15 @@ import { Button } from '../ui/button'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { saveUserRollover } from '@/lib/db'
 import { SupabaseClient } from '@supabase/supabase-js'
+import { DateTime } from "luxon";
+import next from 'next'
 
 /**
  * Interface that defines the shape of these props
  */
 interface TimeSelectorProp {
     onTimeChange?: (time: {hour: number, minute: number, period: 'AM' | 'PM'}) => void
+    tz: string;
     initialTime?: {hour: number, minute: number, period: 'AM' | 'PM'}
     userId?: string | null 
     client: SupabaseClient
@@ -20,7 +23,7 @@ interface TimeSelectorProp {
  * @param param0 
  * @returns 
  */
-const RolloutSelector = ({client, onTimeChange, initialTime, userId} : TimeSelectorProp) => {
+const RolloutSelector = ({client, tz, onTimeChange, initialTime, userId} : TimeSelectorProp) => {
     // The daily reset time selected by the user
     const [selectedHour, setSelectedHour] = useState(initialTime?.hour || 12)
     const [selectedMinute, setSelectedMinute] = useState(initialTime?.minute || 0)
@@ -50,7 +53,8 @@ const RolloutSelector = ({client, onTimeChange, initialTime, userId} : TimeSelec
       setSelectedMinute(displayMinute)
       setSelectedPeriod(displayPeriod)
       const timeConversion = to24HourString(displayHour, displayMinute, displayPeriod)
-      saveUserRollover(client, userId, timeConversion)
+      const nextRollover = computeNextRolloverUTC(tz, timeConversion)
+      saveUserRollover(client, tz, userId, timeConversion, nextRollover)
     }
 
     /**
@@ -59,7 +63,18 @@ const RolloutSelector = ({client, onTimeChange, initialTime, userId} : TimeSelec
     const to24HourString = (hour: number, minute: number, period: 'AM' | 'PM') => {
       let h = hour % 12;
       if (period === "PM") h += 12;
-      return `${h.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}:00`;
+      return `${h.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+    }
+
+    const computeNextRolloverUTC = (tz: string, rolloverTime: string): string => {
+      const [h, m] = rolloverTime.split(":").map(Number);
+      const nowLocal = DateTime.now().setZone(tz);
+
+      const todayRollover = nowLocal.set({ hour: h, minute: m, second: 0, millisecond: 0 });
+
+      const nextRollover = nowLocal > todayRollover ? todayRollover.plus({ days: 1 }) : todayRollover;
+
+      return nextRollover.toUTC().toISO() || '';
     }
 
   return (

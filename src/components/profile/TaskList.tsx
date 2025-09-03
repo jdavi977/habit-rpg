@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
+import { Flame } from "lucide-react";
 
 type TaskListProps = {
   selectedDay: string,
-  tasks: {id: string, title: string, isDone: boolean}[];
+  tasks: {id: string, title: string, streak: number, isDone: boolean}[];
   completeTask: (taskId: string) => void,
   undoTask: (taskId: string) => void,
   removeTask: (taskId: string) => void,
+  currentDay: string;
   loading: boolean;
 }
 
-const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask}: TaskListProps) => {
+const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, currentDay}: TaskListProps) => {
   const [loading, setLoading] = useState(true)
 
   React.useEffect(() => {
@@ -19,6 +21,7 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask}: Task
         setLoading(false)
     }
 }, [tasks])
+
   return (
     <div className="space-y-3">
       {loading ? (
@@ -43,12 +46,18 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask}: Task
               ${task.isDone ? "bg-cyber-blue/300" : "bg-cyber-blue/100"}
             `}
             >
-              <span className="truncate pr-3 text-cyber-text-bright font-medium">
-                {task.title}
+              <span className="truncate pr-3 text-cyber-text-bright font-medium flex">
+                <div className="flex items-center">
+                  <Flame className="size-5 items-center text-orange-400"/>
+                  {task.streak}
+                </div>
+                <div className="pl-5">
+                  {task.title}
+                </div>
               </span>
               {/* Action buttons that appear on hover */}
               <div className="flex gap-2">
-                {!task.isDone ? (
+                {currentDay === selectedDay ? (!task.isDone ? (
                   <Button
                     type="button"
                     size="sm"
@@ -66,6 +75,9 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask}: Task
                   >
                     Undo
                   </Button>
+                )) : (
+                  <div>
+                  </div>
                 )}
                 <Button
                   type="button"

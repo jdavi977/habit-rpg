@@ -28,13 +28,6 @@ const Navbar = () => {
           {isSignedIn ? (
             <>
               <Link
-                href="/"
-                className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors"
-              >
-                <Sword size={16} />
-                <span>Start</span>
-              </Link>
-              <Link
                 href="/home"
                 className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors"
               >
