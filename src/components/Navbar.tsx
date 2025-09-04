@@ -34,6 +34,13 @@ const Navbar = () => {
                 <HomeIcon size={16} />
                 <span>Home</span>
               </Link>
+              <Link
+                href="/settings"
+                className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors"
+              >
+                <HomeIcon size={16} />
+                <span>Settings</span>
+              </Link>
               <UserButton />
             </>
           ) : (

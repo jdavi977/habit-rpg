@@ -2,7 +2,6 @@
 import CreateTask from "@/components/profile/CreateTask";
 import StatsCard from "@/components/profile/StatsCard";
 import SettingsCard from "@/components/profile/SettingsCard";
-import useUserSettings from "@/components/hooks/useUserSettings";
 import TaskCard from "@/components/profile/TaskCard";
 import { getLocalTimeZone } from "@/lib/localTimezone";
 import useAuthClient from "@/components/hooks/useAuthClient";
@@ -23,9 +22,6 @@ import useAuthClient from "@/components/hooks/useAuthClient";
  */
 export default function Home() {
   const { client, userId } = useAuthClient();
-
-  const convertedTime = useUserSettings(client, userId);
-  const tz = getLocalTimeZone();
 
   return (
     <div className="min-h-screen text-slate-200 relative overflow-hidden">
@@ -48,15 +44,11 @@ export default function Home() {
               client={client}
               userId={userId}
             />
-            {/* SETTINGS CARD */}
-            <SettingsCard
-              client={client}
-              id={userId}
-              tz={tz}
-              convertedTime={convertedTime}
-            />
             {/* TASKS CARD */}
-            <TaskCard client={client} userId={userId} />
+            <TaskCard 
+            client={client}
+             userId={userId} 
+            />
           </div>
 
           {/* RIGHT SIDE */}

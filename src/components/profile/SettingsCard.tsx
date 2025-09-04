@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import RolloutSelector from "./RolloutSelector";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import useUserSettings from "../hooks/useUserSettings";
+import { getLocalTimeZone } from "@/lib/localTimezone";
 
 /**
  * Time configuration for daily rollover
@@ -19,12 +21,12 @@ type RolloverTime = {
 
 type SettingsCardProp = {
   client: SupabaseClient;
-  id: string | null | undefined;
-  tz: string;
-  convertedTime?: { hour: number; minute: number; period: "AM" | "PM" };
+  id: string;
 };
 
-const SettingsCard = ({ client, id, tz, convertedTime }: SettingsCardProp) => {
+const SettingsCard = ({ client, id}: SettingsCardProp) => {
+  const convertedTime = useUserSettings(client, id);
+  const tz = getLocalTimeZone();
   const [rolloverTime, setRolloverTime] = useState<RolloverTime>({
     hour: 12,
     minute: 0,
