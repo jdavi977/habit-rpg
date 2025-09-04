@@ -7,8 +7,7 @@ import useTasksByDay from "../hooks/useTasksByDay";
 
 type TaskCardProps = {
   client: SupabaseClient;
-  userId?: string;
-  stats?: { level: number; gold: number; mana: number };
+  userId: string;
 };
 
 const TaskCard = ({ client, userId }: TaskCardProps) => {

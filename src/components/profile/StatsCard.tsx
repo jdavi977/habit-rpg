@@ -1,21 +1,23 @@
 'use client'
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+import { SupabaseClient } from '@supabase/supabase-js'
+import useUserStats from '../hooks/useUserStats'
 
 type StatsCardProps = {
-    level: number | null | undefined;
-    gold: number | null | undefined;
-    mana: number | null | undefined;
+  client: SupabaseClient;
+  userId: string;
 }
 
-const StatsCard = ({level, gold, mana}: StatsCardProps) => {
+const StatsCard = ({client, userId}: StatsCardProps) => {
+  const { stats } = useUserStats(client, userId);
   const [loading, setLoading] = useState(true)
 
     React.useEffect(() => {
-      if (level || gold || mana) {
+      if ( stats ) {
           setLoading(false)
       }
-  }, [level])
+  }, [stats])
 
   return (
     <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20">
@@ -30,17 +32,17 @@ const StatsCard = ({level, gold, mana}: StatsCardProps) => {
                   <div className="grid grid-cols-3 gap-4">
                     {/* Level Display */}
                     <div className="text-center p-4 rounded-xl bg-gradient-to-br from-cyber-blue/10 to-cyber-blue/5 border border-cyber-line-color">
-                      <div className="text-2xl font-bold text-cyber-blue-bright mb-1">{level ?? "1"}</div>
+                      <div className="text-2xl font-bold text-cyber-blue-bright mb-1">{stats?.level ?? "1"}</div>
                       <div className="text-xs text-cyber-text-muted uppercase tracking-wider">Level</div>
                     </div>
                     {/* Gold Display */}
                     <div className="text-center p-4 rounded-xl bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border border-yellow-500/20">
-                      <div className="text-2xl font-bold text-yellow-400 mb-1">{gold ?? "0"}</div>
+                      <div className="text-2xl font-bold text-yellow-400 mb-1">{stats?.gold ?? "0"}</div>
                       <div className="text-xs text-cyber-text-muted uppercase tracking-wider">Gold</div>
                     </div>
                     {/* Mana Display */}
                     <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20">
-                      <div className="text-2xl font-bold text-purple-400 mb-1">{mana ?? "0"}</div>
+                      <div className="text-2xl font-bold text-purple-400 mb-1">{stats?.mana ?? "0"}</div>
                       <div className="text-xs text-cyber-text-muted uppercase tracking-wider">Mana</div>
                     </div>
                   </div>

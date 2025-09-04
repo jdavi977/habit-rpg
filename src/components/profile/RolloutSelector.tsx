@@ -5,7 +5,6 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 import { saveUserRollover } from '@/lib/db'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { DateTime } from "luxon";
-import next from 'next'
 
 /**
  * Interface that defines the shape of these props

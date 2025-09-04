@@ -1,14 +1,11 @@
 "use client";
-import { useEffect, useRef } from "react";
-import { useUser } from "@clerk/nextjs";
-import { useClerkSupabaseClient } from "@/lib/supabaseClient";
 import CreateTask from "@/components/profile/CreateTask";
-import useUserStats from "@/components/hooks/useUserStats";
 import StatsCard from "@/components/profile/StatsCard";
 import SettingsCard from "@/components/profile/SettingsCard";
 import useUserSettings from "@/components/hooks/useUserSettings";
 import TaskCard from "@/components/profile/TaskCard";
 import { getLocalTimeZone } from "@/lib/localTimezone";
+import useAuthClient from "@/components/hooks/useAuthClient";
 
 /**
  * Profile page component that displays user statistics, daily tasks, and task management
@@ -25,24 +22,10 @@ import { getLocalTimeZone } from "@/lib/localTimezone";
  *
  */
 export default function Home() {
-  const client = useClerkSupabaseClient();
-  const prev = useRef(client);
+  const { client, userId } = useAuthClient();
 
-  const { user } = useUser();
-  const id = user?.id;
-
-  const { stats } = useUserStats(client, id);
-  const convertedTime = useUserSettings(client, id);
-
+  const convertedTime = useUserSettings(client, userId);
   const tz = getLocalTimeZone();
-
-  {/* TESTING */}
-  useEffect(() => {
-    if (prev.current !== client) {
-      console.log("Supabase client identity CHANGED");
-      prev.current = client;
-    }
-  }, [client]);
 
   return (
     <div className="min-h-screen text-slate-200 relative overflow-hidden">
@@ -62,25 +45,27 @@ export default function Home() {
           <div className="space-y-6">
             {/* STATS CARD */}
             <StatsCard
-              level={stats?.level}
-              gold={stats?.gold}
-              mana={stats?.mana}
+              client={client}
+              userId={userId}
             />
             {/* SETTINGS CARD */}
             <SettingsCard
               client={client}
-              id={id}
+              id={userId}
               tz={tz}
               convertedTime={convertedTime}
             />
             {/* TASKS CARD */}
-            <TaskCard client={client} userId={id} />
+            <TaskCard client={client} userId={userId} />
           </div>
 
           {/* RIGHT SIDE */}
           <div>
             {/* TASK CREATION CARD  */}
-            <CreateTask userId={id} />
+            <CreateTask 
+              client={client}
+              userId={userId}        
+            />
           </div>
 
         </div>
