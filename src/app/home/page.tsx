@@ -1,9 +1,7 @@
 "use client";
 import CreateTask from "@/components/profile/CreateTask";
 import StatsCard from "@/components/profile/StatsCard";
-import SettingsCard from "@/components/profile/SettingsCard";
 import TaskCard from "@/components/profile/TaskCard";
-import { getLocalTimeZone } from "@/lib/localTimezone";
 import useAuthClient from "@/components/hooks/useAuthClient";
 
 /**

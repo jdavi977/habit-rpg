@@ -73,7 +73,11 @@ const RolloutSelector = ({client, tz, onTimeChange, initialTime, userId} : TimeS
 
       const nextRollover = nowLocal > todayRollover ? todayRollover.plus({ days: 1 }) : todayRollover;
 
-      return nextRollover.toUTC().toISO() || '';
+      const isoString = nextRollover.toUTC().toISO();
+      if (!isoString) {
+        throw new Error('Failed to compute next rollover time');
+      }
+      return isoString;
     }
 
   return (

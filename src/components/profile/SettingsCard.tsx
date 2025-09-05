@@ -25,7 +25,7 @@ type SettingsCardProp = {
 };
 
 const SettingsCard = ({ client, id}: SettingsCardProp) => {
-  const convertedTime = useUserSettings(client, id);
+  const {convertedTime, nextRolloverNull} = useUserSettings(client, id);
   const tz = getLocalTimeZone();
   const [rolloverTime, setRolloverTime] = useState<RolloverTime>({
     hour: 12,
@@ -40,6 +40,7 @@ const SettingsCard = ({ client, id}: SettingsCardProp) => {
       setLoading(false);
     }
   }, [convertedTime]);
+  
   return (
     <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20">
       <CardHeader className="pb-4">
@@ -49,15 +50,15 @@ const SettingsCard = ({ client, id}: SettingsCardProp) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
+      {nextRolloverNull ? (
+        <div>
+          Please select a Daily Reset Time.
+        </div>
+      ) : (
+        <div>{tz}</div>
+      )}
       {!loading ? (
         <div>
-          <div>Current Reset Time</div>
-          <div>{tz}</div>
-          <div>
-            {rolloverTime.hour}:
-            {rolloverTime.minute == 0 ? "00" : rolloverTime.minute}
-            {rolloverTime.period}
-          </div>
           <RolloutSelector
             client={client}
             tz={tz}
