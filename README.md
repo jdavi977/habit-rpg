@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+**Project Overview**
 
-## Getting Started
+HabitRPG is a gamified self-improvement platform designed to help users build and track habits, complete tasks, and grow through an RPG-style system. The project blends task management, reward systems, and RPG progression to motivate consistent personal growth.
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Core Features**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Task Management**: Users can create daily, weekly, and custom tasks.
+- **Rollover System**: Daily reset at user-defined times, handled timezone-aware.
+- **Streaks & Rewards**: Completing tasks increases streaks, gold, XP, and multipliers.
+- **Leveling System**: Users gain XP to level up; XP scales with difficulty and streaks.
+- **Stats & Inventory**: Users track stats like gold, mana, level, and earned rewards.
+- **AI-Driven Classes & Skills System** (planned): Users unlock skills and classes based on habits, powered by AI recommendations.
+- **User Collaboration **(planned) - Users can form parties and join guilds to track progress together, encourage accountability, and complete group challenges.
+- **Boss Battles** (planned) - Parties can challenge powerful "bosses" where each member's skills and passives contribute to the fight. Success requires teamwork and consistent habit completion, and victory unlocks unique rewards.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+**Technical Stack**
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend**: Next.js (React), TailwindCSS, ShadCN/UI
+- **Backend**: Supabase (Postgres DB, Auth, API), Convex (planned for AI interactions)
+- **Auth**: Clerk for authentication
+- **Timezone Handling**: Luxon/Temporal for safe timezone conversions
+- **Deployment**: Vercel (frontend), Docker for dev environment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Real-World Problem Solved**
 
-## Deploy on Vercel
+This project addresses the problem of **habit consistency and personal growth**. Many people struggle with motivation to maintain daily habits. By turning habit-building into a role-playing game, the app makes personal development engaging, rewarding, and trackable.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
