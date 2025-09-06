@@ -29,5 +29,5 @@ HabitRPG is a gamified self-improvement platform designed to help users build an
 
 This project addresses the problem of **habit consistency and personal growth**. Many people struggle with motivation to maintain daily habits. By turning habit-building into a role-playing game, the app makes personal development engaging, rewarding, and trackable.
 
-
+<img width="997" height="1084" alt="image" src="https://github.com/user-attachments/assets/cf173e52-d79d-4db5-88b1-0aa33dbe7a72" />
 
