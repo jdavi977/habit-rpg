@@ -12,8 +12,8 @@ HabitRPG is a gamified self-improvement platform designed to help users build an
 - **Leveling System**: Users gain XP to level up; XP scales with difficulty and streaks.
 - **Stats & Inventory**: Users track stats like gold, mana, level, and earned rewards.
 - **AI-Driven Classes & Skills System** (planned): Users unlock skills and classes based on habits, powered by AI recommendations.
-- **User Collaboration **(planned) - Users can form parties and join guilds to track progress together, encourage accountability, and complete group challenges.
-- **Boss Battles** (planned) - Parties can challenge powerful "bosses" where each member's skills and passives contribute to the fight. Success requires teamwork and consistent habit completion, and victory unlocks unique rewards.
+  ***User Collaboration** (planned): Users can form parties and join guilds to track progress together, encourage accountability, and complete group challenges.
+- **Boss Battles** (planned): Parties can challenge powerful "bosses" where each member's skills and passives contribute to the fight. Success requires teamwork and consistent habit completion, and victory unlocks unique rewards.
 
 
 **Technical Stack**
