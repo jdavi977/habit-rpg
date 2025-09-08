@@ -3,6 +3,7 @@ import CreateTask from "@/components/profile/CreateTask";
 import StatsCard from "@/components/profile/StatsCard";
 import TaskCard from "@/components/profile/TaskCard";
 import useAuthClient from "@/components/hooks/useAuthClient";
+import WarningRollover from "@/components/profile/WarningRollover";
 
 /**
  * Profile page component that displays user statistics, daily tasks, and task management
@@ -31,7 +32,12 @@ export default function Home() {
 
       <div className="container mx-auto max-w-7xl px-4 py-10 relative z-10">
         {/* Header Section - Reserved for future content */}
-        <div className="text-center mb-12">{/* Add content here*/}</div>
+        <div className="text-center mb-12">
+          <WarningRollover 
+            client={client}
+            userId={userId}
+          />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-8">
           
