@@ -54,7 +54,7 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
     const taskData = await getTaskData(client, taskId)
     const stats = await getUserStats(client, userId)
     await decreaseStreak(client, taskId, taskData?.streak)
-    await undoGoldReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak), stats?.gold ?? 0)
+    await undoGoldReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats?.gold ?? 0)
     setTasks(ts => ts.map(t => t.id === taskId ? {...t, isDone: false} : t))
     window.location.reload()
 
@@ -62,11 +62,10 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
   
 
   const removeTask = useCallback(async (taskId: string) => {
-    if (!userId) return
+    undoTask(taskId)
     await removeTaskDb(client, taskId)
     setTasks(ts => ts.filter(t => t.id !== taskId))
-    window.location.reload()
-  }, [])
+  }, [client])
 
   return {tasks, loading, refresh, completeTask, undoTask, removeTask}
 

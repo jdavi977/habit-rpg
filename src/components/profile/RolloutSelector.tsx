@@ -54,6 +54,7 @@ const RolloutSelector = ({client, tz, onTimeChange, initialTime, userId} : TimeS
       const timeConversion = to24HourString(displayHour, displayMinute, displayPeriod)
       const nextRollover = computeNextRolloverUTC(tz, timeConversion)
       saveUserRollover(client, tz, userId, timeConversion, nextRollover)
+      window.location.reload()
     }
 
     /**

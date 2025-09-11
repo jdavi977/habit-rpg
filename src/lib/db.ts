@@ -96,7 +96,6 @@ export async function undoGoldReward(client: SupabaseClient, userId: string, dif
 }
 
 export async function increaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
-  console.log("streak")
   return client.from('tasks')
     .update({ streak: (currentStreak ?? 0) + 1})
     .eq('id', taskId)
@@ -105,7 +104,6 @@ export async function increaseStreak(client: SupabaseClient, taskId: string, cur
 }
 
 export async function decreaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
-  console.log("streak")
   return client.from('tasks')
     .update({ streak: (currentStreak ?? 0) - 1})
     .eq('id', taskId)
