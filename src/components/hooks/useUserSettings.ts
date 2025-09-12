@@ -1,5 +1,5 @@
 'use client'
-import { getUserSettings } from '@/lib/db';
+import { getNextRolloverCheck, getUserSettings } from '@/lib/db';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { useEffect, useState, useRef } from 'react';
 
@@ -9,11 +9,11 @@ type RolloverTime = {
     period: 'AM' | 'PM';
   };
 
-const useUserSettings = (client: SupabaseClient, userId?: string) => {
+const useUserSettings = (client: SupabaseClient, userId: string) => {
   const [convertedTime, setConvertedTime] = useState<RolloverTime>()
+  const [nextRolloverNull, setNextRolloverNull] = useState(false)
   const reqIdRef = useRef(0);
-
-    /**
+  /**
    * Converts the rollover time in the database to match the RolloverTime type fields 
    * @param pgTime The database time being coverted
    * @returns The database time converted to match RolloverTime type
@@ -39,12 +39,14 @@ const useUserSettings = (client: SupabaseClient, userId?: string) => {
           const settingsInfo = await getUserSettings(client, userId)
           if (myReqId !== reqIdRef.current) return;
           setConvertedTime(from24HourString(settingsInfo.rollover_time))
+          const isNull = await getNextRolloverCheck(client, userId)
+          setNextRolloverNull(isNull)
         } catch {}
       })()
       return () => { reqIdRef.current++ }
     }, [userId, client])
 
-  return ( convertedTime )
+  return { convertedTime, nextRolloverNull }
   }
 
 export default useUserSettings

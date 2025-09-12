@@ -9,27 +9,30 @@ type DaysSelectorProps = {
 
 const DaySelector = ({ days, selectedDay, selectDay }: DaysSelectorProps) => {
   return (
-    <div className="space-y-3">
-    <h3 className="text-sm text-cyber-text-muted">Select a day to view tasks</h3>
-    <div className="flex flex-wrap gap-2">
-      {days.map((day) => (
-        <Button
-          key={day}
-          type="button"
-          size="sm"
-          variant={selectedDay === day ? "default" : "secondary"}
-          className={`transition-all duration-200 ${
-            selectedDay === day 
-              ? 'bg-cyber-blue-bright text-cyber-dark shadow-lg shadow-cyber-blue-bright/30' 
-              : 'bg-cyber-blue/20 text-cyber-blue-bright border-cyber-line-color hover:bg-cyber-blue/30'
-          }`}
-          onClick={() => selectDay(day)}
-        >
-          {day}
-        </Button>
-      ))}
+    <div className="space-y-4">
+      <div className="text-center">
+        <h3 className="text-sm font-semibold text-cyber-text-bright mb-1">Select Day</h3>
+        <p className="text-xs text-cyber-text-muted">Choose a day to view and manage tasks</p>
+      </div>
+      <div className="grid grid-cols-7 gap-2">
+        {days.map((day) => (
+          <Button
+            key={day}
+            type="button"
+            size="sm"
+            variant={selectedDay === day ? "default" : "secondary"}
+            className={`h-12 rounded-xl transition-all duration-200 font-medium ${
+              selectedDay === day 
+                ? 'bg-cyber-blue-bright text-cyber-dark shadow-lg shadow-cyber-blue-bright/30 hover:shadow-xl hover:shadow-cyber-blue-bright/40 transform hover:scale-105' 
+                : 'bg-cyber-blue/10 text-cyber-blue-bright border border-cyber-line-color hover:bg-cyber-blue/20 hover:border-cyber-blue-bright/50 hover:shadow-md hover:shadow-cyber-glow-primary/20'
+            }`}
+            onClick={() => selectDay(day)}
+          >
+            {day}
+          </Button>
+        ))}
+      </div>
     </div>
-  </div>
   )
 }
 

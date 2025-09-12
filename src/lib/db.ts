@@ -96,7 +96,6 @@ export async function undoGoldReward(client: SupabaseClient, userId: string, dif
 }
 
 export async function increaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
-  console.log("streak")
   return client.from('tasks')
     .update({ streak: (currentStreak ?? 0) + 1})
     .eq('id', taskId)
@@ -105,7 +104,6 @@ export async function increaseStreak(client: SupabaseClient, taskId: string, cur
 }
 
 export async function decreaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
-  console.log("streak")
   return client.from('tasks')
     .update({ streak: (currentStreak ?? 0) - 1})
     .eq('id', taskId)
@@ -179,4 +177,15 @@ export async function deleteTaskCompleted(client: SupabaseClient, userId: string
   const {data, error} = await client.from('task_completions').delete().match({"user_id": userId, "task_id": taskId, "date": date})
   if (error) throw error;
   return data;
+}
+
+export async function getNextRolloverCheck(client: SupabaseClient, userId: string): Promise<boolean> {
+  const { data, error } = await client
+    .from('user_settings')
+    .select('user_id')
+    .eq('user_id', userId)
+    .is('next_rollover_utc', null)
+    .maybeSingle();
+  if (error) throw error;
+  return !!data;
 }

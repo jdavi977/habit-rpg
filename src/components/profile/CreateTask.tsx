@@ -1,16 +1,19 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useClerkSupabaseClient } from "@/lib/supabaseClient";
 import { createTask } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { SupabaseClient } from "@supabase/supabase-js";
 
-const CreateTask = ({ userId }: { userId?: string }) => {
+type CreateTaskProps = {
+  client: SupabaseClient;
+  userId?: string;
+}
+
+const CreateTask = ({ client, userId }: CreateTaskProps) => {
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [days, setDays] = useState<string[]>([]);
-
-  const client = useClerkSupabaseClient();
 
   const handleDayToggle = (day: string) => {
     if (!day) return;
