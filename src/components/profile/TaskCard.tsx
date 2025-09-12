@@ -30,21 +30,23 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
           Daily Tasks
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         <DaySelector
           days={days}
           selectedDay={selectedDay}
           selectDay={setSelectedDay}
         />
-        <TaskList
-          tasks={tasks}
-          loading={loading}
-          selectedDay={selectedDay}
-          currentDay={todayShort}
-          completeTask={completeTask}
-          undoTask={undoTask}
-          removeTask={removeTask}
-        />
+        <div className="border-t border-cyber-line-color/50 pt-4">
+          <TaskList
+            tasks={tasks}
+            loading={loading}
+            selectedDay={selectedDay}
+            currentDay={todayShort}
+            completeTask={completeTask}
+            undoTask={undoTask}
+            removeTask={removeTask}
+          />
+        </div>
       </CardContent>
     </Card>
   );

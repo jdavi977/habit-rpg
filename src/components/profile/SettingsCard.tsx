@@ -51,11 +51,20 @@ const SettingsCard = ({ client, id}: SettingsCardProp) => {
       </CardHeader>
       <CardContent>
       {nextRolloverNull ? (
-        <div>
-          Please select a Daily Reset Time.
+        <div className="text-center py-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyber-terminal-bg/50 border border-cyber-line-color rounded-lg mb-4">
+            <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+            <span className="text-cyber-text-muted text-sm">No reset time configured</span>
+          </div>
+          <p className="text-cyber-text-muted">Please select a Daily Reset Time below.</p>
         </div>
       ) : (
-        <div>{tz}</div>
+        <div className="text-center py-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyber-terminal-bg/50 border border-cyber-line-color rounded-lg">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-cyber-text-bright text-sm font-mono">Timezone: {tz}</span>
+          </div>
+        </div>
       )}
       {!loading ? (
         <div>
@@ -68,9 +77,20 @@ const SettingsCard = ({ client, id}: SettingsCardProp) => {
           />
         </div>
       ) : (
-        // Loading spinner while stats are being fetched
-        <div className="flex items-center justify-center h-20">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyber-blue-bright"></div>
+        // Enhanced loading state
+        <div className="flex flex-col items-center justify-center py-12 space-y-4">
+          <div className="relative">
+            <div className="animate-spin rounded-full h-12 w-12 border-2 border-cyber-line-color"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-cyber-blue-bright absolute top-0 left-0"></div>
+          </div>
+          <div className="text-center">
+            <p className="text-cyber-text-muted text-sm">Loading configuration...</p>
+            <div className="flex items-center justify-center gap-1 mt-2">
+              <div className="w-1 h-1 bg-cyber-blue-bright rounded-full animate-pulse"></div>
+              <div className="w-1 h-1 bg-cyber-blue-bright rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+              <div className="w-1 h-1 bg-cyber-blue-bright rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+            </div>
+          </div>
         </div>
       )}
       </CardContent>

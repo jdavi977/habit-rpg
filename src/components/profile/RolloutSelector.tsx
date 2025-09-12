@@ -82,80 +82,116 @@ const RolloutSelector = ({client, tz, onTimeChange, initialTime, userId} : TimeS
     }
 
   return (
-    <div>
-      <div className="flex items-center justify-center gap-2">
-        {/* Hour Selector */}
-        <div className='flex flex-col items-center'>
-          <Button
-            onClick={() => setDisplayHour(
-              (displayHour == 12 ? 1 : displayHour + 1)
-            )}
-          >
-            <ChevronUp className="h-4 w-4" />
-          </Button>
-          <div>
-            {displayHour}
-          </div>
-          <Button
-            onClick={() => setDisplayHour(
-              (displayHour == 1 ? 12 : displayHour - 1)
-            )}
-          >
-            <ChevronDown className="h-4 w-4" />
-          </Button>
-        </div>
-        <div className='flex'>
-        <span className="text-2xl font-bold text-gray-400">:</span>
-        </div>
-        {/* Minute Selector */}
-        <div className='flex flex-col items-center'>
-          <Button
-            onClick={() => setDisplayMinute(
-              (displayMinute == 30 ? 0 : 30)
-            )}
-          >
-            <ChevronUp className="h-4 w-4" />
-          </Button>
-          <div>
-            {(displayMinute == 0 ? "00" : displayMinute)}
-          </div>
-          <Button
-            onClick={() => setDisplayMinute(
-              (displayMinute == 30 ? 0 : 30)
-            )}
-          >
-            <ChevronDown className="h-4 w-4" />
-          </Button>
-        </div>
-        {/* Period Selector */}
-        <div className='flex flex-col items-center'>
-          <Button
-            onClick={() => setDisplayPeriod(
-              (displayPeriod ==  "AM" ? "PM" : "AM")
-            )}
-          >
-            <ChevronUp className="h-4 w-4" />
-          </Button>
-          <div>
-            {displayPeriod}
-          </div>
-          <Button
-            onClick={() => setDisplayPeriod(
-              (displayPeriod ==  "AM" ? "PM" : "AM")
-            )}
-          >
-            <ChevronDown className="h-4 w-4" />
+    <div className="space-y-6">
+      {/* Time Display Header */}
+      <div className="text-center">
+        <h3 className="text-lg font-semibold text-cyber-text-bright mb-2">Select Reset Time</h3>
+        <p className="text-sm text-cyber-text-muted">Choose when your daily tasks reset</p>
+      </div>
+
+      {/* Time Selector Container */}
+      <div className="bg-cyber-terminal-bg/50 border border-cyber-line-color rounded-lg p-6">
+        <div className="flex items-center justify-center gap-6">
+          {/* Hour Selector */}
+          <div className='flex flex-col items-center space-y-2'>
+            <Button
+              onClick={() => setDisplayHour(
+                (displayHour == 12 ? 1 : displayHour + 1)
+              )}
+              className="bg-cyber-blue/20 hover:bg-cyber-blue/30 border border-cyber-line-color hover:border-cyber-blue-bright transition-all duration-200 hover:shadow-lg hover:shadow-cyber-glow-primary/20"
+              size="sm"
+            >
+              <ChevronUp className="h-4 w-4 text-cyber-blue-bright" />
             </Button>
+            <div className="bg-cyber-dark border border-cyber-line-color rounded-lg px-4 py-2 min-w-[60px] text-center">
+              <span className="text-2xl font-mono font-bold text-cyber-blue-bright">
+                {displayHour.toString().padStart(2, '0')}
+              </span>
+            </div>
+            <Button
+              onClick={() => setDisplayHour(
+                (displayHour == 1 ? 12 : displayHour - 1)
+              )}
+              className="bg-cyber-blue/20 hover:bg-cyber-blue/30 border border-cyber-line-color hover:border-cyber-blue-bright transition-all duration-200 hover:shadow-lg hover:shadow-cyber-glow-primary/20"
+              size="sm"
+            >
+              <ChevronDown className="h-4 w-4 text-cyber-blue-bright" />
+            </Button>
+          </div>
+
+          {/* Colon Separator */}
+          <div className='flex items-center justify-center h-20'>
+            <span className="text-3xl font-bold text-cyber-blue-bright animate-pulse">:</span>
+          </div>
+
+          {/* Minute Selector */}
+          <div className='flex flex-col items-center space-y-2'>
+            <Button
+              onClick={() => setDisplayMinute(
+                (displayMinute == 30 ? 0 : 30)
+              )}
+              className="bg-cyber-blue/20 hover:bg-cyber-blue/30 border border-cyber-line-color hover:border-cyber-blue-bright transition-all duration-200 hover:shadow-lg hover:shadow-cyber-glow-primary/20"
+              size="sm"
+            >
+              <ChevronUp className="h-4 w-4 text-cyber-blue-bright" />
+            </Button>
+            <div className="bg-cyber-dark border border-cyber-line-color rounded-lg px-4 py-2 min-w-[60px] text-center">
+              <span className="text-2xl font-mono font-bold text-cyber-blue-bright">
+                {(displayMinute == 0 ? "00" : displayMinute)}
+              </span>
+            </div>
+            <Button
+              onClick={() => setDisplayMinute(
+                (displayMinute == 30 ? 0 : 30)
+              )}
+              className="bg-cyber-blue/20 hover:bg-cyber-blue/30 border border-cyber-line-color hover:border-cyber-blue-bright transition-all duration-200 hover:shadow-lg hover:shadow-cyber-glow-primary/20"
+              size="sm"
+            >
+              <ChevronDown className="h-4 w-4 text-cyber-blue-bright" />
+            </Button>
+          </div>
+
+          {/* Period Selector */}
+          <div className='flex flex-col items-center space-y-2'>
+            <Button
+              onClick={() => setDisplayPeriod(
+                (displayPeriod ==  "AM" ? "PM" : "AM")
+              )}
+              className="bg-cyber-blue/20 hover:bg-cyber-blue/30 border border-cyber-line-color hover:border-cyber-blue-bright transition-all duration-200 hover:shadow-lg hover:shadow-cyber-glow-primary/20"
+              size="sm"
+            >
+              <ChevronUp className="h-4 w-4 text-cyber-blue-bright" />
+            </Button>
+            <div className="bg-cyber-dark border border-cyber-line-color rounded-lg px-4 py-2 min-w-[60px] text-center">
+              <span className="text-2xl font-mono font-bold text-cyber-blue-bright">
+                {displayPeriod}
+              </span>
+            </div>
+            <Button
+              onClick={() => setDisplayPeriod(
+                (displayPeriod ==  "AM" ? "PM" : "AM")
+              )}
+              className="bg-cyber-blue/20 hover:bg-cyber-blue/30 border border-cyber-line-color hover:border-cyber-blue-bright transition-all duration-200 hover:shadow-lg hover:shadow-cyber-glow-primary/20"
+              size="sm"
+            >
+              <ChevronDown className="h-4 w-4 text-cyber-blue-bright" />
+            </Button>
+          </div>
         </div>
       </div>
-        {/* APPLY BUTTON */}
-        <div className='flex justify-center justify-content pt-5'>
-          <Button
-            onClick={applyChanges}
-          >
-            <p>Apply</p>
-          </Button>
-        </div>
+
+      {/* Apply Button */}
+      <div className='flex justify-center pt-2'>
+        <Button
+          onClick={applyChanges}
+          className="bg-cyber-blue-bright hover:bg-cyber-blue text-cyber-dark font-bold px-8 py-3 rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-cyber-glow-strong/30 hover:scale-105"
+        >
+          <span className="flex items-center gap-2">
+            <span>Apply Changes</span>
+            <div className="w-2 h-2 bg-cyber-dark rounded-full animate-pulse"></div>
+          </span>
+        </Button>
+      </div>
     </div>
   )
 }
