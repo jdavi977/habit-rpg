@@ -9,7 +9,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 export async function getUserStats(client: SupabaseClient, userId: string) {  
   const { data, error } = await client
     .from("user_stats")
-    .select("level, exp, gold, mana")
+    .select("health, level, exp, gold, mana")
     .eq("user_id", userId)
     .maybeSingle();
   if (error) throw error;

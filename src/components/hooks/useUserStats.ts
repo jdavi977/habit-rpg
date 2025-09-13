@@ -4,7 +4,7 @@ import { getUserStats } from '@/lib/db'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { useEffect, useRef, useState } from 'react'
 
-type UserStats = {level: number, gold: number, mana: number}
+type UserStats = {health: number,level: number, gold: number, mana: number}
 
 const useUserStats = (client: SupabaseClient, userId?: string) => {
     const [stats, setStats] = useState<UserStats>()
@@ -18,6 +18,7 @@ const useUserStats = (client: SupabaseClient, userId?: string) => {
           const stats = await getUserStats(client, userId)
           if (myReqId !== reqIdRef.current) return;
           setStats({
+            health: stats?.health ?? 100,
             level: stats?.level ?? 1,
             gold: stats?.gold ?? 0,
             mana: stats?.mana ?? 0,

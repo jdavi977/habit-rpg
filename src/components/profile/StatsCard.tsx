@@ -3,6 +3,9 @@ import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { SupabaseClient } from '@supabase/supabase-js'
 import useUserStats from '../hooks/useUserStats'
+import HealthBar from "@/components/ui/8bit/health-bar"
+
+
 
 type StatsCardProps = {
   client: SupabaseClient;
@@ -29,24 +32,29 @@ const StatsCard = ({client, userId}: StatsCardProps) => {
               </CardHeader>
               <CardContent className="space-y-6">
                 {!loading ? (
-                  <div className="grid grid-cols-3 gap-4">
-                    {/* Level Display */}
-                    <div className="text-center p-4 rounded-xl bg-gradient-to-br from-cyber-blue/10 to-cyber-blue/5 border border-cyber-line-color hover:border-cyber-blue-bright/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyber-glow-primary/20 group">
-                      <div className="text-2xl font-bold text-cyber-blue-bright mb-1 group-hover:scale-110 transition-transform duration-300">{stats?.level ?? "1"}</div>
-                      <div className="text-xs text-cyber-text-muted uppercase tracking-wider">Level</div>
-                      <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-cyber-blue-bright to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-2"></div>
+                  <div>
+                    <div className='mb-10'>
+                      <HealthBar value={stats?.health}/>
                     </div>
-                    {/* Gold Display */}
-                    <div className="text-center p-4 rounded-xl bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border border-yellow-500/20 hover:border-yellow-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20 group">
-                      <div className="text-2xl font-bold text-yellow-400 mb-1 group-hover:scale-110 transition-transform duration-300">{stats?.gold ?? "0"}</div>
-                      <div className="text-xs text-cyber-text-muted uppercase tracking-wider">Gold</div>
-                      <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-yellow-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-2"></div>
-                    </div>
-                    {/* Mana Display */}
-                    <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 hover:border-purple-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 group">
-                      <div className="text-2xl font-bold text-purple-400 mb-1 group-hover:scale-110 transition-transform duration-300">{stats?.mana ?? "0"}</div>
-                      <div className="text-xs text-cyber-text-muted uppercase tracking-wider">Mana</div>
-                      <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-2"></div>
+                    <div className="grid grid-cols-3 gap-4">
+                      {/* Level Display */}
+                      <div className="text-center p-4 rounded-xl bg-gradient-to-br from-cyber-blue/10 to-cyber-blue/5 border border-cyber-line-color hover:border-cyber-blue-bright/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyber-glow-primary/20 group">
+                        <div className="text-2xl font-bold text-cyber-blue-bright mb-1 group-hover:scale-110 transition-transform duration-300">{stats?.level ?? "1"}</div>
+                        <div className="text-xs text-cyber-text-muted uppercase tracking-wider">Level</div>
+                        <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-cyber-blue-bright to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-2"></div>
+                      </div>
+                      {/* Gold Display */}
+                      <div className="text-center p-4 rounded-xl bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border border-yellow-500/20 hover:border-yellow-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20 group">
+                        <div className="text-2xl font-bold text-yellow-400 mb-1 group-hover:scale-110 transition-transform duration-300">{stats?.gold ?? "0"}</div>
+                        <div className="text-xs text-cyber-text-muted uppercase tracking-wider">Gold</div>
+                        <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-yellow-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-2"></div>
+                      </div>
+                      {/* Mana Display */}
+                      <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 hover:border-purple-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 group">
+                        <div className="text-2xl font-bold text-purple-400 mb-1 group-hover:scale-110 transition-transform duration-300">{stats?.mana ?? "0"}</div>
+                        <div className="text-xs text-cyber-text-muted uppercase tracking-wider">Mana</div>
+                        <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-2"></div>
+                      </div>
                     </div>
                   </div>
                 ) : (
