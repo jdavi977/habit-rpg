@@ -46,7 +46,7 @@ const HabitContent = () => {
 
             <div className="bg-cyber-terminal-bg/30 border border-cyber-line-color rounded-lg p-6 max-w-2xl mx-auto mb-10">
               <p className="text-lg text-cyber-text-bright leading-relaxed">
-                A <span className="text-cyber-blue-bright font-semibold">friendly habit‑tracker</span> that turns your daily tasks into fun <span className="text-yellow-400 font-semibold">"quests."</span> 
+                A <span className="text-cyber-blue-bright font-semibold">friendly habit‑tracker</span> that turns your daily tasks into fun <span className="text-yellow-400 font-semibold">quests. </span> 
                 Complete chores, workouts, or study goals to earn <span className="text-green-400 font-semibold">XP</span>, level up your avatar, and track your progress—all in a <span className="text-cyber-blue-bright font-semibold">game‑style interface</span>.
               </p>
             </div>
@@ -107,7 +107,7 @@ const HabitContent = () => {
 
         {/* ENHANCED CARD CONTENT */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 gap-y-12 pt-5">
-          {CARD_CONTENT.map((program, index) => (
+          {CARD_CONTENT.map((program) => (
             <Card
               key={program.id}
               className="bg-cyber-terminal-bg/50 backdrop-blur-sm border border-cyber-line-color hover:border-cyber-blue-bright/50 transition-all duration-300 overflow-hidden hover:shadow-lg hover:shadow-cyber-glow-primary/20 group"
