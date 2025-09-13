@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
-  Swords, Star, Zap, Target, Shield, Crown, Trophy, Flame
+  Swords, Star, Target, Shield, Crown, Trophy, Flame
 } from "lucide-react";
 import { CARD_CONTENT } from "@/constants";
 
@@ -39,7 +39,7 @@ const HabitContent = () => {
               <div className="w-1 h-8 bg-cyber-blue-bright rounded-full animate-pulse"></div>
               <h2 className="text-4xl md:text-5xl font-bold font-mono">
                 <span className="text-cyber-text-bright">Gamify Your </span>
-                <span className="text-cyber-blue-bright bg-gradient-to-r from-cyber-blue-bright to-cyber-blue-glow bg-clip-text text-transparent">Life</span>
+                <span className="bg-gradient-to-r from-cyber-blue-bright to-cyber-blue-glow bg-clip-text text-transparent">Life</span>
               </h2>
               <div className="w-1 h-8 bg-cyber-blue-bright rounded-full animate-pulse"></div>
             </div>
@@ -99,7 +99,7 @@ const HabitContent = () => {
             <div className="w-1 h-8 bg-cyber-blue-bright rounded-full animate-pulse"></div>
             <h2 className="text-4xl md:text-5xl font-bold font-mono">
               <span className="text-cyber-text-bright">Key </span>
-              <span className="text-cyber-blue-bright bg-gradient-to-r from-cyber-blue-bright to-cyber-blue-glow bg-clip-text text-transparent">Features</span>
+              <span className="bg-gradient-to-r from-cyber-blue-bright to-cyber-blue-glow bg-clip-text text-transparent">Features</span>
             </h2>
             <div className="w-1 h-8 bg-cyber-blue-bright rounded-full animate-pulse"></div>
           </div>
@@ -146,7 +146,7 @@ const HabitContent = () => {
             <Link href="/profile">
               <Button
                 size="lg"
-                className="relative bg-gradient-to-r from-cyber-blue-bright to-cyber-blue text-cyber-dark hover:from-cyber-blue to-cyber-blue-bright px-10 py-6 text-lg font-bold font-mono transition-all duration-300 hover:shadow-lg hover:shadow-cyber-glow-strong/30 hover:scale-105"
+                className="relative bg-gradient-to-r from-cyber-blue-bright text-cyber-dark hover:from-cyber-blue to-cyber-blue-bright px-10 py-6 text-lg font-bold font-mono transition-all duration-300 hover:shadow-lg hover:shadow-cyber-glow-strong/30 hover:scale-105"
               >
                 <Shield className="mr-3 h-6 w-6" />
                 Start Questing Now
