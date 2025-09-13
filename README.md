@@ -2,7 +2,7 @@
 
 HabitRPG is a gamified self-improvement platform designed to help users build and track habits, complete tasks, and grow through an RPG-style system. The project blends task management, reward systems, and RPG progression to motivate consistent personal growth.
 
-
+Link = https://habit-rpg.vercel.app/
 
 **Core Features**
 
