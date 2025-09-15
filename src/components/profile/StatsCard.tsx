@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { SupabaseClient } from '@supabase/supabase-js'
 import useUserStats from '../hooks/useUserStats'
 import HealthBar from "@/components/ui/8bit/health-bar"
+import ManaBar from '../ui/8bit/mana-bar'
+import ExperienceBar from '../ui/8bit/experience-bar'
 
 
 
@@ -34,7 +36,9 @@ const StatsCard = ({client, userId}: StatsCardProps) => {
                 {!loading ? (
                   <div>
                     <div className='mb-10'>
-                      <HealthBar value={stats?.health}/>
+                      <HealthBar value={stats?.health} className='mb-7'/>
+                      <ManaBar value={20} className='mb-7'/>
+                      <ExperienceBar value={50} className='mb-7' variant='retro'/>
                     </div>
                     <div className="grid grid-cols-3 gap-4">
                       {/* Level Display */}
