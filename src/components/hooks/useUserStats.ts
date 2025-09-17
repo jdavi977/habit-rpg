@@ -1,10 +1,10 @@
 'use client'
 
-import { getUserStats } from '@/lib/db'
+import { getUserInfo, getUserStats } from '@/lib/db'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { useEffect, useRef, useState } from 'react'
 
-type UserStats = {health: number,level: number, gold: number, mana: number}
+type UserStats = {name: string, health: number, total_health: number, gold: number, mana: number, total_mana: number, level: number, exp: number, total_exp: number}
 
 const useUserStats = (client: SupabaseClient, userId?: string) => {
     const [stats, setStats] = useState<UserStats>()
@@ -16,12 +16,18 @@ const useUserStats = (client: SupabaseClient, userId?: string) => {
       (async () => {
         try {
           const stats = await getUserStats(client, userId)
+          const userInfo = await getUserInfo(client, userId)
           if (myReqId !== reqIdRef.current) return;
           setStats({
-            health: stats?.health ?? 100,
+            name: userInfo?.username,
+            health: stats?.health,
+            total_health: stats?.total_health,
             level: stats?.level ?? 1,
             gold: stats?.gold ?? 0,
             mana: stats?.mana ?? 0,
+            total_mana:stats?.total_mana,
+            exp: stats?.exp,
+            total_exp: stats?.total_exp,
           }) 
         } catch {}
       })()
