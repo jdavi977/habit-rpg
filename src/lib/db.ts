@@ -9,8 +9,18 @@ import { SupabaseClient } from "@supabase/supabase-js";
 export async function getUserStats(client: SupabaseClient, userId: string) {  
   const { data, error } = await client
     .from("user_stats")
-    .select("health, level, exp, gold, mana")
+    .select("health, total_health, level, exp, gold, mana, exp, total_exp, total_mana")
     .eq("user_id", userId)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+export async function getUserInfo(client: SupabaseClient, userId: string) {
+  const {data, error} = await client
+    .from("users")
+    .select("email, username")
+    .eq("id", userId)
     .maybeSingle();
   if (error) throw error;
   return data;

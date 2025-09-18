@@ -43,21 +43,22 @@ function Progress({
 
   return (
     <div className={cn("relative w-full", className)}>
-      <ProgressPrimitive.Root
-        data-slot="progress"
-        className={cn(
-          "bg-primary/20 relative w-full overflow-hidden",
-          heightClass,
-          font !== "normal" && "retro"
-        )}
-        {...props}
-      >
+        <ProgressPrimitive.Root
+          data-slot="progress"
+          className={cn(
+            variant === "retro" ? "bg-transparent" : "bg-primary/20",
+            "relative w-full overflow-hidden",
+            heightClass,
+            font !== "normal" && "retro"
+          )}
+          {...props}
+        >
         <ProgressPrimitive.Indicator
           data-slot="progress-indicator"
           className={cn(
             "h-full transition-all",
-            variant === "retro" ? "flex" : "w-full flex-1",
-            progressBg && variant !== "retro" ? progressBg : "bg-primary"
+            variant === "retro" ? "flex bg-transparent" : "w-full flex-1",
+            progressBg && variant !== "retro" ? progressBg : variant !== "retro" ? "bg-primary" : ""
           )}
           style={
             variant === "retro"
