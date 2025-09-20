@@ -1,6 +1,6 @@
 'use client'
 
-import { dailyCompletion, dailyTaskCheck, decreaseStreak, deleteTaskCompleted, getSelectedDayTasks, getTaskData, getUserStats, goldReward, increaseStreak, removeTaskDb, undoGoldReward } from "@/lib/db";
+import { dailyCompletion, dailyTaskCheck, decreaseStreak, deleteTaskCompleted, expReward, getSelectedDayTasks, getTaskData, getUserStats, goldReward, increaseStreak, manaReward, removeTaskDb, undoExpReward, undoGoldReward, undoManaReward } from "@/lib/db";
 import { diffMultiplier, streakMultiplier } from "@/lib/reward";
 import { SupabaseClient } from "@supabase/supabase-js"
 import { useCallback, useEffect, useState } from "react";
@@ -42,7 +42,9 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
     const taskData = await getTaskData(client, taskId)
     const stats = await getUserStats(client, userId)
     await increaseStreak(client, taskId, taskData?.streak)
-    await goldReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak), stats?.gold ?? 0)
+    await goldReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak), stats?.gold)
+    await expReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak), stats?.exp)
+    await manaReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak), stats?.mana)
     setTasks(ts => ts.map(t => t.id === taskId ? {...t, isDone: true} : t))
     window.location.reload()
 
@@ -54,7 +56,9 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
     const taskData = await getTaskData(client, taskId)
     const stats = await getUserStats(client, userId)
     await decreaseStreak(client, taskId, taskData?.streak)
-    await undoGoldReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats?.gold ?? 0)
+    await undoGoldReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats?.gold)
+    await undoExpReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats?.exp)
+    await undoManaReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats?.mana)
     setTasks(ts => ts.map(t => t.id === taskId ? {...t, isDone: false} : t))
     window.location.reload()
 

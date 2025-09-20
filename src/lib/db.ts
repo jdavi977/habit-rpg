@@ -97,9 +97,40 @@ export async function goldReward(client: SupabaseClient, userId: string, diffMul
 }
 
 export async function undoGoldReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, gold: number) {
-  console.log("undo", gold)
   return client.from('user_stats')
     .update({ gold: (gold ?? 0) - Math.round((diffMultiplier) * streakMultiplier)})
+    .eq('user_id', userId)
+    .select()
+    .single()
+}
+
+export async function manaReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, mana: number) {
+  return client.from('user_stats')
+      .update({ mana: (mana ?? 0) + Math.round((diffMultiplier) * streakMultiplier)})
+      .eq('user_id', userId)
+      .select()
+      .single()
+}
+
+export async function undoManaReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, mana: number) {
+  return client.from('user_stats')
+    .update({ mana: (mana ?? 0) - Math.round((diffMultiplier) * streakMultiplier)})
+    .eq('user_id', userId)
+    .select()
+    .single()
+}
+
+export async function expReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, exp: number) {
+  return client.from('user_stats')
+    .update({ exp: (exp ?? 0) + Math.round((diffMultiplier) * streakMultiplier)})
+    .eq('user_id', userId)
+    .select()
+    .single()
+}
+
+export async function undoExpReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, exp: number) {
+  return client.from('user_stats')
+    .update({ exp: (exp ?? 0) - Math.round((diffMultiplier) * streakMultiplier)})
     .eq('user_id', userId)
     .select()
     .single()
