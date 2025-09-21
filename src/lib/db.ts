@@ -89,64 +89,86 @@ export async function removeTaskDb(client: SupabaseClient, taskId: string) {
  * @returns A Promise to the result of the update operation.
  */
 export async function goldReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, gold: number) {
+  const increase = Math.round(diffMultiplier * streakMultiplier)
+  const newGold = gold + increase
+
   return client.from('user_stats')
-      .update({ gold: (gold ?? 0) + Math.round((diffMultiplier) * streakMultiplier)})
+      .update({ gold: newGold })
       .eq('user_id', userId)
       .select()
       .single()
 }
 
 export async function undoGoldReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, gold: number) {
+  const deduction = Math.round(diffMultiplier * streakMultiplier)
+  const newGold = Math.max(gold - deduction, 0)
+
   return client.from('user_stats')
-    .update({ gold: (gold ?? 0) - Math.round((diffMultiplier) * streakMultiplier)})
+    .update({ gold: newGold})
     .eq('user_id', userId)
     .select()
     .single()
 }
 
 export async function manaReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, mana: number) {
+  const increase = Math.round(diffMultiplier * streakMultiplier)
+  const newMana = mana + increase
+
   return client.from('user_stats')
-      .update({ mana: (mana ?? 0) + Math.round((diffMultiplier) * streakMultiplier)})
+      .update({ mana: newMana })
       .eq('user_id', userId)
       .select()
       .single()
 }
 
 export async function undoManaReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, mana: number) {
+  const deduction = Math.round(diffMultiplier * streakMultiplier)
+  const newMana = Math.max(mana - deduction, 0)
+
   return client.from('user_stats')
-    .update({ mana: (mana ?? 0) - Math.round((diffMultiplier) * streakMultiplier)})
+    .update({ mana: newMana  })
     .eq('user_id', userId)
     .select()
     .single()
 }
 
 export async function expReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, exp: number) {
+  const increase = Math.round(diffMultiplier * streakMultiplier)
+  const newExp = exp + increase
+
   return client.from('user_stats')
-    .update({ exp: (exp ?? 0) + Math.round((diffMultiplier) * streakMultiplier)})
+    .update({ exp: newExp })
     .eq('user_id', userId)
     .select()
     .single()
 }
 
 export async function undoExpReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, exp: number) {
+  const deduction = Math.round(diffMultiplier * streakMultiplier)
+  const newExp = Math.max(exp - deduction)
+
   return client.from('user_stats')
-    .update({ exp: (exp ?? 0) - Math.round((diffMultiplier) * streakMultiplier)})
+    .update({ exp: newExp })
     .eq('user_id', userId)
     .select()
     .single()
 }
 
 export async function increaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
+  const newStreak = (currentStreak ?? 0 ) + 1
+
   return client.from('tasks')
-    .update({ streak: (currentStreak ?? 0) + 1})
+    .update({ streak: newStreak })
     .eq('id', taskId)
     .select()
     .single()
 }
 
 export async function decreaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
+  const newStreak = currentStreak - 1
+
   return client.from('tasks')
-    .update({ streak: (currentStreak ?? 0) - 1})
+    .update({ streak: newStreak })
     .eq('id', taskId)
     .select()
     .single()
