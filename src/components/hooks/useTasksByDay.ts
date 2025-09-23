@@ -63,7 +63,6 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
     window.location.reload()
 
   }, [client, userId, today])
-  
 
   const removeTask = useCallback(async (taskId: string) => {
     undoTask(taskId)

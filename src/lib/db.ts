@@ -62,7 +62,7 @@ export async function createTask(client: SupabaseClient, userId: string, title: 
 export async function getTaskData(client: SupabaseClient, taskId: string) {
   const { data, error } = await client
     .from("tasks")
-    .select("difficulty, streak")
+    .select("difficulty, streak, days")
     .eq("id", taskId)
     .maybeSingle();
   if (error) throw error;

@@ -63,35 +63,31 @@ export default function Home() {
           />
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-8">
-          
-          {/* LEFT SIDE CONTENT */}
-          <div className="space-y-6">
-            {/* Character Stats Section */}
+        {/* Main Content - Single Column */}
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Character Stats Section */}
+          <div className="relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue-bright/20 to-cyber-blue/20 rounded-xl blur-sm opacity-50"></div>
             <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue-bright/20 to-cyber-blue/20 rounded-xl blur-sm opacity-50"></div>
-              <div className="relative">
-                <StatsCard
-                  client={client}
-                  userId={userId}
-                />
-              </div>
+              <StatsCard
+                client={client}
+                userId={userId}
+              />
             </div>
-            
-            {/* Daily Tasks Section */}
+          </div>
+          
+          {/* Daily Tasks Section */}
+          <div className="relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue/20 to-cyber-blue-bright/20 rounded-xl blur-sm opacity-50"></div>
             <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue/20 to-cyber-blue-bright/20 rounded-xl blur-sm opacity-50"></div>
-              <div className="relative">
-                <TaskCard 
-                  client={client}
-                  userId={userId} 
-                />
-              </div>
+              <TaskCard 
+                client={client}
+                userId={userId} 
+              />
             </div>
           </div>
 
-          {/* RIGHT SIDE - Task Creation */}
+          {/* Task Creation Section */}
           <div className="relative">
             <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue-bright/20 to-cyber-blue/20 rounded-xl blur-sm opacity-50"></div>
             <div className="relative">
@@ -101,7 +97,6 @@ export default function Home() {
               />
             </div>
           </div>
-
         </div>
 
         {/* Bottom Section - Future Features */}

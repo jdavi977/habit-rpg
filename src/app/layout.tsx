@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import StreakChecker from "@/components/profile/StreakChecker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
+          <StreakChecker />
           <Navbar />
 
           {/* GRID BACKGROUND */}
