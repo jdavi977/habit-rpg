@@ -53,6 +53,21 @@ export async function createTask(client: SupabaseClient, userId: string, title: 
   return data;
 }
 
+export async function createTaskCalender(client: SupabaseClient, userId: string, title: string, description: string, difficulty: string, startTime: string, endTime: string, days: string[]) {
+  // Convert time strings to timestamps
+  const today = new Date();
+  const [startHours, startMinutes] = startTime.split(':').map(Number);
+  const [endHours, endMinutes] = endTime.split(':').map(Number);
+  
+  const startTimestamp = new Date(today.getFullYear(), today.getMonth(), today.getDate(), startHours, startMinutes);
+  const endTimestamp = new Date(today.getFullYear(), today.getMonth(), today.getDate(), endHours, endMinutes);
+  
+  const { data, error} = await client.from("task_calender")
+    .insert({user_id: userId, title: title, description: description, difficulty: difficulty, start_time: startTimestamp.toISOString(), end_time: endTimestamp.toISOString(), days: days})
+  if (error) throw error;
+  return data;
+}
+
 /**
  * Provides difficulty and streak data from the tasks table.
  * @param client An authenticated Supabase client instance.
