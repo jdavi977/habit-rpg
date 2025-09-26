@@ -26,34 +26,19 @@ export async function getUserInfo(client: SupabaseClient, userId: string) {
   return data;
 }
 
-/**
- * Provides all the tasks of the user.
- * @param client An authenticated Supabase client instance.
- * @returns A Promise to the data of all the user's tasks.
- */
-export async function getTasks(client: SupabaseClient) {
-  const { data, error } = await client.from("tasks").select();
-  if (error) throw error;
-  return data ?? [];
-}
+// /**
+//  * Provides all the tasks of the user.
+//  * @param client An authenticated Supabase client instance.
+//  * @returns A Promise to the data of all the user's tasks.
+//  */
+// export async function getTasks(client: SupabaseClient) {
+//   const { data, error } = await client.from("tasks").select();
+//   if (error) throw error;
+//   return data ?? [];
+// }
 
-/**
- * Inserts a task with the following data into the database.
- * @param client An authenticated Supabase client instance.
- * @param userId The unique identifer of the user.
- * @param title The title of the task.
- * @param difficulty The difficulty of the task.
- * @param days The days the tasks will appear.
- * @returns The promise to the creation of the task.
- */
-export async function createTask(client: SupabaseClient, userId: string, title: string, difficulty: string, days: string[]) {
-  const { data, error} = await client.from("tasks")
-    .insert({user_id: userId, title: title, difficulty: difficulty, days: days})
-  if (error) throw error;
-  return data;
-}
 
-export async function createTaskCalender(client: SupabaseClient, userId: string, title: string, description: string, difficulty: string, startTime: string, endTime: string, days: string[]) {
+export async function createTask(client: SupabaseClient, userId: string, title: string, description: string, difficulty: string, startTime: string, endTime: string, days: string[]) {
   // Convert time strings to timestamps
   const today = new Date();
   const [startHours, startMinutes] = startTime.split(':').map(Number);
@@ -62,7 +47,7 @@ export async function createTaskCalender(client: SupabaseClient, userId: string,
   const startTimestamp = new Date(today.getFullYear(), today.getMonth(), today.getDate(), startHours, startMinutes);
   const endTimestamp = new Date(today.getFullYear(), today.getMonth(), today.getDate(), endHours, endMinutes);
   
-  const { data, error} = await client.from("task_calender")
+  const { data, error} = await client.from("task")
     .insert({user_id: userId, title: title, description: description, difficulty: difficulty, start_time: startTimestamp.toISOString(), end_time: endTimestamp.toISOString(), days: days})
   if (error) throw error;
   return data;
@@ -76,8 +61,8 @@ export async function createTaskCalender(client: SupabaseClient, userId: string,
  */
 export async function getTaskData(client: SupabaseClient, taskId: string) {
   const { data, error } = await client
-    .from("tasks")
-    .select("difficulty, streak, days")
+    .from("task")
+    .select()
     .eq("id", taskId)
     .maybeSingle();
   if (error) throw error;
@@ -91,7 +76,7 @@ export async function getTaskData(client: SupabaseClient, taskId: string) {
  * @returns A Promise to the removal of the task through the delete operation.
  */
 export async function removeTaskDb(client: SupabaseClient, taskId: string) {
-    return client.from("tasks").delete().eq('id', taskId)
+    return client.from("task").delete().eq('id', taskId)
 }
 
 /**
@@ -172,7 +157,7 @@ export async function undoExpReward(client: SupabaseClient, userId: string, diff
 export async function increaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
   const newStreak = (currentStreak ?? 0 ) + 1
 
-  return client.from('tasks')
+  return client.from('task')
     .update({ streak: newStreak })
     .eq('id', taskId)
     .select()
@@ -182,7 +167,7 @@ export async function increaseStreak(client: SupabaseClient, taskId: string, cur
 export async function decreaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
   const newStreak = currentStreak - 1
 
-  return client.from('tasks')
+  return client.from('task')
     .update({ streak: newStreak })
     .eq('id', taskId)
     .select()
@@ -225,7 +210,7 @@ export async function dailyCompletion(client: SupabaseClient, userId: string, ta
 }
 
 export async function getSelectedDayTasks(client: SupabaseClient, days: string) {
-  const { data, error } = await client.from('tasks').select().contains('days', [days])
+  const { data, error } = await client.from('task').select().contains('days', [days])
   if (error) throw error;
   return data;
 }

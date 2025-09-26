@@ -74,19 +74,18 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
     if (!userId) return;
     if (!title.trim()) return alert("Please enter a task title");
     if (!difficulty) return alert("Please select a difficulty");
-    if (days.length === 0) return alert("Please select at least one day");
+    if (days.length === 0) return alert("Please select a date");
     if (repeatOptions == "") return alert("Please choose a repeat option")
 
     const startConversion = to24HourString(startTime.hour, startTime.minute, startTime.period)
     const endConversion = to24HourString(endTime.hour, endTime.minute, endTime.period)
 
-    //createTask(client, userId, title, difficulty, days);
-    createTaskCalender(client, userId, title, description, difficulty, startConversion, endConversion, days)
+    createTask(client, userId, title, description, difficulty, startConversion, endConversion, days)
 
     resetForm();
     setIsModalOpen(false);
 
-    // window.location.reload();
+    window.location.reload();
   }
 
   const difficultyLevels = [
@@ -246,7 +245,6 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
                             value={description}
                             placeholder="Describe your task in detail..."
                             onChange={(e) => setDescription(e.target.value)}
-                            required
                           />
                           <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-cyber-blue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                           <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-cyber-blue-bright to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-300"></div>

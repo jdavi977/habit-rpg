@@ -21,7 +21,10 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
       if (!client || !userId || !selectedDay) return
       setLoading(true)
       try {
+        console.log("1")
         const taskForDay = (await getSelectedDayTasks(client, selectedDay) ?? [])
+        console.log("2")
+        console.log(taskForDay)
         const taskWithStatus = await Promise.all(taskForDay.map(async (t) => ({
           ...t,
           isDone: await dailyTaskCheck(client, userId, Number(t.id), today),
@@ -41,6 +44,7 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
     await dailyCompletion(client, userId, Number(taskId), today)
     const taskData = await getTaskData(client, taskId)
     const stats = await getUserStats(client, userId)
+    // FIX THIS FOR ALL
     await increaseStreak(client, taskId, taskData?.streak)
     await goldReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak), stats?.gold)
     await expReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak), stats?.exp)
