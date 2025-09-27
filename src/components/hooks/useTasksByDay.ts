@@ -21,10 +21,7 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
       if (!client || !userId || !selectedDay) return
       setLoading(true)
       try {
-        console.log("1")
         const taskForDay = (await getSelectedDayTasks(client, selectedDay) ?? [])
-        console.log("2")
-        console.log(taskForDay)
         const taskWithStatus = await Promise.all(taskForDay.map(async (t) => ({
           ...t,
           isDone: await dailyTaskCheck(client, userId, Number(t.id), today),
@@ -43,6 +40,7 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
     if (alreadyCompleted) return
     await dailyCompletion(client, userId, Number(taskId), today)
     const taskData = await getTaskData(client, taskId)
+    console.log(taskData.streak, taskData.difficulty, taskData.streak)
     const stats = await getUserStats(client, userId)
     // FIX THIS FOR ALL
     await increaseStreak(client, taskId, taskData?.streak)
@@ -56,23 +54,47 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
 
   const undoTask = useCallback(async (taskId: string) => {
     if (!userId) return
-    await deleteTaskCompleted(client, userId, Number(taskId), today)
-    const taskData = await getTaskData(client, taskId)
-    const stats = await getUserStats(client, userId)
-    await decreaseStreak(client, taskId, taskData?.streak)
-    await undoGoldReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats?.gold)
-    await undoExpReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats?.exp)
-    await undoManaReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats?.mana)
-    setTasks(ts => ts.map(t => t.id === taskId ? {...t, isDone: false} : t))
-    window.location.reload()
-
+    
+    try {
+      await deleteTaskCompleted(client, userId, Number(taskId), today)
+      const taskData = await getTaskData(client, taskId)
+      const stats = await getUserStats(client, userId)
+      
+      if (!stats) {
+        console.error('User stats not found, cannot undo task rewards')
+        return
+      }
+      
+      await decreaseStreak(client, taskId, taskData?.streak)
+      await undoGoldReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats.gold)
+      await undoExpReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats.exp)
+      await undoManaReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats.mana)
+      setTasks(ts => ts.map(t => t.id === taskId ? {...t, isDone: false} : t))
+      window.location.reload()
+    } catch (error) {
+      console.error('Error undoing task:', error)
+      throw error // Re-throw to be caught by removeTask
+    }
   }, [client, userId, today])
 
   const removeTask = useCallback(async (taskId: string) => {
-    undoTask(taskId)
-    await removeTaskDb(client, taskId)
-    setTasks(ts => ts.filter(t => t.id !== taskId))
-  }, [client])
+    if (!userId) return
+    
+    try {
+      // First undo the task to handle rewards and streaks
+      await undoTask(taskId)
+      
+      // Then remove the task from the database
+      await removeTaskDb(client, taskId)
+      
+      // Finally update the local state
+      setTasks(ts => ts.filter(t => t.id !== taskId))
+    } catch (error) {
+      console.error('Error removing task:', error)
+      // Optionally refresh the tasks to get the correct state
+      await refresh()
+    }
+  }, [client, userId, undoTask, refresh])
 
   return {tasks, loading, refresh, completeTask, undoTask, removeTask}
 

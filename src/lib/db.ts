@@ -63,7 +63,7 @@ export async function getTaskData(client: SupabaseClient, taskId: string) {
   const { data, error } = await client
     .from("task")
     .select()
-    .eq("id", taskId)
+    .eq("id", parseInt(taskId))
     .maybeSingle();
   if (error) throw error;
   return data;
@@ -76,7 +76,7 @@ export async function getTaskData(client: SupabaseClient, taskId: string) {
  * @returns A Promise to the removal of the task through the delete operation.
  */
 export async function removeTaskDb(client: SupabaseClient, taskId: string) {
-    return client.from("task").delete().eq('id', taskId)
+    return client.from("task").delete().eq('id', parseInt(taskId))
 }
 
 /**
@@ -100,6 +100,11 @@ export async function goldReward(client: SupabaseClient, userId: string, diffMul
 }
 
 export async function undoGoldReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, gold: number) {
+  if (gold === null || gold === undefined) {
+    console.error('Gold is null or undefined, cannot undo reward')
+    return
+  }
+  
   const deduction = Math.round(diffMultiplier * streakMultiplier)
   const newGold = Math.max(gold - deduction, 0)
 
@@ -122,6 +127,11 @@ export async function manaReward(client: SupabaseClient, userId: string, diffMul
 }
 
 export async function undoManaReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, mana: number) {
+  if (mana === null || mana === undefined) {
+    console.error('Mana is null or undefined, cannot undo reward')
+    return
+  }
+  
   const deduction = Math.round(diffMultiplier * streakMultiplier)
   const newMana = Math.max(mana - deduction, 0)
 
@@ -144,8 +154,13 @@ export async function expReward(client: SupabaseClient, userId: string, diffMult
 }
 
 export async function undoExpReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, exp: number) {
+  if (exp === null || exp === undefined) {
+    console.error('Exp is null or undefined, cannot undo reward')
+    return
+  }
+  
   const deduction = Math.round(diffMultiplier * streakMultiplier)
-  const newExp = Math.max(exp - deduction)
+  const newExp = Math.max(exp - deduction, 0)
 
   return client.from('user_stats')
     .update({ exp: newExp })
@@ -222,7 +237,6 @@ export async function checkUserExists(client: SupabaseClient, userId: string) {
 }
 
 export async function saveUserRollover(client: SupabaseClient, tz: string, userId: string, rolloverTime: string, nextRollover: string) {
-  console.log(rolloverTime)
   return client.from('user_settings')
     .update({tz: tz, rollover_time: rolloverTime, next_rollover_utc: nextRollover})
     .eq('user_id', userId)
