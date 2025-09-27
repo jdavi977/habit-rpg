@@ -26,29 +26,29 @@ export async function getUserInfo(client: SupabaseClient, userId: string) {
   return data;
 }
 
-/**
- * Provides all the tasks of the user.
- * @param client An authenticated Supabase client instance.
- * @returns A Promise to the data of all the user's tasks.
- */
-export async function getTasks(client: SupabaseClient) {
-  const { data, error } = await client.from("tasks").select();
-  if (error) throw error;
-  return data ?? [];
-}
+// /**
+//  * Provides all the tasks of the user.
+//  * @param client An authenticated Supabase client instance.
+//  * @returns A Promise to the data of all the user's tasks.
+//  */
+// export async function getTasks(client: SupabaseClient) {
+//   const { data, error } = await client.from("tasks").select();
+//   if (error) throw error;
+//   return data ?? [];
+// }
 
-/**
- * Inserts a task with the following data into the database.
- * @param client An authenticated Supabase client instance.
- * @param userId The unique identifer of the user.
- * @param title The title of the task.
- * @param difficulty The difficulty of the task.
- * @param days The days the tasks will appear.
- * @returns The promise to the creation of the task.
- */
-export async function createTask(client: SupabaseClient, userId: string, title: string, difficulty: string, days: string[]) {
-  const { data, error} = await client.from("tasks")
-    .insert({user_id: userId, title: title, difficulty: difficulty, days: days})
+
+export async function createTask(client: SupabaseClient, userId: string, title: string, description: string, difficulty: string, startTime: string, endTime: string, days: string[]) {
+  // Convert time strings to timestamps
+  const today = new Date();
+  const [startHours, startMinutes] = startTime.split(':').map(Number);
+  const [endHours, endMinutes] = endTime.split(':').map(Number);
+  
+  const startTimestamp = new Date(today.getFullYear(), today.getMonth(), today.getDate(), startHours, startMinutes);
+  const endTimestamp = new Date(today.getFullYear(), today.getMonth(), today.getDate(), endHours, endMinutes);
+  
+  const { data, error} = await client.from("task")
+    .insert({user_id: userId, title: title, description: description, difficulty: difficulty, start_time: startTimestamp.toISOString(), end_time: endTimestamp.toISOString(), days: days})
   if (error) throw error;
   return data;
 }
@@ -61,9 +61,9 @@ export async function createTask(client: SupabaseClient, userId: string, title: 
  */
 export async function getTaskData(client: SupabaseClient, taskId: string) {
   const { data, error } = await client
-    .from("tasks")
-    .select("difficulty, streak")
-    .eq("id", taskId)
+    .from("task")
+    .select()
+    .eq("id", parseInt(taskId))
     .maybeSingle();
   if (error) throw error;
   return data;
@@ -76,7 +76,7 @@ export async function getTaskData(client: SupabaseClient, taskId: string) {
  * @returns A Promise to the removal of the task through the delete operation.
  */
 export async function removeTaskDb(client: SupabaseClient, taskId: string) {
-    return client.from("tasks").delete().eq('id', taskId)
+    return client.from("task").delete().eq('id', parseInt(taskId))
 }
 
 /**
@@ -89,33 +89,101 @@ export async function removeTaskDb(client: SupabaseClient, taskId: string) {
  * @returns A Promise to the result of the update operation.
  */
 export async function goldReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, gold: number) {
+  const increase = Math.round(diffMultiplier * streakMultiplier)
+  const newGold = gold + increase
+
   return client.from('user_stats')
-      .update({ gold: (gold ?? 0) + Math.round((diffMultiplier) * streakMultiplier)})
+      .update({ gold: newGold })
       .eq('user_id', userId)
       .select()
       .single()
 }
 
 export async function undoGoldReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, gold: number) {
-  console.log("undo", gold)
+  if (gold === null || gold === undefined) {
+    console.error('Gold is null or undefined, cannot undo reward')
+    return
+  }
+  
+  const deduction = Math.round(diffMultiplier * streakMultiplier)
+  const newGold = Math.max(gold - deduction, 0)
+
   return client.from('user_stats')
-    .update({ gold: (gold ?? 0) - Math.round((diffMultiplier) * streakMultiplier)})
+    .update({ gold: newGold})
+    .eq('user_id', userId)
+    .select()
+    .single()
+}
+
+export async function manaReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, mana: number) {
+  const increase = Math.round(diffMultiplier * streakMultiplier)
+  const newMana = mana + increase
+
+  return client.from('user_stats')
+      .update({ mana: newMana })
+      .eq('user_id', userId)
+      .select()
+      .single()
+}
+
+export async function undoManaReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, mana: number) {
+  if (mana === null || mana === undefined) {
+    console.error('Mana is null or undefined, cannot undo reward')
+    return
+  }
+  
+  const deduction = Math.round(diffMultiplier * streakMultiplier)
+  const newMana = Math.max(mana - deduction, 0)
+
+  return client.from('user_stats')
+    .update({ mana: newMana  })
+    .eq('user_id', userId)
+    .select()
+    .single()
+}
+
+export async function expReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, exp: number) {
+  const increase = Math.round(diffMultiplier * streakMultiplier)
+  const newExp = exp + increase
+
+  return client.from('user_stats')
+    .update({ exp: newExp })
+    .eq('user_id', userId)
+    .select()
+    .single()
+}
+
+export async function undoExpReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, exp: number) {
+  if (exp === null || exp === undefined) {
+    console.error('Exp is null or undefined, cannot undo reward')
+    return
+  }
+  
+  const deduction = Math.round(diffMultiplier * streakMultiplier)
+  const newExp = Math.max(exp - deduction, 0)
+
+  return client.from('user_stats')
+    .update({ exp: newExp })
     .eq('user_id', userId)
     .select()
     .single()
 }
 
 export async function increaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
-  return client.from('tasks')
-    .update({ streak: (currentStreak ?? 0) + 1})
+  const newStreak = (currentStreak ?? 0 ) + 1
+
+  return client.from('task')
+    .update({ streak: newStreak })
     .eq('id', taskId)
     .select()
     .single()
 }
 
 export async function decreaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
-  return client.from('tasks')
-    .update({ streak: (currentStreak ?? 0) - 1})
+  const newStreak = currentStreak - 1
+
+  return client.from('task')
+    .update({ streak: newStreak })
     .eq('id', taskId)
     .select()
     .single()
@@ -157,7 +225,7 @@ export async function dailyCompletion(client: SupabaseClient, userId: string, ta
 }
 
 export async function getSelectedDayTasks(client: SupabaseClient, days: string) {
-  const { data, error } = await client.from('tasks').select().contains('days', [days])
+  const { data, error } = await client.from('task').select().contains('days', [days])
   if (error) throw error;
   return data;
 }
@@ -169,7 +237,6 @@ export async function checkUserExists(client: SupabaseClient, userId: string) {
 }
 
 export async function saveUserRollover(client: SupabaseClient, tz: string, userId: string, rolloverTime: string, nextRollover: string) {
-  console.log(rolloverTime)
   return client.from('user_settings')
     .update({tz: tz, rollover_time: rolloverTime, next_rollover_utc: nextRollover})
     .eq('user_id', userId)
