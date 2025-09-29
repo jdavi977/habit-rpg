@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import RolloutSelector from "./RolloutSelector";
+import RolloutSelector from "../profile/RolloutSelector";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import useUserSettings from "../hooks/useUserSettings";

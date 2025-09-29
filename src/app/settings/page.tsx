@@ -1,6 +1,6 @@
 "use client"
 import useAuthClient from '@/components/hooks/useAuthClient';
-import SettingsCard from '@/components/profile/SettingsCard';
+import SettingsCard from '@/components/settings/SettingsCard';
 import { Settings, Zap } from 'lucide-react';
 
 const UserSettings = () => {

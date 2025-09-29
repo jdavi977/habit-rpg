@@ -10,10 +10,6 @@ type DaysSelectorProps = {
 const DaySelector = ({ days, selectedDay, selectDay }: DaysSelectorProps) => {
   return (
     <div className="space-y-4">
-      <div className="text-center">
-        <h3 className="text-sm font-semibold text-cyber-text-bright mb-1">Select Day</h3>
-        <p className="text-xs text-cyber-text-muted">Choose a day to view and manage tasks</p>
-      </div>
       <div className="grid grid-cols-7 gap-2">
         {days.map((day) => (
           <Button

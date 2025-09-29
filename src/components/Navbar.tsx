@@ -5,6 +5,7 @@ import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
 import { HomeIcon, Sword, Settings, Zap, Star } from 'lucide-react'
+import { SidebarTrigger } from './ui/sidebar'
 
 const Navbar = () => {
   const {isSignedIn} = useUser()
@@ -15,8 +16,10 @@ const Navbar = () => {
       
       <div className="container mx-auto flex items-center justify-between relative z-10 px-4">
 
-        { /* LOGO */ }
-          <Link href="/" className="flex items-center gap-3 group">
+        { /* SIDEBAR TOGGLE & LOGO */ }
+          <div className="flex items-center gap-3">
+            <SidebarTrigger className="text-cyber-blue-bright hover:text-cyber-blue-bright/80 hover:bg-cyber-blue/20 border-cyber-line-color" />
+            <Link href="/" className="flex items-center gap-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-cyber-blue-bright/20 rounded-lg blur-sm group-hover:blur-md transition-all duration-300"></div>
               <div className="relative p-2 bg-gradient-to-br from-cyber-blue/20 to-cyber-blue-bright/10 border border-cyber-line-color rounded-lg group-hover:border-cyber-blue-bright/50 transition-all duration-300">
@@ -34,6 +37,8 @@ const Navbar = () => {
               </div>
             </div>
           </Link>
+          </div>
+          
         
 
         {/* NAVIGATION */}

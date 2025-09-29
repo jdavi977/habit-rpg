@@ -37,7 +37,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  
+
   /* Custom Cyberpunk Colors */
   --color-cyber-black: var(--cyber-black);
   --color-cyber-dark: var(--cyber-dark);
@@ -53,7 +53,7 @@
   --color-cyber-glow-primary: var(--cyber-glow-primary);
   --color-cyber-glow-strong: var(--cyber-glow-strong);
   --color-cyber-terminal-bg: var(--cyber-terminal-bg);
-  
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -252,4 +252,193 @@
 
 .animate-fadeIn {
   animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+/* FullCalendar Cyberpunk Integration */
+.cyber-calendar-container {
+  background: var(--cyber-dark);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 30px var(--cyber-glow-primary);
+  border: 2px solid var(--cyber-line-color);
+}
+
+.cyber-calendar-container .fc {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Custom event styling for better integration */
+.fc-event {
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  padding: 2px 6px !important;
+  margin: 1px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.fc-event:hover {
+  transform: translateY(-1px) scale(1.02) !important;
+  z-index: 10 !important;
+}
+
+/* Streak indicator in events */
+.fc-event .fc-event-title::before {
+  content: '🔥 ';
+  font-size: 0.8em;
+}
+
+/* Completed task styling */
+.fc-event[data-completed="true"] {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border-color: #047857 !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
+}
+
+.fc-event[data-completed="true"] .fc-event-title::before {
+  content: '✅ ';
+}
+
+/* Pending task styling */
+.fc-event[data-completed="false"] {
+  background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-blue-bright)) !important;
+  border-color: var(--cyber-blue-bright) !important;
+  box-shadow: 0 2px 8px rgba(24, 206, 242, 0.3) !important;
+}
+
+/* Calendar view toggle buttons */
+.cyber-calendar-container + div button {
+  background: var(--cyber-terminal-bg) !important;
+  border: 2px solid var(--cyber-line-color) !important;
+  color: var(--cyber-text-bright) !important;
+  transition: all 0.3s ease !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+}
+
+.cyber-calendar-container + div button:hover {
+  background: var(--cyber-blue) !important;
+  border-color: var(--cyber-blue-bright) !important;
+  box-shadow: 0 0 15px var(--cyber-glow-primary) !important;
+  transform: translateY(-2px) !important;
+}
+
+.cyber-calendar-container + div button[data-state="active"],
+.cyber-calendar-container + div button[data-active="true"] {
+  background: var(--cyber-blue-bright) !important;
+  color: var(--cyber-dark) !important;
+  box-shadow: 0 0 20px var(--cyber-glow-strong) !important;
+  border-color: var(--cyber-blue-bright) !important;
+}
+
+/* View toggle container */
+.cyber-calendar-container + div {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin-bottom: 16px !important;
+  padding: 8px !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--cyber-line-color) !important;
+}
+
+/* Custom event classes */
+.fc-event.completed-task {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border-color: #047857 !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
+}
+
+.fc-event.completed-task .fc-event-title::before {
+  content: '✅ ';
+}
+
+.fc-event.pending-task {
+  background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-blue-bright)) !important;
+  border-color: var(--cyber-blue-bright) !important;
+  box-shadow: 0 2px 8px rgba(24, 206, 242, 0.3) !important;
+}
+
+.fc-event.pending-task .fc-event-title::before {
+  content: '🔥 ';
+}
+
+/* Event hover effects */
+.fc-event.completed-task:hover {
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.5) !important;
+}
+
+.fc-event.pending-task:hover {
+  background: linear-gradient(135deg, var(--cyber-blue-bright), var(--cyber-blue-glow)) !important;
+  box-shadow: 0 4px 15px var(--cyber-glow-primary) !important;
+}
+
+/* Additional calendar styling enhancements */
+.fc-toolbar-title {
+  text-shadow: 0 0 10px var(--cyber-blue-glow) !important;
+  font-weight: 700 !important;
+}
+
+.fc-button-group .fc-button {
+  margin: 0 2px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.fc-button-group .fc-button:hover {
+  transform: translateY(-1px) !important;
+}
+
+.fc-daygrid-day-number {
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.fc-daygrid-day-number:hover {
+  color: var(--cyber-blue-bright) !important;
+  text-shadow: 0 0 5px var(--cyber-glow-primary) !important;
+}
+
+.fc-col-header-cell-cushion {
+  text-shadow: 0 0 5px var(--cyber-glow-primary) !important;
+}
+
+/* Time grid enhancements */
+.fc-timegrid-slot-label {
+  font-weight: 500 !important;
+  color: var(--cyber-text-muted) !important;
+}
+
+.fc-timegrid-axis-cushion {
+  font-weight: 500 !important;
+  color: var(--cyber-text-muted) !important;
+}
+
+/* Event title styling */
+.fc-event-title {
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+}
+
+/* More link styling */
+.fc-more-link {
+  background: var(--cyber-terminal-bg) !important;
+  border: 1px solid var(--cyber-line-color) !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+}
+
+.fc-more-link:hover {
+  background: var(--cyber-blue) !important;
+  border-color: var(--cyber-blue-bright) !important;
+  box-shadow: 0 0 10px var(--cyber-glow-primary) !important;
 }

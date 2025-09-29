@@ -10,6 +10,8 @@ type Task = {
   title: string;
   streak: number;
   isDone: boolean;
+  startTime: string; 
+  endTime: string;    
 };
 
 const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: string) => {
@@ -22,11 +24,18 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
       setLoading(true)
       try {
         const taskForDay = (await getSelectedDayTasks(client, selectedDay) ?? [])
+        console.log("task_check",taskForDay)
         const taskWithStatus = await Promise.all(taskForDay.map(async (t) => ({
-          ...t,
+          id: t.id,
+          title: t.title,
+          streak: t.streak,
+          startTime: t.start_time,  // Map snake_case to camelCase
+          endTime: t.end_time,      // Map snake_case to camelCase
           isDone: await dailyTaskCheck(client, userId, Number(t.id), today),
         })))
+        console.log("task_status", taskWithStatus)
         setTasks(taskWithStatus)
+        console.log("tasks", tasks)
       } finally {
         setLoading(false)
       }
