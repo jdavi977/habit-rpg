@@ -4,8 +4,7 @@ import DaySelector from "./DaySelector";
 import TaskList from "./TaskList";
 import { SupabaseClient } from "@supabase/supabase-js";
 import useTasksByDay from "../hooks/useTasksByDay";
-import WeekSelector from "./WeekSelector";
-import { Calendar } from "../ui/8bit/calendar";
+// import WeekSelector from "./WeekSelector";
 
 type TaskCardProps = {
   client: SupabaseClient;
@@ -23,18 +22,16 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
     userId,
     selectedDay
   );
-  const [selectedWeek, setSelectedWeek] = useState(() => {
-    const today = new Date()
-    const dayOfWeek = today.getDay()
-    const diff = today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)
-    const monday = new Date(today.setDate(diff))
-    return monday.toISOString().slice(0, 10)
-  })
-  const [selectedDates, setSelectedDates] = useState<Date>()
+  // const [selectedWeek, setSelectedWeek] = useState(() => {
+  //   const today = new Date()
+  //   const dayOfWeek = today.getDay()
+  //   const diff = today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)
+  //   const monday = new Date(today.setDate(diff))
+  //   return monday.toISOString().slice(0, 10)
+  // })
 
 
   return (
-    <div>
     <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20">
       <CardHeader className="pb-4">
         <CardTitle className="text-xl font-bold text-cyber-blue-bright flex items-center gap-2">
@@ -43,10 +40,10 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <WeekSelector
+        {/* <WeekSelector
           selectedWeek={selectedWeek}
           selectWeek={setSelectedWeek}
-        />
+        /> */}
         <DaySelector
           days={days}
           selectedDay={selectedDay}
@@ -65,15 +62,6 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
         </div>
       </CardContent>
     </Card>
-      <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20">
-        <Calendar
-          mode="single"
-          selected={selectedDates}
-          onSelect={setSelectedDates}
-          className="border-y-0"
-        />
-      </Card>
-    </div>
   );
 };
 

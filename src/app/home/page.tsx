@@ -4,7 +4,9 @@ import StatsCard from "@/components/profile/StatsCard";
 import TaskCard from "@/components/profile/TaskCard";
 import useAuthClient from "@/components/hooks/useAuthClient";
 import WarningRollover from "@/components/profile/WarningRollover";
+import { Calendar } from "@/components/ui/8bit/calendar";
 import { Sword, Target, Zap } from "lucide-react";
+import { useState } from "react";
 
 /**
  * Profile page component that displays user statistics, daily tasks, and task management
@@ -22,6 +24,7 @@ import { Sword, Target, Zap } from "lucide-react";
  */
 export default function Home() {
   const { client, userId } = useAuthClient();
+  const [selectedDate, setSelectedDate] = useState<Date>();
 
   return (
     <div className="min-h-screen text-slate-200 relative overflow-hidden">
@@ -34,46 +37,60 @@ export default function Home() {
       <div className="container mx-auto max-w-[80vw] px-6 py-10 relative z-10">
         {/* Header Section */}
         <div className="text-center mb-12">
-          {/* Main Title */}
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <div className="w-1 h-12 bg-cyber-blue-bright rounded-full animate-pulse"></div>
-            <Sword className="h-12 w-12 text-cyber-blue-bright animate-pulse" />
-            <div className="w-1 h-12 bg-cyber-blue-bright rounded-full animate-pulse"></div>
-          </div>
-        
+          <div className="pb-10">
           {/* Warning Rollover */}
           <WarningRollover 
             client={client}
             userId={userId}
           />
-        </div>
-
-        {/* Main Content - Multi Column Layout */}
-        <div className="mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-            {/* Left Column - Character Stats */}
-            <div className="lg:col-span-2">
+          </div>
+            {/* Left Column - Character Stats & Create Task */}
               <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue-bright/20 to-cyber-blue/20 rounded-xl blur-sm opacity-50"></div>
+                <div className="absolute -inset-1 from-cyber-blue-bright/20 to-cyber-blue/20 rounded-xl blur-sm opacity-50"></div>
                 <div className="relative">
                   <StatsCard
                     client={client}
                     userId={userId}
                   />
                 </div>
-              </div>
-              
-                <div className="relative pt-10">
-                  <CreateTask 
-                    client={client}
-                    userId={userId}        
-                  />
+              </div>            
+      
+        </div>
+
+        {/* Main Content - Multi Column Layout */}
+        <div className="mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-14 gap-8">
+            {/* Right Column - Calendar */}
+            <div className="lg:col-span-4">
+              <div className="relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue-bright/20 to-cyber-blue/20 rounded-xl blur-sm opacity-50"></div>
+                <div className="relative">
+                  <div className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20 rounded-lg p-6">
+                    <h3 className="text-xl font-bold text-cyber-blue-bright flex items-center gap-2 mb-4">
+                      <div className="w-2 h-2 bg-cyber-blue-bright rounded-full animate-pulse"></div>
+                      Calendar
+                    </h3>
+                    <div className="flex justify-center pt-8">
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={setSelectedDate}
+                        font="retro"
+                      />
+                    </div>
+                  </div>
                 </div>
+                <div className="relative pt-8">
+                <CreateTask 
+                  client={client}
+                  userId={userId}        
+                />
+              </div>
+              </div>
             </div>
             
-            
             {/* Middle Column - Daily Tasks */}
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-10">
               <div className="relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue/20 to-cyber-blue-bright/20 rounded-xl blur-sm opacity-50"></div>
                 <div className="relative">
