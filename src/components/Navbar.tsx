@@ -4,21 +4,33 @@ import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
-import { HomeIcon, Sword, Settings, Zap, Star } from 'lucide-react'
+import { Sword, Zap, Star, Coins, Sparkles } from 'lucide-react'
 import { SidebarTrigger } from './ui/sidebar'
+import useAuthClient from './hooks/useAuthClient'
+import useUserStats from './hooks/useUserStats'
 
 const Navbar = () => {
+  const { client, userId } = useAuthClient();
+  const { stats } = useUserStats(client, userId);
   const {isSignedIn} = useUser()
+
+  
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-cyber-dark/80 backdrop-blur-md border-b border-cyber-line-color py-4 shadow-lg shadow-cyber-glow-primary/10">
       {/* Animated background effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-cyber-blue-bright/5 via-transparent to-cyber-blue-bright/5 animate-pulse"></div>
       
+      {/* Sidebar Trigger - Fixed to left edge */}
+      {isSignedIn && (
+        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20">
+          <SidebarTrigger className="text-cyber-blue-bright hover:text-cyber-blue-bright/80 hover:bg-cyber-blue/20 border-cyber-line-color bg-cyber-dark/60 backdrop-blur-sm px-3 py-2 rounded-lg border transition-all duration-300 hover:shadow-lg hover:shadow-cyber-glow-primary/20" />
+        </div>
+      )}
+      
       <div className="container mx-auto flex items-center justify-between relative z-10 px-4">
 
         { /* SIDEBAR TOGGLE & LOGO */ }
           <div className="flex items-center gap-3">
-            <SidebarTrigger className="text-cyber-blue-bright hover:text-cyber-blue-bright/80 hover:bg-cyber-blue/20 border-cyber-line-color" />
             <Link href="/" className="flex items-center gap-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-cyber-blue-bright/20 rounded-lg blur-sm group-hover:blur-md transition-all duration-300"></div>
@@ -39,28 +51,34 @@ const Navbar = () => {
           </Link>
           </div>
           
-        
+
 
         {/* NAVIGATION */}
         <nav className="flex items-center gap-4">
           {isSignedIn ? (
-            <>
-              <Link
-                href="/home"
-                className="group flex items-center gap-2 px-4 py-2 rounded-lg bg-cyber-blue/10 border border-cyber-line-color hover:border-cyber-blue-bright/50 hover:bg-cyber-blue/20 transition-all duration-300 hover:shadow-lg hover:shadow-cyber-glow-primary/20"
-              >
-                <HomeIcon size={18} className="text-cyber-blue-bright group-hover:animate-pulse" />
-                <span className="text-cyber-text-bright font-medium group-hover:text-cyber-blue-bright transition-colors">Home</span>
-              </Link>
-              <Link
-                href="/settings"
-                className="group flex items-center gap-2 px-4 py-2 rounded-lg bg-cyber-blue/10 border border-cyber-line-color hover:border-cyber-blue-bright/50 hover:bg-cyber-blue/20 transition-all duration-300 hover:shadow-lg hover:shadow-cyber-glow-primary/20"
-              >
-                <Settings size={18} className="text-cyber-blue-bright group-hover:animate-pulse" />
-                <span className="text-cyber-text-bright font-medium group-hover:text-cyber-blue-bright transition-colors">Settings</span>
-              </Link>
-              <div className="ml-2">
-                <UserButton 
+            <div className="flex items-center gap-4 px-4 py-2 rounded-lg bg-cyber-blue/10 border border-cyber-line-color">
+              {/* Gold Display */}
+              <div className="flex items-center gap-2 group">
+                <Coins className="w-4 h-4 text-yellow-400 group-hover:animate-pulse" />
+                <span className="text-yellow-400 font-mono font-semibold text-sm">
+                  {stats?.gold || 0}
+                </span>
+              </div>
+              
+              {/* Separator */}
+              <div className="w-px h-6 bg-cyber-line-color"></div>
+              
+              {/* Mana Display */}
+              <div className="flex items-center gap-2 group">
+                <Sparkles className="w-4 h-4 text-purple-400 group-hover:animate-pulse" />
+                <span className="text-purple-400 font-mono font-semibold text-sm">
+                  {stats?.mana || 0}
+                </span>
+              </div>
+                            
+              {/* Separator */}
+              <div className="w-px h-6 bg-cyber-line-color"></div>
+              <UserButton 
                   appearance={{
                     elements: {
                       avatarBox: "w-10 h-10 border-2 border-cyber-line-color hover:border-cyber-blue-bright transition-all duration-300",
@@ -69,8 +87,8 @@ const Navbar = () => {
                     }
                   }}
                 />
-              </div>
-            </>
+            </div>
+            
           ) : (
             <>
               <SignInButton>
