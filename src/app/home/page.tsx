@@ -4,8 +4,7 @@ import StatsCard from "@/components/profile/StatsCard";
 import TaskCard from "@/components/profile/TaskCard";
 import useAuthClient from "@/components/hooks/useAuthClient";
 import WarningRollover from "@/components/profile/WarningRollover";
-import { Calendar } from "@/components/ui/8bit/calendar";
-import { Sword, Target, Zap } from "lucide-react";
+import { Target, Zap } from "lucide-react";
 import { useState } from "react";
 
 /**
@@ -59,28 +58,12 @@ export default function Home() {
 
         {/* Main Content - Multi Column Layout */}
         <div className="mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-14 gap-8">
+          <div className="gap-8">
             {/* Right Column - Calendar */}
-            <div className="lg:col-span-4">
+            <div className="">
               <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue-bright/20 to-cyber-blue/20 rounded-xl blur-sm opacity-50"></div>
-                <div className="relative">
-                  <div className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20 rounded-lg p-6">
-                    <h3 className="text-xl font-bold text-cyber-blue-bright flex items-center gap-2 mb-4">
-                      <div className="w-2 h-2 bg-cyber-blue-bright rounded-full animate-pulse"></div>
-                      Calendar
-                    </h3>
-                    <div className="flex justify-center pt-8">
-                      <Calendar
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={setSelectedDate}
-                        font="retro"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="relative pt-8">
+                <div className="absolute -inset-1 from-cyber-blue-bright/20 to-cyber-blue/20 rounded-xl blur-sm opacity-50"></div>
+                <div className="relative p-10">
                 <CreateTask 
                   client={client}
                   userId={userId}        
@@ -89,10 +72,9 @@ export default function Home() {
               </div>
             </div>
             
-            {/* Middle Column - Daily Tasks */}
-            <div className="lg:col-span-10">
+            <div className="">
               <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue/20 to-cyber-blue-bright/20 rounded-xl blur-sm opacity-50"></div>
+                <div className="absolute -inset-1 from-cyber-blue/20 to-cyber-blue-bright/20 rounded-xl blur-sm opacity-50"></div>
                 <div className="relative">
                   <TaskCard 
                     client={client}

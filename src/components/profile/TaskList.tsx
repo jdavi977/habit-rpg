@@ -19,15 +19,6 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, curre
 
   // Log today, dayOfWeek, and diff right away
   const today = new Date()
-  const dayOfWeek = today.getDay()
-  const diff = today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)
-  const monday = new Date(today.setDate(diff))
-  
-  console.log('Today:', today)
-  console.log('Day of Week:', dayOfWeek)
-  console.log('Diff (day of month):', diff)
-  console.log('Monday:', monday)
-
 
   React.useEffect(() => {
     setLoading(true)
