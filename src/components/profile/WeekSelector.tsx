@@ -118,8 +118,8 @@ const WeekSelector = ({
     const name = week.split(",")
     const startDate= parseInt(name[0])
     const endDate = parseInt(name[1])
-    let startRange: number[] = [];
-    let range: number[] = [];
+    const startRange: number[] = [];
+    const range: number[] = [];
 
     if (endDate < 8) {
       for (let i = 1; i <= endDate; i++) {
