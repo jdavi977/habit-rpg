@@ -17,9 +17,6 @@ type TaskListProps = {
 const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, currentDay}: TaskListProps) => {
   const [loading, setLoading] = useState(true)
 
-  // Log today, dayOfWeek, and diff right away
-  const today = new Date()
-
   React.useEffect(() => {
     setLoading(true)
     if (tasks) {

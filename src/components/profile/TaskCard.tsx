@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import DaySelector from "./DaySelector";
 import TaskList from "./TaskList";
 import { SupabaseClient } from "@supabase/supabase-js";
 import useTasksByDay from "../hooks/useTasksByDay";
@@ -25,7 +24,7 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
   );
   const today= new Date()
   const [selectedDate, setSelectedDate] = useState<Date>(today);
-
+  
   return (
     <div className="grid grid-cols-1 lg:grid-cols-14 gap-8">
       {/* Calendar Section */}
@@ -60,10 +59,8 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
           </CardHeader>
           <CardContent className="space-y-6">
             <WeekSelector 
-              selectedWeek={selectedDate}
+              selectedDate={selectedDate}
               selectDate={setSelectedDate}
-            />
-            <DaySelector
               days={days}
               selectedDay={selectedDay}
               selectDay={setSelectedDay}
