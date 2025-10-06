@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Flame } from "lucide-react";
+import '../../styles/fullcalendar-cyber.css'
+
 
 type TaskListProps = {
   selectedDay: string,
-  tasks: {id: string, title: string, streak: number, isDone: boolean}[];
+  tasks: {id: string, title: string, streak: number, isDone: boolean, startTime: string, endTime: string}[];
   completeTask: (taskId: string) => void,
   undoTask: (taskId: string) => void,
   removeTask: (taskId: string) => void,
@@ -22,9 +24,11 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, curre
     }
 }, [tasks])
 
+
   return (
-    <div className="space-y-3">
-      {loading ? (
+    <div className="space-y-4">
+        <>
+          {loading ? (
         // Enhanced loading state
         <div className="flex flex-col items-center justify-center py-12 space-y-4">
           <div className="relative">
@@ -120,7 +124,8 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, curre
             </li>
           ))}
         </ul>
-      )}
+          )}
+        </>
     </div>
   );
 };

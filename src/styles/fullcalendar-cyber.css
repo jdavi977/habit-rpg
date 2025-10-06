@@ -1,0 +1,444 @@
+/* FullCalendar Pixel Game Theme Styling */
+
+/* Import FullCalendar base styles */
+@import '@fullcalendar/core/main.css';
+@import '@fullcalendar/daygrid/main.css';
+@import '@fullcalendar/timegrid/main.css';
+
+/* Pixel Game Font */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Main calendar container */
+.fc {
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 8px !important;
+  background: #1a1a2e !important;
+  border: 4px solid #16213e !important;
+  border-radius: 0 !important;
+  box-shadow: 
+    0 0 0 2px #0f3460,
+    0 0 0 4px #16213e,
+    inset 0 0 0 2px #0f3460;
+  overflow: hidden;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Header styling */
+.fc-header-toolbar {
+  background: #0f3460 !important;
+  padding: 8px 12px !important;
+  margin: 0 !important;
+  border-bottom: 3px solid #16213e !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: inset 0 2px 0 #1a1a2e;
+}
+
+.fc-toolbar-title {
+  color: #e94560 !important;
+  font-size: 10px !important;
+  font-weight: normal !important;
+  text-shadow: 2px 2px 0 #16213e;
+  margin: 0 !important;
+  letter-spacing: 1px;
+}
+
+/* Navigation buttons */
+.fc-button {
+  background: #16213e !important;
+  border: 2px solid #0f3460 !important;
+  color: #e94560 !important;
+  border-radius: 0 !important;
+  padding: 4px 8px !important;
+  font-size: 6px !important;
+  font-weight: normal !important;
+  transition: none !important;
+  box-shadow: 2px 2px 0 #0f3460 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.fc-button:hover {
+  background: #0f3460 !important;
+  border-color: #e94560 !important;
+  box-shadow: 2px 2px 0 #e94560 !important;
+  transform: translate(-1px, -1px) !important;
+}
+
+.fc-button:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0 #0f3460 !important;
+}
+
+.fc-button:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  background: #1a1a2e !important;
+  color: #16213e !important;
+}
+
+/* View buttons */
+.fc-button-group {
+  display: flex !important;
+  gap: 2px !important;
+}
+
+.fc-button-primary {
+  background: #16213e !important;
+  border-color: #0f3460 !important;
+}
+
+.fc-button-primary:not(:disabled):hover {
+  background: #0f3460 !important;
+  border-color: #e94560 !important;
+}
+
+.fc-button-primary:not(:disabled).fc-button-active {
+  background: #e94560 !important;
+  border-color: #e94560 !important;
+  color: #1a1a2e !important;
+  box-shadow: 2px 2px 0 #16213e !important;
+}
+
+/* Calendar grid */
+.fc-daygrid {
+  background: #1a1a2e !important;
+}
+
+.fc-daygrid-day {
+  background: #1a1a2e !important;
+  border: 1px solid #16213e !important;
+  transition: none !important;
+  position: relative;
+}
+
+.fc-daygrid-day:hover {
+  background: #0f3460 !important;
+  box-shadow: inset 0 0 0 2px #e94560;
+}
+
+.fc-daygrid-day.fc-day-today {
+  background: #16213e !important;
+  border-color: #e94560 !important;
+  box-shadow: inset 0 0 0 2px #e94560;
+}
+
+.fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+  color: #e94560 !important;
+  font-weight: normal !important;
+  text-shadow: 1px 1px 0 #16213e !important;
+}
+
+/* Day numbers */
+.fc-daygrid-day-number {
+  color: #e94560 !important;
+  font-weight: normal !important;
+  padding: 4px !important;
+  transition: none !important;
+  font-size: 8px !important;
+}
+
+.fc-daygrid-day-number:hover {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 0 #16213e !important;
+}
+
+/* Weekday headers */
+.fc-col-header-cell {
+  background: #0f3460 !important;
+  border: 1px solid #16213e !important;
+  padding: 6px 4px !important;
+}
+
+.fc-col-header-cell-cushion {
+  color: #e94560 !important;
+  font-weight: normal !important;
+  font-size: 6px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  text-shadow: 1px 1px 0 #16213e;
+}
+
+/* Events */
+.fc-event {
+  background: #e94560 !important;
+  border: 2px solid #16213e !important;
+  border-radius: 0 !important;
+  color: #1a1a2e !important;
+  font-weight: normal !important;
+  font-size: 6px !important;
+  padding: 2px 4px !important;
+  margin: 1px !important;
+  box-shadow: 2px 2px 0 #16213e !important;
+  transition: none !important;
+  cursor: pointer !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  line-height: 1.2 !important;
+}
+
+.fc-event:hover {
+  background: #ffffff !important;
+  border-color: #e94560 !important;
+  box-shadow: 2px 2px 0 #e94560 !important;
+  transform: translate(-1px, -1px) !important;
+}
+
+.fc-event-title {
+  color: #1a1a2e !important;
+  font-weight: normal !important;
+  font-size: 6px !important;
+}
+
+/* Time grid specific styles */
+.fc-timegrid {
+  background: #1a1a2e !important;
+}
+
+.fc-timegrid-slot {
+  border-color: #16213e !important;
+  background: #1a1a2e !important;
+}
+
+.fc-timegrid-slot:hover {
+  background: #0f3460 !important;
+}
+
+.fc-timegrid-slot-label {
+  color: #e94560 !important;
+  font-size: 6px !important;
+  font-weight: normal !important;
+}
+
+.fc-timegrid-axis {
+  background: #0f3460 !important;
+  border-color: #16213e !important;
+}
+
+.fc-timegrid-axis-cushion {
+  color: #e94560 !important;
+  font-size: 6px !important;
+  font-weight: normal !important;
+}
+
+/* Scrollbar styling */
+.fc-scroller::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.fc-scroller::-webkit-scrollbar-track {
+  background: #16213e;
+  border: 1px solid #0f3460;
+}
+
+.fc-scroller::-webkit-scrollbar-thumb {
+  background: #e94560;
+  border: 1px solid #16213e;
+  box-shadow: 1px 1px 0 #0f3460;
+}
+
+.fc-scroller::-webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+  box-shadow: 1px 1px 0 #e94560;
+}
+
+/* Loading state */
+.fc-loading {
+  background: #1a1a2e !important;
+  color: #e94560 !important;
+}
+
+/* Popover/Modal styling */
+.fc-popover {
+  background: #16213e !important;
+  border: 2px solid #0f3460 !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 #0f3460 !important;
+}
+
+.fc-popover-header {
+  background: #0f3460 !important;
+  color: #e94560 !important;
+  border-bottom: 2px solid #16213e !important;
+  font-weight: normal !important;
+  font-size: 6px !important;
+}
+
+.fc-popover-body {
+  background: #16213e !important;
+  color: #e94560 !important;
+  font-size: 6px !important;
+}
+
+/* More link */
+.fc-more-link {
+  color: #e94560 !important;
+  font-weight: normal !important;
+  text-decoration: none !important;
+  transition: none !important;
+  font-size: 6px !important;
+  background: #16213e !important;
+  border: 1px solid #0f3460 !important;
+  padding: 2px 4px !important;
+  box-shadow: 1px 1px 0 #0f3460 !important;
+}
+
+.fc-more-link:hover {
+  color: #ffffff !important;
+  background: #0f3460 !important;
+  box-shadow: 1px 1px 0 #e94560 !important;
+}
+
+/* Pixel Game Special Effects */
+.fc::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(233, 69, 96, 0.03) 2px,
+      rgba(233, 69, 96, 0.03) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(233, 69, 96, 0.03) 2px,
+      rgba(233, 69, 96, 0.03) 4px
+    );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Scanline effect */
+.fc::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #e94560, transparent);
+  animation: scanline 3s linear infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@keyframes scanline {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Pixelated event states */
+.fc-event.completed-task {
+  background: #4ade80 !important;
+  border-color: #16a34a !important;
+  box-shadow: 2px 2px 0 #16a34a !important;
+}
+
+.fc-event.completed-task:hover {
+  background: #22c55e !important;
+  box-shadow: 2px 2px 0 #22c55e !important;
+}
+
+.fc-event.pending-task {
+  background: #e94560 !important;
+  border-color: #16213e !important;
+  box-shadow: 2px 2px 0 #16213e !important;
+}
+
+.fc-event.pending-task:hover {
+  background: #ffffff !important;
+  border-color: #e94560 !important;
+  box-shadow: 2px 2px 0 #e94560 !important;
+}
+
+/* Pixel Game Button Effects */
+.fc-button:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px #e94560 !important;
+}
+
+/* Disable smooth transitions for pixel aesthetic */
+.fc-daygrid-day,
+.fc-event,
+.fc-button {
+  transition: none !important;
+}
+
+/* Custom scrollbar for webkit browsers */
+.fc-scroller {
+  scrollbar-width: thin;
+  scrollbar-color: #e94560 #16213e;
+}
+
+/* Pixel Calendar Container */
+.pixel-calendar-container {
+  background: #1a1a2e;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: 
+    0 0 0 2px #0f3460,
+    0 0 0 4px #16213e,
+    inset 0 0 0 2px #0f3460;
+  border: 4px solid #16213e;
+  position: relative;
+}
+
+.pixel-calendar-container .fc {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Pixel Game View Toggle Buttons */
+.pixel-calendar-container + div button {
+  background: #16213e !important;
+  border: 2px solid #0f3460 !important;
+  color: #e94560 !important;
+  transition: none !important;
+  font-weight: normal !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  font-size: 6px !important;
+  font-family: 'Press Start 2P', monospace !important;
+  box-shadow: 2px 2px 0 #0f3460 !important;
+}
+
+.pixel-calendar-container + div button:hover {
+  background: #0f3460 !important;
+  border-color: #e94560 !important;
+  box-shadow: 2px 2px 0 #e94560 !important;
+  transform: translate(-1px, -1px) !important;
+}
+
+.pixel-calendar-container + div button[data-state="active"],
+.pixel-calendar-container + div button[data-active="true"] {
+  background: #e94560 !important;
+  color: #1a1a2e !important;
+  box-shadow: 2px 2px 0 #16213e !important;
+  border-color: #e94560 !important;
+}
+
+/* View toggle container */
+.pixel-calendar-container + div {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  margin-bottom: 8px !important;
+  padding: 4px !important;
+  background: #16213e !important;
+  border-radius: 0 !important;
+  border: 2px solid #0f3460 !important;
+  box-shadow: 2px 2px 0 #0f3460 !important;
+}
