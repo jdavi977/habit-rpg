@@ -1,11 +1,9 @@
 "use client";
-import CreateTask from "@/components/profile/CreateTask";
 import StatsCard from "@/components/profile/StatsCard";
 import TaskCard from "@/components/profile/TaskCard";
 import useAuthClient from "@/components/hooks/useAuthClient";
 import WarningRollover from "@/components/profile/WarningRollover";
 import { Target, Zap } from "lucide-react";
-import { useState } from "react";
 
 /**
  * Profile page component that displays user statistics, daily tasks, and task management
@@ -23,7 +21,6 @@ import { useState } from "react";
  */
 export default function Home() {
   const { client, userId } = useAuthClient();
-  const [selectedDate, setSelectedDate] = useState<Date>();
 
   return (
     <div className="min-h-screen text-slate-200 relative overflow-hidden">
@@ -59,18 +56,6 @@ export default function Home() {
         {/* Main Content - Multi Column Layout */}
         <div className="mx-auto">
           <div className="gap-8">
-            {/* Right Column - Calendar */}
-            <div className="">
-              <div className="relative">
-                <div className="absolute -inset-1 from-cyber-blue-bright/20 to-cyber-blue/20 rounded-xl blur-sm opacity-50"></div>
-                <div className="relative p-10">
-                <CreateTask 
-                  client={client}
-                  userId={userId}        
-                />
-              </div>
-              </div>
-            </div>
             
             <div className="">
               <div className="relative">

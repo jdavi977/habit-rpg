@@ -38,7 +38,7 @@ export async function getUserInfo(client: SupabaseClient, userId: string) {
 // }
 
 
-export async function createTask(client: SupabaseClient, userId: string, title: string, description: string, difficulty: string, startTime: string, endTime: string, days: string[]) {
+export async function createTask(client: SupabaseClient, userId: string, title: string, description: string, difficulty: string, startTime: string, endTime: string, date: string) {
   // Convert time strings to timestamps
   const today = new Date();
   const [startHours, startMinutes] = startTime.split(':').map(Number);
@@ -48,7 +48,7 @@ export async function createTask(client: SupabaseClient, userId: string, title: 
   const endTimestamp = new Date(today.getFullYear(), today.getMonth(), today.getDate(), endHours, endMinutes);
   
   const { data, error} = await client.from("task")
-    .insert({user_id: userId, title: title, description: description, difficulty: difficulty, start_time: startTimestamp.toISOString(), end_time: endTimestamp.toISOString(), days: days})
+    .insert({user_id: userId, title: title, description: description, difficulty: difficulty, start_time: startTimestamp.toISOString(), end_time: endTimestamp.toISOString(), date: date})
   if (error) throw error;
   return data;
 }
@@ -219,13 +219,13 @@ export async function dailyTaskCheck(client: SupabaseClient, userId: string, tas
  */
 export async function dailyCompletion(client: SupabaseClient, userId: string, taskId: number, date: string) {
   return client.from("task_completions").upsert(
-    [{ user_id: userId, task_id: taskId, date }],
+    [{ user_id: userId, task_id: taskId, date: date }],
     { onConflict: "user_id, task_id, date", ignoreDuplicates: true }
   );
 }
 
-export async function getSelectedDayTasks(client: SupabaseClient, days: string) {
-  const { data, error } = await client.from('task').select().contains('days', [days])
+export async function getSelectedDayTasks(client: SupabaseClient, date: string) {
+  const { data, error } = await client.from('task').select().eq('date', date)
   if (error) throw error;
   return data;
 }

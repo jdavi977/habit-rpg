@@ -14,18 +14,23 @@ type Task = {
   endTime: string;    
 };
 
-const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: string) => {
+const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: string, selectedDate?: Date) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
   // Memoize today to prevent unnecessary re-renders
   const today = React.useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const date = selectedDate?.toISOString().slice(0, 10)
 
   const refresh = useCallback(async () => {
       if (!client || !userId || !selectedDay) return
       setLoading(true)
       try {
-        const taskForDay = (await getSelectedDayTasks(client, selectedDay) ?? [])
-        console.log("task_check",taskForDay)
+        if (!date) {
+          setTasks([]);
+          setLoading(false);
+          return;
+        }
+        const taskForDay = (await getSelectedDayTasks(client, date) ?? []);
         const taskWithStatus = await Promise.all(taskForDay.map(async (t) => ({
           id: t.id,
           title: t.title,
@@ -34,9 +39,7 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
           endTime: t.end_time,      // Map snake_case to camelCase
           isDone: await dailyTaskCheck(client, userId, Number(t.id), today),
         })))
-        console.log("task_status", taskWithStatus)
         setTasks(taskWithStatus)
-        console.log("tasks", tasks)
       } finally {
         setLoading(false)
       }
@@ -50,7 +53,6 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
     if (alreadyCompleted) return
     await dailyCompletion(client, userId, Number(taskId), today)
     const taskData = await getTaskData(client, taskId)
-    console.log(taskData.streak, taskData.difficulty, taskData.streak)
     const stats = await getUserStats(client, userId)
     // FIX THIS FOR ALL
     await increaseStreak(client, taskId, taskData?.streak)

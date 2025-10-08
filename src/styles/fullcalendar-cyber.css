@@ -1,9 +1,9 @@
 /* FullCalendar Pixel Game Theme Styling */
 
 /* Import FullCalendar base styles */
-@import '@fullcalendar/core/main.css';
-@import '@fullcalendar/daygrid/main.css';
-@import '@fullcalendar/timegrid/main.css';
+@import '@fullcalendar/core/index.css';
+@import '@fullcalendar/daygrid/index.css';
+@import '@fullcalendar/timegrid/index.css';
 
 /* Pixel Game Font */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
