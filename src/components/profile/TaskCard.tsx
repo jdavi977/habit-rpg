@@ -13,7 +13,7 @@ type TaskCardProps = {
 
 const TaskCard = ({ client, userId }: TaskCardProps) => {
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const today= new Date()
+  const today = new Date();
   const [selectedDate, setSelectedDate] = useState<Date>(today);
   const todayShort = new Date().toLocaleDateString("en-US", {
     weekday: "short",
@@ -26,12 +26,11 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
     selectedDate
   );
 
-  
   return (
     <div className="grid grid-cols-1 lg:grid-cols-14 gap-8">
       {/* Calendar Section */}
       <div className="lg:col-span-4">
-      <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20 h-fit w-full">
+        <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20 h-fit w-full">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg font-bold text-cyber-blue-bright flex items-center gap-2">
               <div className="w-2 h-2 bg-cyber-blue-bright rounded-full animate-pulse"></div>
@@ -49,10 +48,10 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Tasks Section */}
       <div className="lg:col-span-10">
-      <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20 w-full">
+        <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20 w-full">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl font-bold text-cyber-blue-bright flex items-center gap-2">
               <div className="w-2 h-2 bg-cyber-blue-bright rounded-full animate-pulse"></div>
@@ -60,7 +59,7 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <WeekSelector 
+            <WeekSelector
               selectedDate={selectedDate}
               selectDate={setSelectedDate}
               days={days}

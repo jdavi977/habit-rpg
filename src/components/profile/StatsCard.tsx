@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader } from '../ui/card'
 import { SupabaseClient } from '@supabase/supabase-js'
 import useUserStats from '../hooks/useUserStats'

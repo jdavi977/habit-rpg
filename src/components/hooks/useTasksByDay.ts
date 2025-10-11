@@ -17,9 +17,20 @@ type Task = {
 const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: string, selectedDate?: Date) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
-  // Memoize today to prevent unnecessary re-renders
-  const today = React.useMemo(() => new Date().toISOString().slice(0, 10), []);
-  const date = selectedDate?.toISOString().slice(0, 10)
+
+  const today = React.useMemo(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }, []);
+  const date = selectedDate ? (() => {
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  })() : undefined;
 
   const refresh = useCallback(async () => {
       if (!client || !userId || !selectedDay) return
@@ -62,7 +73,7 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
     setTasks(ts => ts.map(t => t.id === taskId ? {...t, isDone: true} : t))
     // Refresh tasks to get updated streak counts
     await refresh()
-
+    window.location.reload()
   }, [client, userId, today, refresh])
 
   const undoTask = useCallback(async (taskId: string) => {
@@ -85,6 +96,8 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
       setTasks(ts => ts.map(t => t.id === taskId ? {...t, isDone: false} : t))
       // Refresh tasks to get updated streak counts
       await refresh()
+      window.location.reload()
+
     } catch (error) {
       console.error('Error undoing task:', error)
       throw error // Re-throw to be caught by removeTask

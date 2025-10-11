@@ -63,7 +63,7 @@ export default function Home() {
                 <div className="relative">
                   <TaskCard 
                     client={client}
-                    userId={userId} 
+                    userId={userId}
                   />
                 </div>
               </div>
