@@ -6,7 +6,6 @@ import { createTask } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Calendar } from "../ui/calendar";
-import TimePicker from "../ui/TimePicker";
 import { X, Plus, CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";

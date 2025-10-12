@@ -1,6 +1,6 @@
 "use client";
 import StatsCard from "@/components/profile/StatsCard";
-import TaskCard from "@/components/profile/TaskCard";
+import CurrentTasks from "@/components/profile/CurrentTasks";
 import useAuthClient from "@/components/hooks/useAuthClient";
 import WarningRollover from "@/components/profile/WarningRollover";
 
@@ -35,8 +35,7 @@ export default function Home() {
           userId={userId}
         />
 
-        {/* Task Card */}
-        <TaskCard
+        <CurrentTasks
           client={client}
           userId={userId}
         />

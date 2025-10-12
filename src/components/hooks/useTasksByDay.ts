@@ -17,6 +17,8 @@ type Task = {
 const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: string, selectedDate?: Date) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
+  const [totalTasksCompleted, setTotalTasksCompleted] = useState(0);
+  const totalTasks = tasks.length
 
   const date = selectedDate ? (() => {
     const year = selectedDate.getFullYear();
@@ -50,7 +52,16 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
       }
   }, [client, userId, selectedDay, date])
 
+  function totalTasksLeft() {
+    const completedTasks = tasks.filter(task => task.isDone).length
+    setTotalTasksCompleted(completedTasks)
+  }
+
   useEffect(() => {void refresh() }, [refresh])
+
+  useEffect(() => {
+    totalTasksLeft()
+  }, [tasks])
 
   const completeTask = useCallback(async (taskId: string) => {
     if (!userId || !date) return
@@ -117,7 +128,7 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
     }
   }, [client, userId, undoTask, refresh])
 
-  return {tasks, loading, refresh, completeTask, undoTask, removeTask}
+  return {tasks, loading, totalTasks, totalTasksCompleted, refresh, completeTask, undoTask, removeTask}
 
 
 }

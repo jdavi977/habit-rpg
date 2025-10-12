@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Heart, Sparkles, Star } from "lucide-react";
+import { Heart, Sparkles } from "lucide-react";
 
 const HeroSection = () => {
   return (
