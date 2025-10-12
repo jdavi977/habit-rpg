@@ -82,16 +82,6 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
     if (!selectedDates) return alert("Please select a date");
     if (repeatOptions == "") return alert("Please choose a repeat option");
 
-    const startConversion = to24HourString(
-      startTime.hour,
-      startTime.minute,
-      startTime.period
-    );
-    const endConversion = to24HourString(
-      endTime.hour,
-      endTime.minute,
-      endTime.period
-    );
     const date = updateSelectedDate(selectedDates);
 
     createTask(
@@ -100,8 +90,6 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
       title,
       description,
       difficulty,
-      startConversion,
-      endConversion,
       date
     );
 
@@ -356,31 +344,6 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
                                 />
                               </PopoverContent>
                             </Popover>
-                          </div>
-
-                          {/* Time Pickers */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="relative">
-                              <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue/20 to-cyber-blue-bright/20 rounded-xl blur-sm opacity-50"></div>
-                              <div className="relative bg-gradient-to-br from-cyber-blue/10 to-cyber-blue/5 border border-cyber-line-color rounded-xl p-4">
-                                <TimePicker
-                                  label="Start Time"
-                                  value={startTime}
-                                  onChange={setStartTime}
-                                />
-                              </div>
-                            </div>
-
-                            <div className="relative">
-                              <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue-bright/20 to-cyber-blue/20 rounded-xl blur-sm opacity-50"></div>
-                              <div className="relative bg-gradient-to-br from-cyber-blue/10 to-cyber-blue/5 border border-cyber-line-color rounded-xl p-4">
-                                <TimePicker
-                                  label="End Time"
-                                  value={endTime}
-                                  onChange={setEndTime}
-                                />
-                              </div>
-                            </div>
                           </div>
                         </div>
 

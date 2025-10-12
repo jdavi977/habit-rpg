@@ -68,6 +68,8 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
               client={client}
               userId={userId}
             />
+            
+            
             <div className="border-t border-cyber-line-color/50 pt-4">
               <TaskList
                 tasks={tasks}

@@ -38,17 +38,12 @@ export async function getUserInfo(client: SupabaseClient, userId: string) {
 // }
 
 
-export async function createTask(client: SupabaseClient, userId: string, title: string, description: string, difficulty: string, startTime: string, endTime: string, date: string) {
+export async function createTask(client: SupabaseClient, userId: string, title: string, description: string, difficulty: string, date: string) {
   // Convert time strings to timestamps
   const today = new Date();
-  const [startHours, startMinutes] = startTime.split(':').map(Number);
-  const [endHours, endMinutes] = endTime.split(':').map(Number);
-  
-  const startTimestamp = new Date(today.getFullYear(), today.getMonth(), today.getDate(), startHours, startMinutes);
-  const endTimestamp = new Date(today.getFullYear(), today.getMonth(), today.getDate(), endHours, endMinutes);
   
   const { data, error} = await client.from("task")
-    .insert({user_id: userId, title: title, description: description, difficulty: difficulty, start_time: startTimestamp.toISOString(), end_time: endTimestamp.toISOString(), date: date})
+    .insert({user_id: userId, title: title, description: description, difficulty: difficulty, date: date})
   if (error) throw error;
   return data;
 }

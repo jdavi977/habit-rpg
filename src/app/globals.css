@@ -378,10 +378,210 @@
   box-shadow: 0 4px 15px var(--cyber-glow-primary) !important;
 }
 
-/* Additional calendar styling enhancements */
-.fc-toolbar-title {
-  text-shadow: 0 0 10px var(--cyber-blue-glow) !important;
-  font-weight: 700 !important;
+/* Timeline-specific animations and effects */
+@keyframes timeline-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes timeline-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--cyber-glow-primary);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--cyber-glow-strong), 0 0 30px var(--cyber-blue-glow);
+  }
+}
+
+@keyframes timeline-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes current-time-indicator {
+  0%, 100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scaleY(1.1);
+  }
+}
+
+.animate-timeline-pulse {
+  animation: timeline-pulse 2s ease-in-out infinite;
+}
+
+.animate-timeline-glow {
+  animation: timeline-glow 3s ease-in-out infinite;
+}
+
+.animate-timeline-slide-in {
+  animation: timeline-slide-in 0.5s ease-out forwards;
+}
+
+.animate-current-time-indicator {
+  animation: current-time-indicator 2s ease-in-out infinite;
+}
+
+/* Timeline hover effects */
+.timeline-task:hover {
+  transform: translateY(-2px) scale(1.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.timeline-task {
+  z-index: 2;
+}
+
+.timeline-task-completed:hover {
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.timeline-task-pending:hover {
+  box-shadow: 0 8px 25px var(--cyber-glow-primary);
+}
+
+/* Timeline scrollbar styling */
+.timeline-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.timeline-scroll::-webkit-scrollbar-track {
+  background: var(--cyber-terminal-bg);
+  border-radius: 4px;
+}
+
+.timeline-scroll::-webkit-scrollbar-thumb {
+  background: var(--cyber-line-color);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.timeline-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--cyber-blue-bright);
+}
+
+/* Timeline hour line animations */
+.timeline-hour-line {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.timeline-hour-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyber-blue-bright), transparent);
+  animation: timeline-scan 3s linear infinite;
+}
+
+@keyframes timeline-scan {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Timeline task status indicators */
+.timeline-status-indicator {
+  position: relative;
+}
+
+.timeline-status-indicator::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: timeline-pulse 2s ease-in-out infinite;
+}
+
+.timeline-status-completed::after {
+  background: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.timeline-status-pending::after {
+  background: rgba(24, 206, 242, 0.6);
+  box-shadow: 0 0 10px rgba(24, 206, 242, 0.4);
+}
+
+/* Timeline responsive adjustments */
+@media (max-width: 768px) {
+  .timeline-task {
+    font-size: 0.75rem;
+  }
+  
+  .timeline-hour-label {
+    font-size: 0.7rem;
+  }
+  
+  .timeline-task-actions {
+    opacity: 1 !important;
+  }
+}
+
+/* 24-hour timeline specific adjustments */
+.timeline-24hour .timeline-hour-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--cyber-text-muted);
+  background: var(--cyber-terminal-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--cyber-line-color);
+}
+
+.timeline-24hour .timeline-task {
+  font-size: 0.8rem;
+}
+
+.timeline-24hour .timeline-task .text-xs {
+  font-size: 0.65rem;
+}
+
+/* Timeline loading skeleton */
+.timeline-skeleton {
+  background: linear-gradient(90deg, 
+    var(--cyber-terminal-bg) 25%, 
+    var(--cyber-line-color) 50%, 
+    var(--cyber-terminal-bg) 75%
+  );
+  background-size: 200% 100%;
+  animation: timeline-skeleton-loading 1.5s infinite;
+}
+
+@keyframes timeline-skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .fc-button-group .fc-button {
