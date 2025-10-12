@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import TaskList from "./TaskList";
 import { SupabaseClient } from "@supabase/supabase-js";
 import useTasksByDay from "../hooks/useTasksByDay";
-import { Calendar } from "../ui/8bit/calendar";
+import { Calendar } from "../ui/8bit/calendar"; // NOTE: This still uses 8bit calendar
 import WeekSelector from "./WeekSelector";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { Button } from "../ui/button";
 
 type TaskCardProps = {
   client: SupabaseClient;
@@ -19,6 +21,7 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
     weekday: "short",
   });
   const [selectedDay, setSelectedDay] = useState<string>(() => todayShort);
+  const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
   const { tasks, loading, completeTask, undoTask, removeTask } = useTasksByDay(
     client,
     userId,
@@ -27,17 +30,31 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
   );
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-14 gap-8">
-      {/* Calendar Section */}
-      <div className="lg:col-span-4">
-        <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20 h-fit w-full">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-bold text-cyber-blue-bright flex items-center gap-2">
-              <div className="w-2 h-2 bg-cyber-blue-bright rounded-full animate-pulse"></div>
+    <div className="space-y-6">
+      {/* Calendar Section - Collapsible */}
+      <Card className="bg-card/95 backdrop-blur-sm border-border shadow-lg">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-semibold text-text-primary flex items-center gap-2">
+              <div className="w-2 h-2 bg-soft-primary rounded-full animate-gentle-pulse"></div>
               Calendar
             </CardTitle>
-          </CardHeader>
-          <CardContent className="flex p-4 justify-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsCalendarExpanded(!isCalendarExpanded)}
+              className="text-text-secondary hover:text-text-primary"
+            >
+              {isCalendarExpanded ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+        </CardHeader>
+        {isCalendarExpanded && (
+          <CardContent className="flex justify-center">
             <Calendar
               mode="single"
               selected={selectedDate}
@@ -46,44 +63,41 @@ const TaskCard = ({ client, userId }: TaskCardProps) => {
               required
             />
           </CardContent>
-        </Card>
-      </div>
+        )}
+      </Card>
 
       {/* Tasks Section */}
-      <div className="lg:col-span-10">
-        <Card className="bg-card/80 backdrop-blur-sm border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20 w-full">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-bold text-cyber-blue-bright flex items-center gap-2">
-              <div className="w-2 h-2 bg-cyber-blue-bright rounded-full animate-pulse"></div>
-              Tasks
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <WeekSelector
-              selectedDate={selectedDate}
-              selectDate={setSelectedDate}
-              days={days}
+      <Card className="bg-card/95 backdrop-blur-sm border-border shadow-lg">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl font-semibold text-text-primary flex items-center gap-2">
+            <div className="w-2 h-2 bg-soft-secondary rounded-full animate-gentle-pulse"></div>
+            Tasks
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <WeekSelector
+            selectedDate={selectedDate}
+            selectDate={setSelectedDate}
+            days={days}
+            selectedDay={selectedDay}
+            selectDay={setSelectedDay}
+            client={client}
+            userId={userId}
+          />
+
+          <div className="border-t border-border/50 pt-4">
+            <TaskList
+              tasks={tasks}
+              loading={loading}
               selectedDay={selectedDay}
-              selectDay={setSelectedDay}
-              client={client}
-              userId={userId}
+              currentDay={todayShort}
+              completeTask={completeTask}
+              undoTask={undoTask}
+              removeTask={removeTask}
             />
-            
-            
-            <div className="border-t border-cyber-line-color/50 pt-4">
-              <TaskList
-                tasks={tasks}
-                loading={loading}
-                selectedDay={selectedDay}
-                currentDay={todayShort}
-                completeTask={completeTask}
-                undoTask={undoTask}
-                removeTask={removeTask}
-              />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

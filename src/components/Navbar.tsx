@@ -4,10 +4,10 @@ import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
-import { Sword, Zap, Star, Coins, Sparkles } from 'lucide-react'
-import { SidebarTrigger } from './ui/sidebar'
+import { Heart, Sparkles, Star, Coins } from 'lucide-react'
 import useAuthClient from './hooks/useAuthClient'
 import useUserStats from './hooks/useUserStats'
+import { ThemeToggle } from './ThemeToggle'
 
 const Navbar = () => {
   const { client, userId } = useAuthClient();
@@ -16,91 +16,67 @@ const Navbar = () => {
 
   
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-cyber-dark/80 backdrop-blur-md border-b border-cyber-line-color py-4 shadow-lg shadow-cyber-glow-primary/10">
-      {/* Animated background effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-cyber-blue-bright/5 via-transparent to-cyber-blue-bright/5 animate-pulse"></div>
-      
-      {/* Sidebar Trigger - Fixed to left edge */}
-      {isSignedIn && (
-        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20">
-          <SidebarTrigger className="text-cyber-blue-bright hover:text-cyber-blue-bright/80 hover:bg-cyber-blue/20 border-cyber-line-color bg-cyber-dark/60 backdrop-blur-sm px-3 py-2 rounded-lg border transition-all duration-300 hover:shadow-lg hover:shadow-cyber-glow-primary/20" />
-        </div>
-      )}
-      
-      <div className="container mx-auto flex items-center justify-between relative z-10 px-4">
-
-        { /* SIDEBAR TOGGLE & LOGO */ }
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative">
-              <div className="absolute inset-0 bg-cyber-blue-bright/20 rounded-lg blur-sm group-hover:blur-md transition-all duration-300"></div>
-              <div className="relative p-2 bg-gradient-to-br from-cyber-blue/20 to-cyber-blue-bright/10 border border-cyber-line-color rounded-lg group-hover:border-cyber-blue-bright/50 transition-all duration-300">
-                <Sword className="w-5 h-5 text-cyber-blue-bright group-hover:animate-pulse"/>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold font-mono tracking-wider">
-                <span className="text-cyber-text-bright">HABIT</span>
-                <span className="text-cyber-blue-bright">RPG</span>
-              </span>
-              <div className="flex items-center gap-1">
-                <Star className="w-3 h-3 text-yellow-400 animate-pulse" />
-                <Zap className="w-3 h-3 text-cyber-blue-bright animate-pulse" style={{animationDelay: '0.5s'}} />
-              </div>
-            </div>
-          </Link>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border py-4 shadow-sm">
+      <div className="max-w-2xl mx-auto flex items-center justify-between px-4">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="p-2 bg-gradient-to-br from-soft-primary/20 to-soft-secondary/10 border border-border rounded-xl group-hover:border-soft-primary/50 transition-all duration-300">
+            <Heart className="w-5 h-5 text-soft-primary group-hover:animate-gentle-pulse"/>
           </div>
-          
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-bold">
+              <span className="text-text-primary">Habit</span>
+              <span className="text-soft-primary">RPG</span>
+            </span>
+          </div>
+        </Link>
 
-
-        {/* NAVIGATION */}
+        {/* Navigation */}
         <nav className="flex items-center gap-4">
+          {/* Theme Toggle */}
+          <ThemeToggle />
+          
           {isSignedIn ? (
-            <div className="flex items-center gap-4 px-4 py-2 rounded-lg bg-cyber-blue/10 border border-cyber-line-color">
+            <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-card-bg-secondary border border-border">
               {/* Gold Display */}
-              <div className="flex items-center gap-2 group">
-                <Coins className="w-4 h-4 text-yellow-400 group-hover:animate-pulse" />
-                <span className="text-yellow-400 font-mono font-semibold text-sm">
+              <div className="flex items-center gap-1.5">
+                <Coins className="w-4 h-4 text-soft-accent" />
+                <span className="text-soft-accent font-medium text-sm">
                   {stats?.gold || 0}
                 </span>
               </div>
               
-              {/* Separator */}
-              <div className="w-px h-6 bg-cyber-line-color"></div>
-              
               {/* Mana Display */}
-              <div className="flex items-center gap-2 group">
-                <Sparkles className="w-4 h-4 text-purple-400 group-hover:animate-pulse" />
-                <span className="text-purple-400 font-mono font-semibold text-sm">
+              <div className="flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-mana" />
+                <span className="text-mana font-medium text-sm">
                   {stats?.mana || 0}
                 </span>
               </div>
-                            
-              {/* Separator */}
-              <div className="w-px h-6 bg-cyber-line-color"></div>
+              
               <UserButton 
-                  appearance={{
-                    elements: {
-                      avatarBox: "w-10 h-10 border-2 border-cyber-line-color hover:border-cyber-blue-bright transition-all duration-300",
-                      userButtonPopoverCard: "bg-cyber-dark border border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20",
-                      userButtonPopoverActionButton: "text-cyber-text-bright hover:bg-cyber-blue/20 hover:text-cyber-blue-bright"
-                    }
-                  }}
-                />
+                appearance={{
+                  elements: {
+                    avatarBox: "w-8 h-8 border border-border hover:border-soft-primary transition-all duration-300",
+                    userButtonPopoverCard: "bg-card border border-border shadow-lg",
+                    userButtonPopoverActionButton: "text-text-primary hover:bg-card-bg-secondary hover:text-soft-primary"
+                  }
+                }}
+              />
             </div>
             
           ) : (
             <>
               <SignInButton>
                 <Button
-                  variant={"outline"}
-                  className="border-cyber-line-color text-cyber-text-bright hover:text-cyber-dark hover:bg-cyber-blue-bright hover:border-cyber-blue-bright transition-all duration-300 hover:shadow-lg hover:shadow-cyber-glow-primary/20 font-medium"
+                  variant="outline"
+                  className="border-border text-text-primary hover:text-text-primary hover:bg-card-bg-secondary hover:border-soft-primary transition-all duration-300 font-medium"
                 >
                   Sign In
                 </Button>
               </SignInButton>
               <SignUpButton>
-                <Button className="bg-gradient-to-r from-cyber-blue-bright to-cyber-blue text-cyber-dark hover:from-cyber-blue to-cyber-blue-bright transition-all duration-300 hover:shadow-lg hover:shadow-cyber-glow-strong/30 font-medium">
+                <Button className="bg-soft-primary text-text-primary hover:bg-soft-primary/90 transition-all duration-300 font-medium">
                   Sign Up
                 </Button>
               </SignUpButton>

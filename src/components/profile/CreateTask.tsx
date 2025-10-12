@@ -25,16 +25,6 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
   const [repeatOptions, setRepeatOptions] = useState("");
   const [days, setDays] = useState<string[]>([]);
   const [selectedDates, setSelectedDates] = useState<Date>();
-  const [startTime, setStartTime] = useState<{
-    hour: number;
-    minute: number;
-    period: "AM" | "PM";
-  }>({ hour: 9, minute: 0, period: "AM" });
-  const [endTime, setEndTime] = useState<{
-    hour: number;
-    minute: number;
-    period: "AM" | "PM";
-  }>({ hour: 10, minute: 0, period: "AM" });
 
   function updateSelectedDate(date: Date): string {
     const year = date.getFullYear();
@@ -43,21 +33,6 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
     return `${year}-${month}-${day}`;
   }
 
-  /**
-   * Function to convert to time on database
-   */
-  const to24HourString = (
-    hour: number,
-    minute: number,
-    period: "AM" | "PM"
-  ) => {
-    let h = hour % 12;
-    if (period === "PM") h += 12;
-    return `${h.toString().padStart(2, "0")}:${minute
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
   const resetForm = () => {
     setTitle("");
     setDescription("");
@@ -65,8 +40,6 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
     setRepeatOptions("");
     setDays([]);
     setSelectedDates(undefined);
-    setStartTime({ hour: 9, minute: 0, period: "AM" });
-    setEndTime({ hour: 10, minute: 0, period: "AM" });
   };
 
   const closeModal = () => {
@@ -84,14 +57,18 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
 
     const date = updateSelectedDate(selectedDates);
 
+
     createTask(
       client,
       userId,
       title,
       description,
       difficulty,
-      date
+      date,
+      repeatOptions
     );
+
+    
 
     resetForm();
     setIsModalOpen(false);
@@ -123,30 +100,35 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
   const taskRepeatOptions = [
     {
       name: "Does Not Repeat",
+      rrule: "DNR",
       color: "from-green-500/20 to-green-600/10",
       borderColor: "border-green-500/30",
       textColor: "text-white-400",
     },
     {
       name: "Daily",
+      rrule: "D",
       color: "from-green-500/20 to-green-600/10",
       borderColor: "border-green-500/30",
       textColor: "text-white-400",
     },
     {
       name: "Weekly",
+      rrule: "W",
       color: "from-yellow-500/20 to-yellow-600/10",
       borderColor: "border-yellow-500/30",
       textColor: "text-white-400",
     },
     {
       name: "Monthly",
+      rrule: "M", 
       color: "from-red-500/20 to-red-600/10",
       borderColor: "border-red-500/30",
       textColor: "text-white-400",
     },
     {
-      name: "Every Weekday (Mon - Fri)",
+      name: "Every Weekday",
+      rrule: "DW",
       color: "from-red-500/20 to-red-600/10",
       borderColor: "border-red-500/30",
       textColor: "text-white-400",
@@ -356,11 +338,11 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {taskRepeatOptions.map((option) => (
                               <Button
-                                key={option.name}
+                                key={option.rrule}
                                 type="button"
-                                onClick={() => setRepeatOptions(option.name)}
+                                onClick={() => setRepeatOptions(option.rrule)}
                                 className={`h-14 rounded-xl border-2 transition-all duration-300 ${
-                                  repeatOptions === option.name
+                                  repeatOptions === option.rrule
                                     ? `${option.color} ${option.borderColor} ${option.textColor} shadow-xl shadow-cyber-glow-primary/40 ring-2 ring-cyber-blue-bright/50`
                                     : "bg-gradient-to-br from-cyber-blue/15 to-cyber-blue/8 border-cyber-line-color text-cyber-text-muted hover:bg-gradient-to-br hover:from-cyber-blue/25 hover:to-cyber-blue/15 hover:border-cyber-blue/50 hover:text-cyber-text-bright"
                                 }`}

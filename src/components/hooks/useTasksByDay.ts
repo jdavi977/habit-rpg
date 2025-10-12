@@ -3,7 +3,7 @@
 import { dailyCompletion, dailyTaskCheck, decreaseStreak, deleteTaskCompleted, expReward, getSelectedDayTasks, getTaskData, getUserStats, goldReward, increaseStreak, manaReward, removeTaskDb, undoExpReward, undoGoldReward, undoManaReward } from "@/lib/db";
 import { diffMultiplier, streakMultiplier } from "@/lib/reward";
 import { SupabaseClient } from "@supabase/supabase-js"
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Task = {
   id: string;
@@ -18,19 +18,13 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const today = React.useMemo(() => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }, []);
   const date = selectedDate ? (() => {
     const year = selectedDate.getFullYear();
     const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
     const day = String(selectedDate.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   })() : undefined;
+  
 
   const refresh = useCallback(async () => {
       if (!client || !userId || !selectedDay) return
@@ -46,23 +40,23 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
           id: t.id,
           title: t.title,
           streak: t.streak,
-          startTime: t.start_time,  // Map snake_case to camelCase
-          endTime: t.end_time,      // Map snake_case to camelCase
-          isDone: await dailyTaskCheck(client, userId, Number(t.id), today),
+          startTime: t.start_time,  
+          endTime: t.end_time,     
+          isDone: await dailyTaskCheck(client, userId, Number(t.id), date),
         })))
         setTasks(taskWithStatus)
       } finally {
         setLoading(false)
       }
-  }, [client, userId, selectedDay, today])
+  }, [client, userId, selectedDay, date])
 
   useEffect(() => {void refresh() }, [refresh])
 
   const completeTask = useCallback(async (taskId: string) => {
-    if (!userId) return
-    const alreadyCompleted = await dailyTaskCheck(client, userId, Number(taskId), today)
+    if (!userId || !date) return
+    const alreadyCompleted = await dailyTaskCheck(client, userId, Number(taskId), date)
     if (alreadyCompleted) return
-    await dailyCompletion(client, userId, Number(taskId), today)
+    await dailyCompletion(client, userId, Number(taskId), date)
     const taskData = await getTaskData(client, taskId)
     const stats = await getUserStats(client, userId)
     // FIX THIS FOR ALL
@@ -74,13 +68,13 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
     // Refresh tasks to get updated streak counts
     await refresh()
     window.location.reload()
-  }, [client, userId, today, refresh])
+  }, [client, userId, date, refresh])
 
   const undoTask = useCallback(async (taskId: string) => {
-    if (!userId) return
+    if (!userId || !date) return
     
     try {
-      await deleteTaskCompleted(client, userId, Number(taskId), today)
+      await deleteTaskCompleted(client, userId, Number(taskId), date)
       const taskData = await getTaskData(client, taskId)
       const stats = await getUserStats(client, userId)
       
@@ -102,7 +96,7 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
       console.error('Error undoing task:', error)
       throw error // Re-throw to be caught by removeTask
     }
-  }, [client, userId, today, refresh])
+  }, [client, userId, date, refresh])
 
   const removeTask = useCallback(async (taskId: string) => {
     if (!userId) return

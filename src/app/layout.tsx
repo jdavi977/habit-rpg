@@ -3,10 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/ui/8bit/blocks/sidebar";
-// import StreakChecker from "@/components/profile/StreakChecker";
+import BottomNav from "@/components/BottomNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HabitRPG - Ascend",
-  description: "TO DO",
+  title: "HabitRPG - Build Better Habits",
+  description: "Transform your daily habits into an engaging journey of self-improvement",
 };
 
 export default function RootLayout({
@@ -32,19 +29,18 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased dynamic-bg`}
         >
-          <SidebarProvider>
-          <Navbar />
-          {/* GRID BACKGROUND */}
-          <div className="fixed inset-0 -z-1">
-            <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background"></div>
-            <div className="absolute inset-0 bg-[linear-gradient(var(--cyber-grid-color)_1px,transparent_1px),linear-gradient(90deg,var(--cyber-grid-color)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+          {/* Floating Background Elements */}
+          <div className="floating-elements">
+            <div className="floating-element"></div>
+            <div className="floating-element"></div>
+            <div className="floating-element"></div>
           </div>
-            <AppSidebar />
-            <main className="pt-24 flex-grow">{children}</main>
-          </SidebarProvider>
-          <Footer />
+          
+          <Navbar />
+          <main className="pt-20 pb-20 max-w-2xl mx-auto px-4 relative z-10">{children}</main>
+          <BottomNav />
         </body>
       </html>
     </ClerkProvider>

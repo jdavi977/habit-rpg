@@ -26,24 +26,9 @@ export async function getUserInfo(client: SupabaseClient, userId: string) {
   return data;
 }
 
-// /**
-//  * Provides all the tasks of the user.
-//  * @param client An authenticated Supabase client instance.
-//  * @returns A Promise to the data of all the user's tasks.
-//  */
-// export async function getTasks(client: SupabaseClient) {
-//   const { data, error } = await client.from("tasks").select();
-//   if (error) throw error;
-//   return data ?? [];
-// }
-
-
-export async function createTask(client: SupabaseClient, userId: string, title: string, description: string, difficulty: string, date: string) {
-  // Convert time strings to timestamps
-  const today = new Date();
-  
+export async function createTask(client: SupabaseClient, userId: string, title: string, description: string, difficulty: string, date: string, repeatOption: string) {
   const { data, error} = await client.from("task")
-    .insert({user_id: userId, title: title, description: description, difficulty: difficulty, date: date})
+    .insert({user_id: userId, title: title, description: description, difficulty: difficulty, date: date, rrule: repeatOption})
   if (error) throw error;
   return data;
 }

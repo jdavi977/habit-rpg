@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { Flame } from "lucide-react";
-import '../../styles/fullcalendar-cyber.css'
-
+import { Flame, CheckCircle, RotateCcw, Trash2 } from "lucide-react";
 
 type TaskListProps = {
   selectedDay: string,
@@ -24,7 +22,6 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, curre
     }
 }, [tasks])
 
-
   return (
     <div className="space-y-4">
         <>
@@ -32,26 +29,26 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, curre
         // Enhanced loading state
         <div className="flex flex-col items-center justify-center py-12 space-y-4">
           <div className="relative">
-            <div className="animate-spin rounded-full h-10 w-10 border-2 border-cyber-line-color"></div>
-            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-cyber-blue-bright absolute top-0 left-0"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-2 border-border/30"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-soft-primary absolute top-0 left-0"></div>
           </div>
           <div className="text-center">
-            <p className="text-cyber-text-muted text-sm">Loading tasks...</p>
+            <p className="text-text-secondary text-sm">Loading tasks...</p>
             <div className="flex items-center justify-center gap-1 mt-2">
-              <div className="w-1 h-1 bg-cyber-blue-bright rounded-full animate-pulse"></div>
-              <div className="w-1 h-1 bg-cyber-blue-bright rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-              <div className="w-1 h-1 bg-cyber-blue-bright rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+              <div className="w-1 h-1 bg-soft-primary rounded-full animate-gentle-pulse"></div>
+              <div className="w-1 h-1 bg-soft-primary rounded-full animate-gentle-pulse" style={{animationDelay: '0.2s'}}></div>
+              <div className="w-1 h-1 bg-soft-primary rounded-full animate-gentle-pulse" style={{animationDelay: '0.4s'}}></div>
             </div>
           </div>
         </div>
       ) : tasks.length === 0 ? (
         // Enhanced empty state
         <div className="text-center py-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-cyber-terminal-bg/50 border border-cyber-line-color rounded-full mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-card-bg-secondary border border-border rounded-2xl mb-4">
             <div className="text-2xl">📝</div>
           </div>
-          <h3 className="text-lg font-semibold text-cyber-text-bright mb-2">No tasks for {selectedDay}</h3>
-          <p className="text-cyber-text-muted text-sm">Create some tasks to get started on your journey!</p>
+          <h3 className="text-lg font-semibold text-text-primary mb-2">No tasks for {selectedDay}</h3>
+          <p className="text-text-secondary text-sm">Create some tasks to get started on your journey!</p>
         </div>
       ) : (
         // Task list with completion and removal actions
@@ -59,29 +56,29 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, curre
           {tasks.map((task) => (
             <li
               key={task.id}
-              className={`group flex items-center justify-between rounded-xl border p-4 transition-all duration-300 hover:shadow-lg hover:shadow-cyber-glow-primary/20 hover:border-cyber-blue/40 hover:scale-[1.02]
+              className={`group flex items-center justify-between rounded-2xl border p-4 transition-all duration-300 hover:shadow-md hover:border-soft-primary/40 hover:scale-[1.01]
               ${task.isDone 
-                ? "bg-gradient-to-r from-green-500/20 to-green-600/10 border-green-500/30" 
-                : "bg-gradient-to-r from-cyber-blue/10 to-cyber-blue/5 border-cyber-line-color"
+                ? "bg-gradient-to-r from-soft-secondary/20 to-soft-secondary/10 border-soft-secondary/30" 
+                : "bg-gradient-to-r from-card-bg-secondary to-card-bg border-border"
               }
             `}
             >
               <div className="flex items-center gap-4 flex-1 min-w-0">
                 {/* Streak Counter */}
-                <div className="flex items-center gap-2 bg-cyber-terminal-bg/50 border border-cyber-line-color rounded-lg px-3 py-2">
-                  <Flame className="h-4 w-4 text-orange-400"/>
-                  <span className="text-orange-400 font-bold text-sm">{task.streak}</span>
+                <div className="flex items-center gap-2 bg-card-bg-secondary border border-border rounded-xl px-3 py-2">
+                  <Flame className="h-4 w-4 text-soft-accent"/>
+                  <span className="text-soft-accent font-semibold text-sm">{task.streak}</span>
                 </div>
                 
                 {/* Task Title */}
                 <div className="flex-1 min-w-0">
-                  <span className={`font-medium truncate block ${
-                    task.isDone ? "text-green-400 line-through" : "text-cyber-text-bright"
+                  <span className={`font-medium truncate block text-base ${
+                    task.isDone ? "text-soft-secondary line-through" : "text-text-primary"
                   }`}>
                     {task.title}
                   </span>
                   {task.isDone && (
-                    <div className="text-xs text-green-300/70 mt-1">Completed!</div>
+                    <div className="text-sm text-soft-secondary/70 mt-1">Completed!</div>
                   )}
                 </div>
               </div>
@@ -92,33 +89,36 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, curre
                   <Button
                     type="button"
                     size="sm"
-                    className="bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/30 hover:shadow-xl hover:shadow-green-600/40 transition-all duration-200 hover:scale-105"
+                    className="bg-soft-secondary hover:bg-soft-secondary/80 text-text-primary shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 min-h-[44px] min-w-[44px]"
                     onClick={() => completeTask(task.id)}
                   >
-                    ✓ Complete
+                    <CheckCircle className="h-4 w-4" />
+                    <span className="ml-1">Complete</span>
                   </Button>
                 ) : (
                   <Button
                     type="button"
                     size="sm"
-                    className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 transition-all duration-200 hover:scale-105"
+                    className="bg-soft-primary hover:bg-soft-primary/80 text-text-primary shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 min-h-[44px] min-w-[44px]"
                     onClick={() => undoTask(task.id)}
                   >
-                    ↶ Undo
+                    <RotateCcw className="h-4 w-4" />
+                    <span className="ml-1">Undo</span>
                   </Button>
                 )) : (
-                  <div className="w-20 h-8 flex items-center justify-center">
-                    <span className="text-xs text-cyber-text-muted">View Only</span>
+                  <div className="w-20 h-11 flex items-center justify-center">
+                    <span className="text-xs text-text-secondary">View Only</span>
                   </div>
                 )}
                 <Button
                   type="button"
                   size="sm"
                   variant="destructive"
-                  className="shadow-lg shadow-red-600/30 hover:shadow-xl hover:shadow-red-600/40 transition-all duration-200 hover:scale-105"
+                  className="shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 min-h-[44px] min-w-[44px]"
                   onClick={() => removeTask(task.id)}
                 >
-                  🗑️ Remove
+                  <Trash2 className="h-4 w-4" />
+                  <span className="ml-1">Remove</span>
                 </Button>
               </div>
             </li>

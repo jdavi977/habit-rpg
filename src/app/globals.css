@@ -38,21 +38,26 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
 
-  /* Custom Cyberpunk Colors */
-  --color-cyber-black: var(--cyber-black);
-  --color-cyber-dark: var(--cyber-dark);
-  --color-cyber-blue-bright: var(--cyber-blue-bright);
-  --color-cyber-blue: var(--cyber-blue);
-  --color-cyber-blue-dark: var(--cyber-blue-dark);
-  --color-cyber-blue-glow: var(--cyber-blue-glow);
-  --color-cyber-accent: var(--cyber-accent);
-  --color-cyber-text-bright: var(--cyber-text-bright);
-  --color-cyber-text-muted: var(--cyber-text-muted);
-  --color-cyber-text-dim: var(--cyber-text-dim);
-  --color-cyber-line-color: var(--cyber-line-color);
-  --color-cyber-glow-primary: var(--cyber-glow-primary);
-  --color-cyber-glow-strong: var(--cyber-glow-strong);
-  --color-cyber-terminal-bg: var(--cyber-terminal-bg);
+  /* Soft Theme Colors */
+  --color-soft-primary: var(--soft-primary);
+  --color-soft-secondary: var(--soft-secondary);
+  --color-soft-accent: var(--soft-accent);
+  --color-soft-pink: var(--soft-pink);
+  --color-soft-lavender: var(--soft-lavender);
+  --color-soft-peach: var(--soft-peach);
+  --color-warm-bg: var(--warm-bg);
+  --color-warm-bg-secondary: var(--warm-bg-secondary);
+  --color-card-bg: var(--card-bg);
+  --color-card-bg-secondary: var(--card-bg-secondary);
+  --color-bg-gradient-primary: var(--bg-gradient-primary);
+  --color-bg-gradient-secondary: var(--bg-gradient-secondary);
+  --color-bg-gradient-accent: var(--bg-gradient-accent);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-health: var(--health-color);
+  --color-mana: var(--mana-color);
+  --color-exp: var(--exp-color);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -62,126 +67,132 @@
 
 :root {
   /* Base Variables */
-  --radius: 0.625rem;
+  --radius: 1rem;
 
-  /* Cyberpunk Theme Colors */
-  --cyber-black: #000000;
-  --cyber-dark: #0a0c14;
-  --cyber-blue-bright: #18cef2;
-  --cyber-blue: #1089bd;
-  --cyber-blue-dark: #0b4a7d;
-  --cyber-blue-glow: #38bdf8;
-  --cyber-accent: #0ff4;
+  /* Soft Wellness Theme Colors */
+  --soft-primary: #7dd3fc; /* Sky blue */
+  --soft-secondary: #a7f3d0; /* Mint green */
+  --soft-accent: #fbbf24; /* Warm yellow */
+  --soft-pink: #f9a8d4; /* Soft pink */
+  --soft-lavender: #c4b5fd; /* Lavender */
+  --soft-peach: #fed7aa; /* Peach */
+
+  /* Backgrounds */
+  --warm-bg: #fefefe;
+  --warm-bg-secondary: #f8fafc;
+  --card-bg: #ffffff;
+  --card-bg-secondary: #f1f5f9;
+
+  /* Dynamic Background Gradients */
+  --bg-gradient-primary: linear-gradient(135deg, #fefefe 0%, #f8fafc 50%, #f1f5f9 100%);
+  --bg-gradient-secondary: linear-gradient(45deg, #fefefe 0%, #f0f9ff 25%, #f8fafc 50%, #f0fdf4 75%, #fefefe 100%);
+  --bg-gradient-accent: radial-gradient(ellipse at top, #f0f9ff 0%, #fefefe 50%, #f8fafc 100%);
+
+  /* Text Colors */
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
 
   /* Background */
-  --background: var(--cyber-dark);
-  --foreground: #f2f2f2;
+  --background: var(--warm-bg);
+  --foreground: var(--text-primary);
 
   /* Card and popover elements */
-  --card: #111827;
-  --card-foreground: #f2f2f2;
-  --popover: #111827;
-  --popover-foreground: #f2f2f2;
+  --card: var(--card-bg);
+  --card-foreground: var(--text-primary);
+  --popover: var(--card-bg);
+  --popover-foreground: var(--text-primary);
 
-  /* Primary - Main blue */
-  --primary: var(--cyber-blue-bright);
-  --primary-foreground: var(--cyber-dark);
+  /* Primary - Soft sky blue */
+  --primary: var(--soft-primary);
+  --primary-foreground: var(--text-primary);
 
-  /* Secondary - Darker blue */
-  --secondary: var(--cyber-blue);
-  --secondary-foreground: #ffffff;
+  /* Secondary - Mint green */
+  --secondary: var(--soft-secondary);
+  --secondary-foreground: var(--text-primary);
 
-  /* Accent - Light blue with glow */
-  --accent: var(--cyber-blue-glow);
-  --accent-foreground: var(--cyber-dark);
+  /* Accent - Warm yellow */
+  --accent: var(--soft-accent);
+  --accent-foreground: var(--text-primary);
 
   /* Muted elements */
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
+  --muted: var(--card-bg-secondary);
+  --muted-foreground: var(--text-secondary);
 
   /* System colors */
-  --destructive: #ef4444;
-  --border: rgba(24, 206, 242, 0.2);
-  --input: rgba(24, 206, 242, 0.2);
-  --ring: var(--cyber-blue);
+  --destructive: #f87171;
+  --border: #e2e8f0;
+  --input: #f1f5f9;
+  --ring: var(--soft-primary);
 
-  /* Chart colors - cyberpunk theme */
-  --chart-1: var(--cyber-blue-bright);
-  --chart-2: #3b82f6;
-  --chart-3: var(--cyber-blue);
-  --chart-4: #06b6d4;
-  --chart-5: #0284c7;
+  /* Chart colors - soft theme */
+  --chart-1: var(--soft-primary);
+  --chart-2: var(--soft-secondary);
+  --chart-3: var(--soft-accent);
+  --chart-4: var(--soft-pink);
+  --chart-5: var(--soft-lavender);
 
-  /* Sidebar colors */
-  --sidebar: var(--cyber-dark);
-  --sidebar-foreground: #f2f2f2;
-  --sidebar-primary: var(--cyber-blue-bright);
-  --sidebar-primary-foreground: var(--cyber-dark);
-  --sidebar-accent: var(--cyber-blue);
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(24, 206, 242, 0.2);
-  --sidebar-ring: var(--cyber-blue);
-
-  /* Custom Cyberpunk UI Variables */
-  --cyber-grid-color: rgba(24, 206, 242, 0.05);
-  --cyber-glow-primary: rgba(24, 206, 242, 0.2);
-  --cyber-glow-strong: rgba(24, 206, 242, 0.5);
-  --cyber-line-color: rgba(24, 206, 242, 0.3);
-  --cyber-terminal-bg: rgba(0, 0, 0, 0.7);
-  --cyber-text-bright: #ffffff;
-  --cyber-text-muted: rgba(242, 242, 242, 0.7);
-  --cyber-text-dim: rgba(242, 242, 242, 0.5);
+  /* Gaming Elements - Subtle */
+  --health-color: #fbb6ce; /* Soft coral */
+  --mana-color: var(--soft-lavender);
+  --exp-color: var(--soft-secondary);
 }
 
 .dark {
+  /* Soft Dark Mode */
+  --warm-bg: #0a0e1a;
+  --warm-bg-secondary: #1a1f2e;
+  --card-bg: #1e2430;
+  --card-bg-secondary: #2a3142;
+
+  /* Dynamic Background Gradients - Dark */
+  --bg-gradient-primary: linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 50%, #2a3142 100%);
+  --bg-gradient-secondary: linear-gradient(45deg, #0a0e1a 0%, #1e3a8a 25%, #1a1f2e 50%, #166534 75%, #0a0e1a 100%);
+  --bg-gradient-accent: radial-gradient(ellipse at top, #1e3a8a 0%, #0a0e1a 50%, #1a1f2e 100%);
+
+  /* Text Colors */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
   /* Background */
-  --background: var(--cyber-dark);
-  --foreground: #f2f2f2;
+  --background: var(--warm-bg);
+  --foreground: var(--text-primary);
 
   /* Card and popover elements */
-  --card: #111827;
-  --card-foreground: #f2f2f2;
-  --popover: #111827;
-  --popover-foreground: #f2f2f2;
+  --card: var(--card-bg);
+  --card-foreground: var(--text-primary);
+  --popover: var(--card-bg);
+  --popover-foreground: var(--text-primary);
 
-  /* Primary - Main blue */
-  --primary: var(--cyber-blue-bright);
-  --primary-foreground: var(--cyber-dark);
+  /* Primary - Soft sky blue */
+  --primary: var(--soft-primary);
+  --primary-foreground: var(--text-primary);
 
-  /* Secondary - Darker blue */
-  --secondary: var(--cyber-blue);
-  --secondary-foreground: #ffffff;
+  /* Secondary - Mint green */
+  --secondary: var(--soft-secondary);
+  --secondary-foreground: var(--text-primary);
 
-  /* Accent - Light blue with glow */
-  --accent: var(--cyber-blue-glow);
-  --accent-foreground: var(--cyber-dark);
+  /* Accent - Warm yellow */
+  --accent: var(--soft-accent);
+  --accent-foreground: var(--text-primary);
 
   /* Muted elements */
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
+  --muted: var(--card-bg-secondary);
+  --muted-foreground: var(--text-secondary);
 
   /* System colors */
-  --destructive: #ef4444;
-  --border: rgba(24, 206, 242, 0.2);
-  --input: rgba(24, 206, 242, 0.2);
-  --ring: var(--cyber-blue);
+  --destructive: #f87171;
+  --border: #3a4556;
+  --input: #2a3142;
+  --ring: var(--soft-primary);
 
-  /* Chart colors - cyberpunk theme */
-  --chart-1: var(--cyber-blue-bright);
-  --chart-2: #3b82f6;
-  --chart-3: var(--cyber-blue);
-  --chart-4: #06b6d4;
-  --chart-5: #0284c7;
-
-  /* Sidebar colors */
-  --sidebar: var(--cyber-dark);
-  --sidebar-foreground: #f2f2f2;
-  --sidebar-primary: var(--cyber-blue-bright);
-  --sidebar-primary-foreground: var(--cyber-dark);
-  --sidebar-accent: var(--cyber-blue);
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(24, 206, 242, 0.2);
-  --sidebar-ring: var(--cyber-blue);
+  /* Chart colors - soft theme */
+  --chart-1: var(--soft-primary);
+  --chart-2: var(--soft-secondary);
+  --chart-3: var(--soft-accent);
+  --chart-4: var(--soft-pink);
+  --chart-5: var(--soft-lavender);
 }
 
 @layer base {
@@ -190,68 +201,163 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-size: 16px;
+    line-height: 1.6;
+    background: var(--bg-gradient-primary);
+    background-attachment: fixed;
+    min-height: 100vh;
   }
-  /* https://tailwindcss.com/docs/upgrade-guide#buttons-use-the-default-cursor */
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
 }
 
-@keyframes scanline {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 0 100%;
-  }
+/* Dynamic Background Elements */
+.dynamic-bg {
+  position: relative;
 }
 
-/* TODO: EXPLAIN THIS BC U PROMISED JUST IN THE FIRST SECTION */
-@keyframes slow-spin {
-  from {
-    transform: rotate(0deg);
+.dynamic-bg::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-gradient-secondary);
+  opacity: 0.3;
+  animation: gentle-shift 20s ease-in-out infinite;
+  z-index: -2;
+}
+
+.dynamic-bg::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-gradient-accent);
+  opacity: 0.2;
+  animation: gentle-shift 25s ease-in-out infinite reverse;
+  z-index: -1;
+}
+
+@keyframes gentle-shift {
+  0%, 100% {
+    transform: translateX(0) translateY(0) scale(1);
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-scanline {
-  animation: scanline 8s linear infinite;
-}
-
-.animate-slow-spin {
-  animation: slow-spin 12s linear infinite;
-}
-
-@keyframes sound-wave {
-  0% {
-    height: 10%;
+  25% {
+    transform: translateX(-2%) translateY(-1%) scale(1.01);
   }
   50% {
-    height: 100%;
+    transform: translateX(1%) translateY(-2%) scale(0.99);
   }
-  100% {
-    height: 10%;
+  75% {
+    transform: translateX(-1%) translateY(1%) scale(1.01);
   }
 }
 
-.animate-sound-wave {
-  animation: sound-wave 1.2s ease-in-out infinite;
+/* Floating Elements */
+.floating-elements {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: -1;
 }
 
-@keyframes fadeIn {
+.floating-element {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--soft-primary), var(--soft-secondary));
+  opacity: 0.03;
+  animation: float 15s ease-in-out infinite;
+}
+
+.dark .floating-element {
+  opacity: 0.08;
+}
+
+.floating-element:nth-child(1) {
+  width: 200px;
+  height: 200px;
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.floating-element:nth-child(2) {
+  width: 150px;
+  height: 150px;
+  top: 60%;
+  right: 15%;
+  animation-delay: 5s;
+}
+
+.floating-element:nth-child(3) {
+  width: 100px;
+  height: 100px;
+  bottom: 20%;
+  left: 20%;
+  animation-delay: 10s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-20px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(10px) rotate(240deg);
+  }
+}
+
+/* Gentle Animations */
+@keyframes gentle-fade-in {
   from {
     opacity: 0;
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.5s ease-in-out forwards;
+@keyframes gentle-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes soft-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-gentle-fade-in {
+  animation: gentle-fade-in 0.5s ease-out forwards;
+}
+
+.animate-gentle-pulse {
+  animation: gentle-pulse 2s ease-in-out infinite;
+}
+
+.animate-soft-bounce {
+  animation: soft-bounce 1s ease-in-out infinite;
 }
 
 /* FullCalendar Cyberpunk Integration */
