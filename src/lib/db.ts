@@ -1,4 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
+import { act } from "react";
 
 /**
  * Provides the stats of the user.
@@ -95,28 +96,37 @@ export async function undoGoldReward(client: SupabaseClient, userId: string, dif
     .single()
 }
 
-export async function manaReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, mana: number) {
+export async function manaReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, mana: number, total_mana: number) {
   const increase = Math.round(diffMultiplier * streakMultiplier)
-  const newMana = mana + increase
+  const newMana = addWithCap(mana, increase, total_mana)
 
-  return client.from('user_stats')
-      .update({ mana: newMana })
+  await client.from('user_stats')
+      .update({ mana: newMana.cappedValue })
       .eq('user_id', userId)
       .select()
       .single()
+
+  return {
+    actualIncrease: newMana.actualGain,
+  }
 }
 
-export async function undoManaReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, mana: number) {
+const addWithCap = (current: number, addition: number, cap: number) => {
+  const newValue = current + addition
+  const cappedValue = Math.min(newValue, cap)
+  const excessValue = newValue - cappedValue
+  const actualGain = cappedValue - current
+
+  return {cappedValue, excessValue, actualGain}
+}
+
+export async function undoManaReward(client: SupabaseClient, userId: string, mana: number, actualIncrease: number) {
   if (mana === null || mana === undefined) {
     console.error('Mana is null or undefined, cannot undo reward')
     return
   }
-  
-  const deduction = Math.round(diffMultiplier * streakMultiplier)
-  const newMana = Math.max(mana - deduction, 0)
-
   return client.from('user_stats')
-    .update({ mana: newMana  })
+    .update({ mana: mana - actualIncrease  })
     .eq('user_id', userId)
     .select()
     .single()
@@ -197,11 +207,19 @@ export async function dailyTaskCheck(client: SupabaseClient, userId: string, tas
  * @param date The completion date
  * @returns A Promise to the result of the Supabase upsert operation.
  */
-export async function dailyCompletion(client: SupabaseClient, userId: string, taskId: number, date: string) {
+export async function dailyCompletion(client: SupabaseClient, userId: string, taskId: number, date: string, manaIncrease: number) {
   return client.from("task_completions").upsert(
-    [{ user_id: userId, task_id: taskId, date: date }],
+    [{ user_id: userId, task_id: taskId, date: date, mana_increase: manaIncrease}],
     { onConflict: "user_id, task_id, date", ignoreDuplicates: true }
   );
+}
+
+export async function getTaskCompletionData(client: SupabaseClient, userId: string, taskId: number, date:string) {
+  const {data, error} = await client
+    .from("task_completions")
+    .select().eq("user_id", userId).eq('task_id', taskId).eq('date', date).maybeSingle();
+    if (error) throw error;
+  return data
 }
 
 export async function getSelectedDayTasks(client: SupabaseClient, date: string) {

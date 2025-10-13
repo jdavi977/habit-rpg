@@ -1,7 +1,7 @@
 'use client'
 
-import { dailyCompletion, dailyTaskCheck, decreaseStreak, deleteTaskCompleted, expReward, getSelectedDayTasks, getTaskData, getUserStats, goldReward, increaseStreak, manaReward, removeTaskDb, undoExpReward, undoGoldReward, undoManaReward } from "@/lib/db";
-import { diffMultiplier, streakMultiplier } from "@/lib/reward";
+import { dailyCompletion, dailyTaskCheck, decreaseStreak, deleteTaskCompleted, expReward, getSelectedDayTasks, getTaskCompletionData, getTaskData, getUserStats, goldReward, increaseStreak, manaReward, removeTaskDb, undoExpReward, undoGoldReward, undoManaReward } from "@/lib/db";
+import { computeRewardMultipliers } from "@/lib/reward";
 import { SupabaseClient } from "@supabase/supabase-js"
 import { useCallback, useEffect, useState } from "react";
 
@@ -67,41 +67,50 @@ const useTasksByDay = (client: SupabaseClient, userId?: string, selectedDay?: st
     if (!userId || !date) return
     const alreadyCompleted = await dailyTaskCheck(client, userId, Number(taskId), date)
     if (alreadyCompleted) return
-    await dailyCompletion(client, userId, Number(taskId), date)
     const taskData = await getTaskData(client, taskId)
     const stats = await getUserStats(client, userId)
-    // FIX THIS FOR ALL
+    
+    // Calculate reward multipliers using helper function
+    const multipliers = computeRewardMultipliers(taskData?.difficulty, taskData?.streak)
+    
     await increaseStreak(client, taskId, taskData?.streak)
-    await goldReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak), stats?.gold)
-    await expReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak), stats?.exp)
-    await manaReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak), stats?.mana)
+    await goldReward(client, userId, multipliers.diffMultiplier, multipliers.streakMultiplier, stats?.gold)
+    await expReward(client, userId, multipliers.diffMultiplier, multipliers.streakMultiplier, stats?.exp)
+    const manaResult = await manaReward(client, userId, multipliers.diffMultiplier, multipliers.streakMultiplier, stats?.mana, stats?.total_mana)
+    await dailyCompletion(client, userId, Number(taskId), date, manaResult.actualIncrease)
     setTasks(ts => ts.map(t => t.id === taskId ? {...t, isDone: true} : t))
     // Refresh tasks to get updated streak counts
     await refresh()
-    window.location.reload()
+    // window.location.reload()
   }, [client, userId, date, refresh])
 
   const undoTask = useCallback(async (taskId: string) => {
     if (!userId || !date) return
     
     try {
+      const completedData = await getTaskCompletionData(client, userId, Number(taskId), date)
       await deleteTaskCompleted(client, userId, Number(taskId), date)
       const taskData = await getTaskData(client, taskId)
       const stats = await getUserStats(client, userId)
-      
       if (!stats) {
         console.error('User stats not found, cannot undo task rewards')
         return
       }
       
+      // Calculate reward multipliers for undo (using streak - 1)
+      const undoMultipliers = computeRewardMultipliers(taskData?.difficulty, taskData?.streak - 1)
+      const currentMana = stats.mana
+      const manaIncrease = completedData.mana_increase
+      
       await decreaseStreak(client, taskId, taskData?.streak)
-      await undoGoldReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats.gold)
-      await undoExpReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats.exp)
-      await undoManaReward(client, userId, diffMultiplier(taskData?.difficulty), streakMultiplier(taskData?.streak - 1), stats.mana)
+      await undoGoldReward(client, userId, undoMultipliers.diffMultiplier, undoMultipliers.streakMultiplier, stats.gold)
+      await undoExpReward(client, userId, undoMultipliers.diffMultiplier, undoMultipliers.streakMultiplier, stats.exp)
+      await undoManaReward(client, userId, currentMana, manaIncrease)
+      
       setTasks(ts => ts.map(t => t.id === taskId ? {...t, isDone: false} : t))
       // Refresh tasks to get updated streak counts
       await refresh()
-      window.location.reload()
+      // window.location.reload()
 
     } catch (error) {
       console.error('Error undoing task:', error)
