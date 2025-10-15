@@ -18,7 +18,6 @@ import {
   undoGoldReward,
   undoManaReward,
 } from "@/lib/db";
-import { computeRewardMultipliers } from "@/lib/reward";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState } from "react";
 
@@ -103,25 +102,19 @@ const useTasksByDay = (
       const taskData = await getTaskData(client, taskId);
       const stats = await getUserStats(client, userId);
 
-      // Calculate reward multipliers using helper function
-      const multipliers = computeRewardMultipliers(
-        taskData?.difficulty,
-        taskData?.streak
-      );
-
       await increaseStreak(client, taskId, taskData?.streak);
       await goldReward(
         client,
         userId,
-        multipliers.diffMultiplier,
-        multipliers.streakMultiplier,
+        taskData?.difficulty,
+        taskData?.streak,
         stats?.gold
       );
       await expReward(
         client,
         userId,
-        multipliers.diffMultiplier,
-        multipliers.streakMultiplier,
+        taskData?.difficulty,
+        taskData?.streak,
         stats.exp,
         stats.total_exp,
         stats.level
@@ -129,8 +122,8 @@ const useTasksByDay = (
       const manaResult = await manaReward(
         client,
         userId,
-        multipliers.diffMultiplier,
-        multipliers.streakMultiplier,
+        taskData?.difficulty,
+        taskData?.streak,
         stats?.mana,
         stats?.total_mana
       );
@@ -170,11 +163,6 @@ const useTasksByDay = (
           return;
         }
 
-        // Calculate reward multipliers for undo (using streak - 1)
-        const undoMultipliers = computeRewardMultipliers(
-          taskData?.difficulty,
-          taskData?.streak - 1
-        );
         const currentMana = stats.mana;
         const manaIncrease = completedData.mana_increase;
 
@@ -182,16 +170,17 @@ const useTasksByDay = (
         await undoGoldReward(
           client,
           userId,
-          undoMultipliers.diffMultiplier,
-          undoMultipliers.streakMultiplier,
+          taskData?.difficulty,
+          taskData?.streak - 1,
           stats.gold
         );
         await undoExpReward(
           client,
           userId,
-          undoMultipliers.diffMultiplier,
-          undoMultipliers.streakMultiplier,
-          stats.exp
+          taskData?.difficulty,
+          taskData?.streak - 1,
+          stats.exp,
+          stats.level
         );
         await undoManaReward(client, userId, currentMana, manaIncrease);
 

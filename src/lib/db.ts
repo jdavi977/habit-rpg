@@ -1,4 +1,10 @@
 import { SupabaseClient } from "@supabase/supabase-js";
+import { computeRewardMultipliers, totalExpForLevel } from './reward';
+
+// Helper function to calculate reward multipliers
+const getRewardMultipliers = (difficulty: string, streak: number, level: number = 1) => {
+  return computeRewardMultipliers(difficulty, streak, level);
+};
 
 /**
  * Provides the stats of the user.
@@ -77,19 +83,21 @@ export async function removeTaskDb(client: SupabaseClient, taskId: string) {
  * Gives a gold reward to the user which scales based on difficulty of the task and the current streak.
  * @param client An authenticated Supabase client instance.
  * @param userId The unique identifier of the user.
- * @param diffMultiplier The difficulty multiplier.
- * @param streakMultiplier The streak multiplier.
+ * @param difficulty The difficulty level of the task.
+ * @param streak The current streak of the task.
  * @param gold The amount of gold the user currently has.
  * @returns A Promise to the result of the update operation.
  */
 export async function goldReward(
   client: SupabaseClient,
   userId: string,
-  diffMultiplier: number,
-  streakMultiplier: number,
+  difficulty: string,
+  streak: number,
   gold: number
 ) {
-  const increase = Math.round(diffMultiplier * streakMultiplier);
+  const multipliers = getRewardMultipliers(difficulty, streak, 1); // Gold doesn't use level multiplier
+  
+  const increase = multipliers.gold;
   const newGold = gold + increase;
 
   return client
@@ -103,8 +111,8 @@ export async function goldReward(
 export async function undoGoldReward(
   client: SupabaseClient,
   userId: string,
-  diffMultiplier: number,
-  streakMultiplier: number,
+  difficulty: string,
+  streak: number,
   gold: number
 ) {
   if (gold === null || gold === undefined) {
@@ -112,7 +120,9 @@ export async function undoGoldReward(
     return;
   }
 
-  const deduction = Math.round(diffMultiplier * streakMultiplier);
+  const multipliers = getRewardMultipliers(difficulty, streak, 1); // Gold doesn't use level multiplier
+  
+  const deduction = multipliers.gold;
   const newGold = Math.max(gold - deduction, 0);
 
   return client
@@ -126,12 +136,14 @@ export async function undoGoldReward(
 export async function manaReward(
   client: SupabaseClient,
   userId: string,
-  diffMultiplier: number,
-  streakMultiplier: number,
+  difficulty: string,
+  streak: number,
   mana: number,
   total_mana: number
 ) {
-  const increase = Math.round(diffMultiplier * streakMultiplier);
+  const multipliers = getRewardMultipliers(difficulty, streak, 1); // Mana doesn't use level multiplier
+  
+  const increase = multipliers.mana;
   const newMana = addWithCap(mana, increase, total_mana);
 
   await client
@@ -176,16 +188,19 @@ export async function undoManaReward(
 export async function expReward(
   client: SupabaseClient,
   userId: string,
-  diffMultiplier: number,
-  streakMultiplier: number,
+  difficulty: string,
+  streak: number,
   exp: number,
   totalExp: number,
   level: number
 ) {
-  const increase = Math.round(diffMultiplier * streakMultiplier);
-  const newExp = exp + increase;
+  const multipliers = getRewardMultipliers(difficulty, streak, level);
+  
+  const increase = multipliers.exp;
+  let newExp = exp + increase;
   if (newExp > totalExp) {
-    await increaseLevel(client, userId, level)
+    await increaseLevel(client, userId, level);
+    newExp = newExp - totalExp;
   }
 
   return client
@@ -197,26 +212,67 @@ export async function expReward(
 }
 
 export async function increaseLevel(
-  client: SupabaseClient, userId: string, level: number
+  client: SupabaseClient,
+  userId: string,
+  level: number
 ) {
-  // update total_exp and exp
-  return client.from("user_stats").update({level: level + 1}).eq("user_id", userId).select().single();
+  const newLevel = level + 1;
+  const newTotalExp = totalExpForLevel(newLevel);
+  
+  // update level and total_exp
+  return client
+    .from("user_stats")
+    .update({ 
+      level: newLevel,
+      total_exp: newTotalExp
+    })
+    .eq("user_id", userId)
+    .select()
+    .single();
+}
+
+export async function decreaseLevel(
+  client: SupabaseClient,
+  userId: string,
+  level: number
+) {
+  const newLevel = Math.max(level - 1, 1); // Ensure level doesn't go below 1
+  const newTotalExp = totalExpForLevel(newLevel);
+  
+  // update level and total_exp
+  return client
+    .from("user_stats")
+    .update({ 
+      level: newLevel,
+      total_exp: newTotalExp
+    })
+    .eq("user_id", userId)
+    .select()
+    .single();
 }
 
 export async function undoExpReward(
   client: SupabaseClient,
   userId: string,
-  diffMultiplier: number,
-  streakMultiplier: number,
-  exp: number
+  difficulty: string,
+  streak: number,
+  exp: number,
+  level: number
 ) {
   if (exp === null || exp === undefined) {
     console.error("Exp is null or undefined, cannot undo reward");
     return;
   }
 
-  const deduction = Math.round(diffMultiplier * streakMultiplier);
-  const newExp = Math.max(exp - deduction, 0);
+  const multipliers = getRewardMultipliers(difficulty, streak, level);
+  
+  const deduction = multipliers.exp;
+  let newExp = exp - deduction;
+  if (newExp < 0) {
+    await decreaseLevel(client, userId, level);
+    const stats = await getUserStats(client, userId);
+    newExp = stats.total_exp + newExp; // newExp is negative, so we add it
+  }
 
   return client
     .from("user_stats")
