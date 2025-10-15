@@ -43,7 +43,10 @@ const useUserSettings = (client: SupabaseClient, userId: string) => {
           setNextRolloverNull(isNull)
         } catch {}
       })()
-      return () => { reqIdRef.current++ }
+      return () => { 
+        const currentReqId = reqIdRef.current;
+        reqIdRef.current = currentReqId + 1;
+      }
     }, [userId, client])
 
   return { convertedTime, nextRolloverNull }

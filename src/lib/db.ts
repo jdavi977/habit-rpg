@@ -1,4 +1,10 @@
 import { SupabaseClient } from "@supabase/supabase-js";
+import { computeRewardMultipliers, totalExpForLevel } from './reward';
+
+// Helper function to calculate reward multipliers
+const getRewardMultipliers = (difficulty: string, streak: number, level: number = 1) => {
+  return computeRewardMultipliers(difficulty, streak, level);
+};
 
 /**
  * Provides the stats of the user.
@@ -6,10 +12,10 @@ import { SupabaseClient } from "@supabase/supabase-js";
  * @param userId The unique identifier of the user.
  * @returns A Promise to the data of the user's stats.
  */
-export async function getUserStats(client: SupabaseClient, userId: string) {  
+export async function getUserStats(client: SupabaseClient, userId: string) {
   const { data, error } = await client
     .from("user_stats")
-    .select("health, total_health, level, exp, gold, mana, exp, total_exp, total_mana")
+    .select()
     .eq("user_id", userId)
     .maybeSingle();
   if (error) throw error;
@@ -17,7 +23,7 @@ export async function getUserStats(client: SupabaseClient, userId: string) {
 }
 
 export async function getUserInfo(client: SupabaseClient, userId: string) {
-  const {data, error} = await client
+  const { data, error } = await client
     .from("users")
     .select("email, username")
     .eq("id", userId)
@@ -26,9 +32,23 @@ export async function getUserInfo(client: SupabaseClient, userId: string) {
   return data;
 }
 
-export async function createTask(client: SupabaseClient, userId: string, title: string, description: string, difficulty: string, date: string, repeatOption: string) {
-  const { data, error} = await client.from("task")
-    .insert({user_id: userId, title: title, description: description, difficulty: difficulty, date: date, rrule: repeatOption})
+export async function createTask(
+  client: SupabaseClient,
+  userId: string,
+  title: string,
+  description: string,
+  difficulty: string,
+  date: string,
+  repeatOption: string
+) {
+  const { data, error } = await client.from("task").insert({
+    user_id: userId,
+    title: title,
+    description: description,
+    difficulty: difficulty,
+    date: date,
+    rrule: repeatOption,
+  });
   if (error) throw error;
   return data;
 }
@@ -56,117 +76,240 @@ export async function getTaskData(client: SupabaseClient, taskId: string) {
  * @returns A Promise to the removal of the task through the delete operation.
  */
 export async function removeTaskDb(client: SupabaseClient, taskId: string) {
-    return client.from("task").delete().eq('id', parseInt(taskId))
+  return client.from("task").delete().eq("id", parseInt(taskId));
 }
 
 /**
  * Gives a gold reward to the user which scales based on difficulty of the task and the current streak.
  * @param client An authenticated Supabase client instance.
  * @param userId The unique identifier of the user.
- * @param diffMultiplier The difficulty multiplier.
- * @param streakMultiplier The streak multiplier.
+ * @param difficulty The difficulty level of the task.
+ * @param streak The current streak of the task.
  * @param gold The amount of gold the user currently has.
  * @returns A Promise to the result of the update operation.
  */
-export async function goldReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, gold: number) {
-  const increase = Math.round(diffMultiplier * streakMultiplier)
-  const newGold = gold + increase
+export async function goldReward(
+  client: SupabaseClient,
+  userId: string,
+  difficulty: string,
+  streak: number,
+  gold: number
+) {
+  const multipliers = getRewardMultipliers(difficulty, streak, 1); // Gold doesn't use level multiplier
+  
+  const increase = multipliers.gold;
+  const newGold = gold + increase;
 
-  return client.from('user_stats')
-      .update({ gold: newGold })
-      .eq('user_id', userId)
-      .select()
-      .single()
+  return client
+    .from("user_stats")
+    .update({ gold: newGold })
+    .eq("user_id", userId)
+    .select()
+    .single();
 }
 
-export async function undoGoldReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, gold: number) {
+export async function undoGoldReward(
+  client: SupabaseClient,
+  userId: string,
+  difficulty: string,
+  streak: number,
+  gold: number
+) {
   if (gold === null || gold === undefined) {
-    console.error('Gold is null or undefined, cannot undo reward')
-    return
+    console.error("Gold is null or undefined, cannot undo reward");
+    return;
   }
+
+  const multipliers = getRewardMultipliers(difficulty, streak, 1); // Gold doesn't use level multiplier
   
-  const deduction = Math.round(diffMultiplier * streakMultiplier)
-  const newGold = Math.max(gold - deduction, 0)
+  const deduction = multipliers.gold;
+  const newGold = Math.max(gold - deduction, 0);
 
-  return client.from('user_stats')
-    .update({ gold: newGold})
-    .eq('user_id', userId)
+  return client
+    .from("user_stats")
+    .update({ gold: newGold })
+    .eq("user_id", userId)
     .select()
-    .single()
+    .single();
 }
 
-export async function manaReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, mana: number) {
-  const increase = Math.round(diffMultiplier * streakMultiplier)
-  const newMana = mana + increase
+export async function manaReward(
+  client: SupabaseClient,
+  userId: string,
+  difficulty: string,
+  streak: number,
+  mana: number,
+  total_mana: number
+) {
+  const multipliers = getRewardMultipliers(difficulty, streak, 1); // Mana doesn't use level multiplier
+  
+  const increase = multipliers.mana;
+  const newMana = addWithCap(mana, increase, total_mana);
 
-  return client.from('user_stats')
-      .update({ mana: newMana })
-      .eq('user_id', userId)
-      .select()
-      .single()
+  await client
+    .from("user_stats")
+    .update({ mana: newMana.cappedValue })
+    .eq("user_id", userId)
+    .select()
+    .single();
+
+  return {
+    actualIncrease: newMana.actualGain,
+  };
 }
 
-export async function undoManaReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, mana: number) {
+const addWithCap = (current: number, addition: number, cap: number) => {
+  const newValue = current + addition;
+  const cappedValue = Math.min(newValue, cap);
+  const excessValue = newValue - cappedValue;
+  const actualGain = cappedValue - current;
+
+  return { cappedValue, excessValue, actualGain };
+};
+
+export async function undoManaReward(
+  client: SupabaseClient,
+  userId: string,
+  mana: number,
+  actualIncrease: number
+) {
   if (mana === null || mana === undefined) {
-    console.error('Mana is null or undefined, cannot undo reward')
-    return
+    console.error("Mana is null or undefined, cannot undo reward");
+    return;
   }
+  return client
+    .from("user_stats")
+    .update({ mana: mana - actualIncrease })
+    .eq("user_id", userId)
+    .select()
+    .single();
+}
+
+export async function expReward(
+  client: SupabaseClient,
+  userId: string,
+  difficulty: string,
+  streak: number,
+  exp: number,
+  totalExp: number,
+  level: number
+) {
+  const multipliers = getRewardMultipliers(difficulty, streak, level);
   
-  const deduction = Math.round(diffMultiplier * streakMultiplier)
-  const newMana = Math.max(mana - deduction, 0)
+  const increase = multipliers.exp;
+  let newExp = exp + increase;
+  if (newExp > totalExp) {
+    await increaseLevel(client, userId, level);
+    newExp = newExp - totalExp;
+  }
 
-  return client.from('user_stats')
-    .update({ mana: newMana  })
-    .eq('user_id', userId)
-    .select()
-    .single()
-}
-
-export async function expReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, exp: number) {
-  const increase = Math.round(diffMultiplier * streakMultiplier)
-  const newExp = exp + increase
-
-  return client.from('user_stats')
+  return client
+    .from("user_stats")
     .update({ exp: newExp })
-    .eq('user_id', userId)
+    .eq("user_id", userId)
     .select()
-    .single()
+    .single();
 }
 
-export async function undoExpReward(client: SupabaseClient, userId: string, diffMultiplier: number, streakMultiplier: number, exp: number) {
+export async function increaseLevel(
+  client: SupabaseClient,
+  userId: string,
+  level: number
+) {
+  const newLevel = level + 1;
+  const newTotalExp = totalExpForLevel(newLevel);
+  
+  // update level and total_exp
+  return client
+    .from("user_stats")
+    .update({ 
+      level: newLevel,
+      total_exp: newTotalExp
+    })
+    .eq("user_id", userId)
+    .select()
+    .single();
+}
+
+export async function decreaseLevel(
+  client: SupabaseClient,
+  userId: string,
+  level: number
+) {
+  const newLevel = Math.max(level - 1, 1); // Ensure level doesn't go below 1
+  const newTotalExp = totalExpForLevel(newLevel);
+  
+  // update level and total_exp
+  return client
+    .from("user_stats")
+    .update({ 
+      level: newLevel,
+      total_exp: newTotalExp
+    })
+    .eq("user_id", userId)
+    .select()
+    .single();
+}
+
+export async function undoExpReward(
+  client: SupabaseClient,
+  userId: string,
+  difficulty: string,
+  streak: number,
+  exp: number,
+  level: number
+) {
   if (exp === null || exp === undefined) {
-    console.error('Exp is null or undefined, cannot undo reward')
-    return
+    console.error("Exp is null or undefined, cannot undo reward");
+    return;
   }
+
+  const multipliers = getRewardMultipliers(difficulty, streak, level);
   
-  const deduction = Math.round(diffMultiplier * streakMultiplier)
-  const newExp = Math.max(exp - deduction, 0)
+  const deduction = multipliers.exp;
+  let newExp = exp - deduction;
+  if (newExp < 0) {
+    await decreaseLevel(client, userId, level);
+    const stats = await getUserStats(client, userId);
+    newExp = stats.total_exp + newExp; // newExp is negative, so we add it
+  }
 
-  return client.from('user_stats')
+  return client
+    .from("user_stats")
     .update({ exp: newExp })
-    .eq('user_id', userId)
+    .eq("user_id", userId)
     .select()
-    .single()
+    .single();
 }
 
-export async function increaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
-  const newStreak = (currentStreak ?? 0 ) + 1
+export async function increaseStreak(
+  client: SupabaseClient,
+  taskId: string,
+  currentStreak: number
+) {
+  const newStreak = (currentStreak ?? 0) + 1;
 
-  return client.from('task')
+  return client
+    .from("task")
     .update({ streak: newStreak })
-    .eq('id', taskId)
+    .eq("id", taskId)
     .select()
-    .single()
+    .single();
 }
 
-export async function decreaseStreak(client: SupabaseClient, taskId: string, currentStreak: number) {
-  const newStreak = currentStreak - 1
+export async function decreaseStreak(
+  client: SupabaseClient,
+  taskId: string,
+  currentStreak: number
+) {
+  const newStreak = currentStreak - 1;
 
-  return client.from('task')
+  return client
+    .from("task")
     .update({ streak: newStreak })
-    .eq('id', taskId)
+    .eq("id", taskId)
     .select()
-    .single()
+    .single();
 }
 
 /**
@@ -177,16 +320,21 @@ export async function decreaseStreak(client: SupabaseClient, taskId: string, cur
  * @param date The date to check for completion.
  * @returns A Promise that resolves to true or false if the task is present in the table.
  */
-export async function dailyTaskCheck(client: SupabaseClient, userId: string, taskId: number, date: string) {
-    const {count} = 
-        await client.from("task_completions")
-        .select('*', {count: 'exact', head: true})
-        .eq('user_id', userId)
-        .eq('task_id', taskId)
-        .eq('date', date)
+export async function dailyTaskCheck(
+  client: SupabaseClient,
+  userId: string,
+  taskId: number,
+  date: string
+) {
+  const { count } = await client
+    .from("task_completions")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("task_id", taskId)
+    .eq("date", date);
 
-    const completed = (count ?? 0) > 0;
-    return completed;
+  const completed = (count ?? 0) > 0;
+  return completed;
 }
 
 /**
@@ -197,51 +345,114 @@ export async function dailyTaskCheck(client: SupabaseClient, userId: string, tas
  * @param date The completion date
  * @returns A Promise to the result of the Supabase upsert operation.
  */
-export async function dailyCompletion(client: SupabaseClient, userId: string, taskId: number, date: string) {
+export async function dailyCompletion(
+  client: SupabaseClient,
+  userId: string,
+  taskId: number,
+  date: string,
+  manaIncrease: number
+) {
   return client.from("task_completions").upsert(
-    [{ user_id: userId, task_id: taskId, date: date }],
+    [
+      {
+        user_id: userId,
+        task_id: taskId,
+        date: date,
+        mana_increase: manaIncrease,
+      },
+    ],
     { onConflict: "user_id, task_id, date", ignoreDuplicates: true }
   );
 }
 
-export async function getSelectedDayTasks(client: SupabaseClient, date: string) {
-  const { data, error } = await client.from('task').select().eq('date', date)
+export async function getTaskCompletionData(
+  client: SupabaseClient,
+  userId: string,
+  taskId: number,
+  date: string
+) {
+  const { data, error } = await client
+    .from("task_completions")
+    .select()
+    .eq("user_id", userId)
+    .eq("task_id", taskId)
+    .eq("date", date)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+export async function getSelectedDayTasks(
+  client: SupabaseClient,
+  date: string
+) {
+  const { data, error } = await client.from("task").select().eq("date", date);
   if (error) throw error;
   return data;
 }
 
 export async function checkUserExists(client: SupabaseClient, userId: string) {
-  const { data, error } = await client.from('users').select('id').eq('id', userId).maybeSingle()
+  const { data, error } = await client
+    .from("users")
+    .select("id")
+    .eq("id", userId)
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
 
-export async function saveUserRollover(client: SupabaseClient, tz: string, userId: string, rolloverTime: string, nextRollover: string) {
-  return client.from('user_settings')
-    .update({tz: tz, rollover_time: rolloverTime, next_rollover_utc: nextRollover})
-    .eq('user_id', userId)
+export async function saveUserRollover(
+  client: SupabaseClient,
+  tz: string,
+  userId: string,
+  rolloverTime: string,
+  nextRollover: string
+) {
+  return client
+    .from("user_settings")
+    .update({
+      tz: tz,
+      rollover_time: rolloverTime,
+      next_rollover_utc: nextRollover,
+    })
+    .eq("user_id", userId)
     .select()
-    .single()
+    .single();
 }
 
 export async function getUserSettings(client: SupabaseClient, userId: string) {
-  const {data, error} = await client.from('user_settings').select('rollover_time').eq("user_id", userId).single()
-  if (error) throw error;
-  return data;
-}
-
-export async function deleteTaskCompleted(client: SupabaseClient, userId: string, taskId: number, date: string) {
-  const {data, error} = await client.from('task_completions').delete().match({"user_id": userId, "task_id": taskId, "date": date})
-  if (error) throw error;
-  return data;
-}
-
-export async function getNextRolloverCheck(client: SupabaseClient, userId: string): Promise<boolean> {
   const { data, error } = await client
-    .from('user_settings')
-    .select('user_id')
-    .eq('user_id', userId)
-    .is('next_rollover_utc', null)
+    .from("user_settings")
+    .select("rollover_time")
+    .eq("user_id", userId)
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteTaskCompleted(
+  client: SupabaseClient,
+  userId: string,
+  taskId: number,
+  date: string
+) {
+  const { data, error } = await client
+    .from("task_completions")
+    .delete()
+    .match({ user_id: userId, task_id: taskId, date: date });
+  if (error) throw error;
+  return data;
+}
+
+export async function getNextRolloverCheck(
+  client: SupabaseClient,
+  userId: string
+): Promise<boolean> {
+  const { data, error } = await client
+    .from("user_settings")
+    .select("user_id")
+    .eq("user_id", userId)
+    .is("next_rollover_utc", null)
     .maybeSingle();
   if (error) throw error;
   return !!data;

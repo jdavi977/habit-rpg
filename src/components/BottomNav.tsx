@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Settings, Plus } from "lucide-react";
+import { Home, Settings } from "lucide-react";
 import { Button } from "./ui/button";
-import { ThemeToggle } from "./ThemeToggle";
 
 const BottomNav = () => {
   const pathname = usePathname();
