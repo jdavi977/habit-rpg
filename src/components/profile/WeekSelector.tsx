@@ -127,15 +127,12 @@ const WeekSelector = ({
     const endDate = parseInt(name[1]);
     const startRange: number[] = [];
     const range: number[] = [];
-
     if (endDate < 8) {
       for (let i = 1; i <= endDate; i++) {
         range.push(i);
       }
     }
-
     const endRangeLength = range.length;
-
     const startRangeLength = DAYS_WEEK - endRangeLength - 1;
 
     for (let i = startDate; i <= startDate + startRangeLength; i++) {
@@ -230,7 +227,7 @@ const WeekSelector = ({
               variant={selectedDay ? "default" : "secondary"}
               className={`h-16 rounded-xl transition-all duration-200 font-medium flex flex-col items-center justify-center gap-1 ${
                 selectedDay === day
-                  ? "bg-cyber-blue-bright text-cyber-dark shadow-lg shadow-cyber-blue-bright/30 hover:shadow-xl hover:shadow-cyber-blue-bright/40 transform hover:scale-105"
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/50 hover:shadow-xl hover:shadow-primary/70 transform hover:scale-105"
                   : "bg-cyber-blue/10 text-cyber-blue-bright border border-cyber-line-color hover:bg-cyber-blue/20 hover:border-cyber-blue-bright/50 hover:shadow-md hover:shadow-cyber-glow-primary/20"
               }`}
               onClick={() => sendDate(numberedDays[index], day)}

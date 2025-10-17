@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+"use client"
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, useUser } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import BottomNav from "@/components/BottomNav";
 
@@ -15,10 +16,30 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "HabitRPG - Build Better Habits",
-  description: "Transform your daily habits into an engaging journey of self-improvement",
-};
+function LayoutContent({ children }: { children: React.ReactNode }) {
+  const { isSignedIn } = useUser();
+  
+  return (
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dynamic-bg`}
+      >
+        {/* Floating Background Elements */}
+        <div className="floating-elements">
+          <div className="floating-element"></div>
+          <div className="floating-element"></div>
+          <div className="floating-element"></div>
+        </div>
+        
+        <Navbar />
+        <main className="pt-20 pb-20 max-w-2xl mx-auto px-4 relative z-10">{children}</main>
+        {isSignedIn && (
+          <BottomNav />
+        )}
+      </body>
+    </html>
+  );
+}
 
 export default function RootLayout({
   children,
@@ -27,22 +48,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased dynamic-bg`}
-        >
-          {/* Floating Background Elements */}
-          <div className="floating-elements">
-            <div className="floating-element"></div>
-            <div className="floating-element"></div>
-            <div className="floating-element"></div>
-          </div>
-          
-          <Navbar />
-          <main className="pt-20 pb-20 max-w-2xl mx-auto px-4 relative z-10">{children}</main>
-          <BottomNav />
-        </body>
-      </html>
+      <LayoutContent>{children}</LayoutContent>
     </ClerkProvider>
   );
 }

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import TaskList from "./TaskList";
 import { SupabaseClient } from "@supabase/supabase-js";
 import useTasksByDay from "../hooks/useTasksByDay";
-import { Calendar } from "../ui/8bit/calendar"; // NOTE: This still uses 8bit calendar
+import { Calendar } from "../ui/8bit/calendar"; 
 import WeekSelector from "./WeekSelector";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "../ui/button";

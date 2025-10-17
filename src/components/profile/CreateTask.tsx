@@ -164,7 +164,7 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
             </div>
 
             {/* Modal Content with Enhanced Styling */}
-            <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto overflow-x-hidden mx-auto my-auto">
+            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden mx-auto my-auto">
               {/* Outer Glow Effect */}
               <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue-bright/30 via-cyber-blue/20 to-cyber-blue-bright/30 rounded-2xl blur-sm opacity-60"></div>
 

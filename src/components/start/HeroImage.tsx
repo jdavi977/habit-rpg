@@ -1,12 +1,12 @@
 const HeroImage = () => {
   return (
-    <div className="lg:col-span-5 relative">
+    <div className="w-full max-w-lg relative flex justify-center">
       {/* ENHANCED CORNER PIECES */}
-      <div className="absolute -inset-6 pointer-events-none">
-        <div className="absolute top-0 left-0 w-20 h-20 border-l-2 border-t-2 border-cyber-blue-bright/60"/>
-        <div className="absolute top-0 right-0 w-20 h-20 border-r-2 border-t-2 border-cyber-blue-bright/60"/>
-        <div className="absolute bottom-0 left-0 w-20 h-20 border-l-2 border-b-2 border-cyber-blue-bright/60"/>
-        <div className="absolute bottom-0 right-0 w-20 h-20 border-r-2 border-b-2 border-cyber-blue-bright/60"/>
+      <div className="absolute -inset-4 md:-inset-6 pointer-events-none">
+        <div className="absolute top-0 left-0 w-16 h-16 md:w-20 md:h-20 border-l-2 border-t-2 border-cyber-blue-bright/60"/>
+        <div className="absolute top-0 right-0 w-16 h-16 md:w-20 md:h-20 border-r-2 border-t-2 border-cyber-blue-bright/60"/>
+        <div className="absolute bottom-0 left-0 w-16 h-16 md:w-20 md:h-20 border-l-2 border-b-2 border-cyber-blue-bright/60"/>
+        <div className="absolute bottom-0 right-0 w-16 h-16 md:w-20 md:h-20 border-r-2 border-b-2 border-cyber-blue-bright/60"/>
         
         {/* Animated corner dots */}
         <div className="absolute top-2 left-2 w-2 h-2 bg-cyber-blue-bright rounded-full animate-pulse"/>
@@ -15,13 +15,13 @@ const HeroImage = () => {
         <div className="absolute bottom-2 right-2 w-2 h-2 bg-cyber-blue-bright rounded-full animate-pulse" style={{animationDelay: '1.5s'}}/>
       </div>
 
-      {/* IMAGE CONTAINER */}
-      <div className="relative aspect-square max-w-lg mx-auto">
-        <div className="relative overflow-hidden rounded-lg bg-cyber-black border-2 border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20">
+      {/* IMAGE CONTAINER with improved responsiveness */}
+      <div className="relative aspect-square w-full max-w-sm sm:max-w-md lg:max-w-lg mx-auto">
+        <div className="relative overflow-hidden rounded-lg bg-cyber-black border-2 border-cyber-line-color shadow-lg shadow-cyber-glow-primary/20 hover:shadow-xl hover:shadow-cyber-glow-primary/30 transition-all duration-300 group">
           <img
             src="/codehealth.png"
             alt="HabitRPG Character"
-            className="size-full object-cover object-center"                  
+            className="size-full object-cover object-center group-hover:scale-105 transition-transform duration-500"                  
           />
 
           {/* ENHANCED SCAN ANIMATION */}
@@ -49,6 +49,9 @@ const HeroImage = () => {
 
           {/* ENHANCED GRADIENT FADE */}
           <div className="absolute inset-0 bg-gradient-to-t from-cyber-dark via-cyber-dark/40 to-transparent"/>
+          
+          {/* Subtle hover overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-cyber-blue-bright/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
       </div>
     </div>
