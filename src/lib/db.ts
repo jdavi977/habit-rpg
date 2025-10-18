@@ -406,14 +406,14 @@ export async function saveUserRollover(
   tz: string,
   userId: string,
   rolloverTime: string,
-  nextRollover: string
+  ///nextRollover: string
 ) {
   return client
     .from("user_settings")
     .update({
       tz: tz,
       rollover_time: rolloverTime,
-      next_rollover_utc: nextRollover,
+      // next_rollover_utc: nextRollover,
     })
     .eq("user_id", userId)
     .select()
@@ -423,7 +423,7 @@ export async function saveUserRollover(
 export async function getUserSettings(client: SupabaseClient, userId: string) {
   const { data, error } = await client
     .from("user_settings")
-    .select("rollover_time")
+    .select()
     .eq("user_id", userId)
     .single();
   if (error) throw error;

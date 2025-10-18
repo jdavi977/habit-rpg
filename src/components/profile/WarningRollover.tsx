@@ -9,11 +9,11 @@ type WarningRolloverProps = {
 }
 
 const WarningRollover = ({client, userId}: WarningRolloverProps) => {
-    const { nextRolloverNull } = useUserSettings(client, userId)
+    const { rolloverTimeSelected } = useUserSettings(client, userId)
 
     return (
         <>
-        {nextRolloverNull ? (
+        {!rolloverTimeSelected ? (
             <div className="inline-flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-xl shadow-lg shadow-yellow-500/20 animate-pulse">
               <AlertTriangle className="h-6 w-6 text-yellow-400" />
               <div className="text-center">
