@@ -72,7 +72,7 @@ const SettingsCard = ({ client, id }: SettingsCardProp) => {
             </div>
           </div>
         )}
-        {!loading || !rolloverTimeSelected? (
+        {!loading ? (
           <div>
             <RolloutSelector
               client={client}
