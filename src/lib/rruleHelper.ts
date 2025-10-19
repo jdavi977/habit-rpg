@@ -104,7 +104,7 @@ export function doesTaskRepeatOnDate(
             return occDate === checkDate;
         });
     } catch (error) {
-        console.log('Error checking RRULE occurence:', error);
+        console.error('Error checking RRULE occurence:', error);
         return false;
     }
 }
