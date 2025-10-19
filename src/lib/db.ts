@@ -1,8 +1,13 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { computeRewardMultipliers, totalExpForLevel } from './reward';
+import { computeRewardMultipliers, totalExpForLevel } from "./reward";
+import { doesTaskRepeatOnDate } from "./rruleHelper";
 
 // Helper function to calculate reward multipliers
-const getRewardMultipliers = (difficulty: string, streak: number, level: number = 1) => {
+const getRewardMultipliers = (
+  difficulty: string,
+  streak: number,
+  level: number = 1
+) => {
   return computeRewardMultipliers(difficulty, streak, level);
 };
 
@@ -96,7 +101,7 @@ export async function goldReward(
   gold: number
 ) {
   const multipliers = getRewardMultipliers(difficulty, streak, 1); // Gold doesn't use level multiplier
-  
+
   const increase = multipliers.gold;
   const newGold = gold + increase;
 
@@ -121,7 +126,7 @@ export async function undoGoldReward(
   }
 
   const multipliers = getRewardMultipliers(difficulty, streak, 1); // Gold doesn't use level multiplier
-  
+
   const deduction = multipliers.gold;
   const newGold = Math.max(gold - deduction, 0);
 
@@ -142,7 +147,7 @@ export async function manaReward(
   total_mana: number
 ) {
   const multipliers = getRewardMultipliers(difficulty, streak, 1); // Mana doesn't use level multiplier
-  
+
   const increase = multipliers.mana;
   const newMana = addWithCap(mana, increase, total_mana);
 
@@ -195,7 +200,7 @@ export async function expReward(
   level: number
 ) {
   const multipliers = getRewardMultipliers(difficulty, streak, level);
-  
+
   const increase = multipliers.exp;
   let newExp = exp + increase;
   if (newExp > totalExp) {
@@ -218,13 +223,13 @@ export async function increaseLevel(
 ) {
   const newLevel = level + 1;
   const newTotalExp = totalExpForLevel(newLevel);
-  
+
   // update level and total_exp
   return client
     .from("user_stats")
-    .update({ 
+    .update({
       level: newLevel,
-      total_exp: newTotalExp
+      total_exp: newTotalExp,
     })
     .eq("user_id", userId)
     .select()
@@ -238,13 +243,13 @@ export async function decreaseLevel(
 ) {
   const newLevel = Math.max(level - 1, 1); // Ensure level doesn't go below 1
   const newTotalExp = totalExpForLevel(newLevel);
-  
+
   // update level and total_exp
   return client
     .from("user_stats")
-    .update({ 
+    .update({
       level: newLevel,
-      total_exp: newTotalExp
+      total_exp: newTotalExp,
     })
     .eq("user_id", userId)
     .select()
@@ -265,7 +270,7 @@ export async function undoExpReward(
   }
 
   const multipliers = getRewardMultipliers(difficulty, streak, level);
-  
+
   const deduction = multipliers.exp;
   let newExp = exp - deduction;
   if (newExp < 0) {
@@ -384,11 +389,19 @@ export async function getTaskCompletionData(
 
 export async function getSelectedDayTasks(
   client: SupabaseClient,
+  userId: string,
   date: string
 ) {
-  const { data, error } = await client.from("task").select().eq("date", date);
+  const { data, error } = await client.from("task").select().eq("user_id", userId);
   if (error) throw error;
-  return data;
+  if (!data) return [];
+
+  return data.filter(task => {
+    if (!task.rrule || task.rrule === "DNR") {
+      return task.date === date;
+    }
+    return doesTaskRepeatOnDate(task.rrule, task.date, date)
+  })
 }
 
 export async function checkUserExists(client: SupabaseClient, userId: string) {
@@ -405,15 +418,15 @@ export async function saveUserRollover(
   client: SupabaseClient,
   tz: string,
   userId: string,
-  rolloverTime: string,
-  nextRollover: string
+  rolloverTime: string
+  ///nextRollover: string
 ) {
   return client
     .from("user_settings")
     .update({
       tz: tz,
       rollover_time: rolloverTime,
-      next_rollover_utc: nextRollover,
+      // next_rollover_utc: nextRollover,
     })
     .eq("user_id", userId)
     .select()
@@ -423,7 +436,7 @@ export async function saveUserRollover(
 export async function getUserSettings(client: SupabaseClient, userId: string) {
   const { data, error } = await client
     .from("user_settings")
-    .select("rollover_time")
+    .select()
     .eq("user_id", userId)
     .single();
   if (error) throw error;

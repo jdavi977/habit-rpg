@@ -10,6 +10,7 @@ import { X, Plus, CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import React from "react";
+import { generateRRule } from "@/lib/rruleHelper";
 
 type CreateTaskProps = {
   client: SupabaseClient;
@@ -27,8 +28,8 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
 
   function updateSelectedDate(date: Date): string {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   }
 
@@ -55,7 +56,7 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
     if (repeatOptions == "") return alert("Please choose a repeat option");
 
     const date = updateSelectedDate(selectedDates);
-
+    const rruleString = generateRRule(repeatOptions, selectedDates)
 
     createTask(
       client,
@@ -64,14 +65,11 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
       description,
       difficulty,
       date,
-      repeatOptions
+      rruleString || "DNR"
     );
-
-    
 
     resetForm();
     setIsModalOpen(false);
-
     window.location.reload();
   }
 
@@ -120,7 +118,7 @@ const CreateTask = ({ client, userId }: CreateTaskProps) => {
     },
     {
       name: "Monthly",
-      rrule: "M", 
+      rrule: "M",
       color: "from-red-500/20 to-red-600/10",
       borderColor: "border-red-500/30",
       textColor: "text-white-400",

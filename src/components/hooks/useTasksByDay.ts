@@ -59,7 +59,7 @@ const useTasksByDay = (
         setLoading(false);
         return;
       }
-      const taskForDay = (await getSelectedDayTasks(client, date)) ?? [];
+      const taskForDay = (await getSelectedDayTasks(client, userId, date)) ?? [];
       const taskWithStatus = await Promise.all(
         taskForDay.map(async (t) => ({
           id: t.id,
