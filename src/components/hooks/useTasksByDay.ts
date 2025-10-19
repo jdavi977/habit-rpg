@@ -6,6 +6,7 @@ import {
   decreaseStreak,
   deleteTaskCompleted,
   expReward,
+  getLastCompletionDate,
   getSelectedDayTasks,
   getTaskCompletionData,
   getTaskData,
@@ -18,6 +19,7 @@ import {
   undoGoldReward,
   undoManaReward,
 } from "@/lib/db";
+import { isConsecutiveCompletion } from "@/lib/streakHelper";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState } from "react";
 
@@ -92,17 +94,24 @@ const useTasksByDay = (
   const completeTask = useCallback(
     async (taskId: string) => {
       if (!userId || !date) return;
+
       const alreadyCompleted = await dailyTaskCheck(
         client,
         userId,
         Number(taskId),
         date
       );
+
       if (alreadyCompleted) return;
+
       const taskData = await getTaskData(client, taskId);
       const stats = await getUserStats(client, userId);
 
-      await increaseStreak(client, taskId, taskData?.streak);
+      const lastCompletion = await getLastCompletionDate(client, userId, taskId);
+      const isConsecutive = isConsecutiveCompletion(taskData, date, lastCompletion || taskData.date);
+
+      await increaseStreak(client, taskId, taskData?.streak, isConsecutive)
+
       await goldReward(
         client,
         userId,

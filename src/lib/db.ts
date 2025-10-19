@@ -1,6 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { computeRewardMultipliers, totalExpForLevel } from "./reward";
 import { doesTaskRepeatOnDate } from "./rruleHelper";
+import { shouldStreakBeReset } from "./streakHelper";
 
 // Helper function to calculate reward multipliers
 const getRewardMultipliers = (
@@ -290,14 +291,21 @@ export async function undoExpReward(
 export async function increaseStreak(
   client: SupabaseClient,
   taskId: string,
-  currentStreak: number
+  currentStreak: number,
+  isConsecutive: boolean = true
 ) {
-  const newStreak = (currentStreak ?? 0) + 1;
+  let newStreak: number;
+
+  if (isConsecutive) {
+    newStreak = (currentStreak ?? 0) + 1;
+  } else {
+    newStreak = 1;
+  }
 
   return client
     .from("task")
     .update({ streak: newStreak })
-    .eq("id", taskId)
+    .eq("id", parseInt(taskId))
     .select()
     .single();
 }
@@ -312,9 +320,71 @@ export async function decreaseStreak(
   return client
     .from("task")
     .update({ streak: newStreak })
-    .eq("id", taskId)
+    .eq("id", parseInt(taskId))
     .select()
     .single();
+}
+
+export async function resetTaskStreak(
+  client: SupabaseClient,
+  userId: string,
+  taskId: string,
+  currentStreak: number,
+  reason: string = "missed_deadline"
+) {
+  const { error: streakError } = await client
+    .from("task")
+    .update({ streak: 0 })
+    .eq("id", parseInt(taskId));
+  if (streakError) throw streakError;
+
+  const { error: historyError } = await client
+    .from("streak_history")
+    .insert({
+      user_id: userId,
+      task_id: parseInt(taskId),
+      streak_value: currentStreak,
+      reason: reason,
+    });
+  if (historyError) {
+    console.warn("Failed to log streak history:", historyError);
+  }
+
+  return { success: true };
+}
+
+export async function getTaskCompletionDates(
+  client: SupabaseClient,
+  userId: string,
+  taskId: string
+): Promise<string[]> {
+  const { data, error } = await client
+    .from("task_completions")
+    .select("date")
+    .eq("user_id", userId)
+    .eq("id", parseInt(taskId))
+    .order("date", { ascending: true });
+
+  if (error) throw error;
+  return data?.map((completion) => completion.date || []);
+}
+
+export async function getLastCompletionDate(
+  client: SupabaseClient,
+  userId: string,
+  taskId: string
+): Promise<string | null> {
+  const { data, error } = await client
+    .from("task_completions")
+    .select("date")
+    .eq("user_id", userId)
+    .eq("id", parseInt(taskId))
+    .order("date", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data?.date || null;
 }
 
 /**
@@ -392,16 +462,19 @@ export async function getSelectedDayTasks(
   userId: string,
   date: string
 ) {
-  const { data, error } = await client.from("task").select().eq("user_id", userId);
+  const { data, error } = await client
+    .from("task")
+    .select()
+    .eq("user_id", userId);
   if (error) throw error;
   if (!data) return [];
 
-  return data.filter(task => {
+  return data.filter((task) => {
     if (!task.rrule || task.rrule === "DNR") {
       return task.date === date;
     }
-    return doesTaskRepeatOnDate(task.rrule, task.date, date)
-  })
+    return doesTaskRepeatOnDate(task.rrule, task.date, date);
+  });
 }
 
 export async function checkUserExists(client: SupabaseClient, userId: string) {
@@ -469,4 +542,89 @@ export async function getNextRolloverCheck(
     .maybeSingle();
   if (error) throw error;
   return !!data;
+}
+
+export async function getUsersWithRolloverSettings(client: SupabaseClient) {
+  const { data, error } = await client
+    .from("user_settings")
+    .select("user_id, rollover_time, tz")
+    .not("rolover_time", "tz", null);
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getActiveStreakTasks(
+  client: SupabaseClient,
+  userId: string
+) {
+  const { data, error } = await client
+    .from("task")
+    .select("id, rrule, date, streak")
+    .eq("user_id", userId)
+    .gt("streak", 0);
+  if (error) throw error;
+  return data || [];
+}
+
+export async function  processStreakChecking(client: SupabaseClient) {
+  try {
+    const users = await getUsersWithRolloverSettings(client);
+
+    let processedUsers = 0;
+    let processedTasks = 0;
+    let resetStreaks = 0;
+
+    for (const user of users) {
+      processedUsers ++;
+    
+      try {
+        const tasks = await getActiveStreakTasks(client, user.user_id)
+
+        for (const task of tasks) {
+          processedTasks ++;
+
+          try {
+            const completionDates = await getTaskCompletionDates(client, user.user_id, task.id);
+
+            if (completionDates.length === 0) {
+              continue;
+            }
+
+            const lastCompletion = completionDates[completionDates.length - 1];
+
+            const currentDate = new Date().toLocaleDateString('en-CA', {
+              timeZone:user.tz || 'UTC'
+            });
+
+            const shouldReset = shouldStreakBeReset(
+              task, lastCompletion, currentDate, user.rollover_time, user.tz || 'UTC', completionDates
+            );
+
+            if (shouldReset) {
+              await resetTaskStreak(client, user.user_id, task.id, task.streak, "missed_deadline");
+
+              resetStreaks++;
+              console.log(`Reset streak for task ${task.id} (user ${user.user_id})`);
+            }
+          } catch (taskError) {
+            console.error(`Error processing task ${task.id}:`, taskError)
+          }
+        }
+      } catch (userError) {
+        console.error(`Error processing user ${user.user_id}:`, userError);
+      }
+    }
+
+    return {
+      success: true,
+      processedUsers,
+      processedTasks,
+      resetStreaks,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error("Error in processStreakChecking:", error);
+    throw error;
+  }
 }
