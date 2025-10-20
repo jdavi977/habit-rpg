@@ -1,0 +1,9 @@
+### Test Local Endpoint
+POST http://localhost:3000/api/cron/check-streaks
+Authorization: Bearer ISdNLz+HkjILDv8aFUKDf5gPQVXBokRuT1Smh2zgaZo=
+Content-Type: application/json
+
+### Test Production Endpoint
+POST https://habit-rpg.vercel.app/api/cron/check-streaks
+Authorization: Bearer ISdNLz+HkjILDv8aFUKDf5gPQVXBokRuT1Smh2zgaZo=
+Content-Type: application/json

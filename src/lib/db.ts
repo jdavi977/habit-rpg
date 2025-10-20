@@ -548,7 +548,8 @@ export async function getUsersWithRolloverSettings(client: SupabaseClient) {
   const { data, error } = await client
     .from("user_settings")
     .select("user_id, rollover_time, tz")
-    .not("rolover_time", "tz", null);
+    .not("rollover_time", "is", null)
+    .not("tz", "is", null);
 
   if (error) throw error;
   return data || [];
