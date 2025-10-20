@@ -492,14 +492,12 @@ export async function saveUserRollover(
   tz: string,
   userId: string,
   rolloverTime: string
-  ///nextRollover: string
 ) {
   return client
     .from("user_settings")
     .update({
       tz: tz,
       rollover_time: rolloverTime,
-      // next_rollover_utc: nextRollover,
     })
     .eq("user_id", userId)
     .select()
@@ -528,20 +526,6 @@ export async function deleteTaskCompleted(
     .match({ user_id: userId, task_id: taskId, date: date });
   if (error) throw error;
   return data;
-}
-
-export async function getNextRolloverCheck(
-  client: SupabaseClient,
-  userId: string
-): Promise<boolean> {
-  const { data, error } = await client
-    .from("user_settings")
-    .select("user_id")
-    .eq("user_id", userId)
-    .is("next_rollover_utc", null)
-    .maybeSingle();
-  if (error) throw error;
-  return !!data;
 }
 
 export async function getUsersWithRolloverSettings(client: SupabaseClient) {

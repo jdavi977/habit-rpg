@@ -6,6 +6,14 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+    return handleCronRequest(req);
+}
+
+export async function GET(req: NextRequest) {
+    return handleCronRequest(req);
+}
+
+async function handleCronRequest(req: NextRequest) {
     try {
         const authHeader = req.headers.get("authorization")
         const cronSecret = process.env.CRON_SECRET;

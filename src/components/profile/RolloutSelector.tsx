@@ -52,8 +52,7 @@ const RolloutSelector = ({client, tz, onTimeChange, initialTime, userId} : TimeS
       setSelectedMinute(displayMinute)
       setSelectedPeriod(displayPeriod)
       const timeConversion = to24HourString(displayHour, displayMinute, displayPeriod)
-      //const nextRollover = computeNextRolloverUTC(tz, timeConversion)
-      saveUserRollover(client, tz, userId, timeConversion) //nextRollover)
+      saveUserRollover(client, tz, userId, timeConversion)
     }
 
     /**
@@ -64,21 +63,6 @@ const RolloutSelector = ({client, tz, onTimeChange, initialTime, userId} : TimeS
       if (period === "PM") h += 12;
       return `${h.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
     }
-
-    // const computeNextRolloverUTC = (tz: string, rolloverTime: string): string => {
-    //   const [h, m] = rolloverTime.split(":").map(Number);
-    //   const nowLocal = DateTime.now().setZone(tz);
-
-    //   const todayRollover = nowLocal.set({ hour: h, minute: m, second: 0, millisecond: 0 });
-
-    //   const nextRollover = nowLocal > todayRollover ? todayRollover.plus({ days: 1 }) : todayRollover;
-
-    //   const isoString = nextRollover.toUTC().toISO();
-    //   if (!isoString) {
-    //     throw new Error('Failed to compute next rollover time');
-    //   }
-    //   return isoString;
-    // }
 
   return (
     <div className="space-y-6">
