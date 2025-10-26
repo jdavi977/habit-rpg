@@ -14,7 +14,6 @@ import {
   goldReward,
   increaseStreak,
   manaReward,
-  processStreakChecking,
   removeTaskDb,
   undoExpReward,
   undoGoldReward,
