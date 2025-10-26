@@ -1,11 +1,14 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 
-// This variable contains the function createRouteMatcher. Any pathways placed here will need to be protected by authentication.
-const isProtectedRoute = createRouteMatcher(["/profile"]);
+// Any pathways placed here will need to be protected by authentication.
+const isProtectedRoute = createRouteMatcher(["/tasks", "/home", "/settings"]);
 
-// This clerkMiddleware method intercepts all incoming requests. 
-// If a protected pathway is requested the method will make sure they are authenticated first.
+/**
+ * Intercepts all incoming requests
+ * Protects routes found in isProtectedRoute
+ * Making sure that you need to be authenticated first
+ */
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) await auth.protect();
 });
