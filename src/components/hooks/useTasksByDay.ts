@@ -14,6 +14,7 @@ import {
   goldReward,
   increaseStreak,
   manaReward,
+  processStreakChecking,
   removeTaskDb,
   undoExpReward,
   undoGoldReward,
@@ -109,7 +110,7 @@ const useTasksByDay = (
 
       const lastCompletion = await getLastCompletionDate(client, userId, taskId);
       const isConsecutive = isConsecutiveCompletion(taskData, date, lastCompletion || taskData.date);
-
+      
       await increaseStreak(client, taskId, taskData?.streak, isConsecutive)
 
       await goldReward(

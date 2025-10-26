@@ -360,9 +360,9 @@ export async function getTaskCompletionDates(
 ): Promise<string[]> {
   const { data, error } = await client
     .from("task_completions")
-    .select("date")
+    .select()
     .eq("user_id", userId)
-    .eq("id", parseInt(taskId))
+    .eq("task_id", parseInt(taskId))
     .order("date", { ascending: true });
 
   if (error) throw error;
@@ -552,7 +552,7 @@ export async function getActiveStreakTasks(
   return data || [];
 }
 
-export async function  processStreakChecking(client: SupabaseClient) {
+export async function processStreakChecking(client: SupabaseClient) {
   try {
     const users = await getUsersWithRolloverSettings(client);
 
@@ -560,22 +560,28 @@ export async function  processStreakChecking(client: SupabaseClient) {
     let processedTasks = 0;
     let resetStreaks = 0;
 
+    // For each user we do these checks
     for (const user of users) {
       processedUsers ++;
     
       try {
+        // Gets all tasks that are currently active ( has a streak > 0 )
         const tasks = await getActiveStreakTasks(client, user.user_id)
 
         for (const task of tasks) {
           processedTasks ++;
 
           try {
+            // Finds the completed dates of the active tasks
+            // Incorrect
             const completionDates = await getTaskCompletionDates(client, user.user_id, task.id);
 
+            // If the task has no completion dates, then we skip to the next task
             if (completionDates.length === 0) {
               continue;
             }
 
+            // Find the last completed date
             const lastCompletion = completionDates[completionDates.length - 1];
 
             const currentDate = new Date().toLocaleDateString('en-CA', {

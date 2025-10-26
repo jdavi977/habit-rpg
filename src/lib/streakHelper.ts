@@ -1,6 +1,5 @@
 import { RRule } from "rrule";
 
-// NOT USED
 /**
  * Gets the next occurrence of a task after a given date
  * @param rruleString The RRULE string from database
@@ -53,7 +52,6 @@ export function getNextOccurenceAfterDate(
   }
 }
 
-// USED IN shouldstreakbereset
 /**
  * Gets all occurences of a task between two dates
  * @param rruleString The RRULE string from database
@@ -117,9 +115,13 @@ export function isCompletionOnTime(
 
     const completionDate = new Date(completedAt);
 
-    const completionInUserTz = new Date(completionDate.toLocaleString("en-US", { timeZone: timezone }));
+    const completionInUserTz = new Date(
+      completionDate.toLocaleString("en-US", { timeZone: timezone })
+    );
 
-    const deadlineInUserTz = new Date(deadlineDate.toLocaleString("en-US", { timeZone: timezone }));
+    const deadlineInUserTz = new Date(
+      deadlineDate.toLocaleString("en-US", { timeZone: timezone })
+    );
 
     return completionInUserTz <= deadlineInUserTz;
   } catch (error) {
@@ -146,53 +148,72 @@ export function shouldStreakBeReset(
   timezone: string,
   completedDates: string[]
 ): boolean {
-    try {
-        if (!task.rrule || task.rrule === "DNR") {
-            return false;
-        }
-
-        const expectedOccurences = getAllOccurrencesBetween(task.rrule, task.date, lastCompletion, currentDate);
-
-        const remainingOccurrences = expectedOccurences.filter(date => date !== lastCompletion);
-
-        for (const occurenceDate of remainingOccurrences) {
-            const wasCompleted =  completedDates.includes(occurenceDate);
-            if (!wasCompleted) {
-                const currentTime = new Date().toISOString();
-                const isDeadlinePassed =  !isCompletionOnTime(currentTime, occurenceDate, rolloverTime, timezone);
-
-                if (isDeadlinePassed) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    } catch (error) {
-        console.error("Error checking if streak should be reset:", error);
-        return true;
+  try {
+    if (!task.rrule || task.rrule === "DNR") {
+      return false;
     }
+
+    const expectedOccurences = getAllOccurrencesBetween(
+      task.rrule,
+      task.date,
+      lastCompletion,
+      currentDate
+    );
+
+    const remainingOccurrences = expectedOccurences.filter(
+      (date) => date !== lastCompletion
+    );
+
+    for (const occurenceDate of remainingOccurrences) {
+      const wasCompleted = completedDates.includes(occurenceDate);
+      if (!wasCompleted) {
+        const currentTime = new Date().toISOString();
+        const isDeadlinePassed = !isCompletionOnTime(
+          currentTime,
+          occurenceDate,
+          rolloverTime,
+          timezone
+        );
+
+        if (isDeadlinePassed) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  } catch (error) {
+    console.error("Error checking if streak should be reset:", error);
+    return true;
+  }
 }
 
 /**
- * 
- * @param task 
- * @param completionDate 
- * @param lastCompletion 
- * @returns 
+ * Determines if the tasks have been consecutively completed since the last due date
+ * @param task the task being checked
+ * @param completionDate current completion due date
+ * @param lastCompletion last completion due date
+ * @returns true if the task have been executed consecutively
  */
-export function isConsecutiveCompletion(task: {rrule: string; date: string}, completionDate: string, lastCompletion: string): boolean {
-    try {
-        if (!task.rrule || task.rrule === "DNT") {
-            return true;
-        }
-        const nextExpected = getNextOccurenceAfterDate(task.rrule, task.date, lastCompletion);
-
-        return nextExpected === completionDate;
-    } catch (error) {
-        console.error("Error checking consecutive completion:", error);
-        return false;
+export function isConsecutiveCompletion(
+  task: { rrule: string; date: string },
+  completionDate: string,
+  lastCompletion: string
+): boolean {
+  try {
+    if (!task.rrule || task.rrule === "DNT") {
+      return true;
     }
+    // checks last completion next due date occurence
+    const nextExpected = getNextOccurenceAfterDate(
+      task.rrule,
+      task.date,
+      lastCompletion
+    );
+    // if nextExpected is the same as completionDate, then tasks have been completed consecutively
+    return nextExpected === completionDate;
+  } catch (error) {
+    console.error("Error checking consecutive completion:", error);
+    return false;
+  }
 }
-
-
