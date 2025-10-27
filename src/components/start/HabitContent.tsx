@@ -1,3 +1,16 @@
+/**
+ * @fileoverview Landing page content section component
+ * @module components/start/HabitContent
+ * 
+ * Main content area for landing page featuring:
+ * - Program gallery header with description
+ * - Three-step process visualization (Define, Train, Conquer)
+ * - Feature cards grid from constants
+ * - Call-to-action button
+ * 
+ * Uses cyber-themed styling throughout with animated elements.
+ */
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -6,7 +19,14 @@ import {
 } from "lucide-react";
 import { CARD_CONTENT } from "@/constants";
 
-
+/**
+ * Main content section for landing page
+ * 
+ * Displays feature overview, three-step process, and feature cards.
+ * Includes call-to-action button linking to /home.
+ * 
+ * @returns {JSX.Element} Content section with features and CTA
+ */
 const HabitContent = () => {
   return (
     <div className="w-full md:py-2 lg:py-2 relative">

@@ -1,3 +1,12 @@
+/**
+ * @fileoverview Character statistics display component
+ * @module components/profile/StatsCard
+ * 
+ * Displays user character stats including health, mana, and experience.
+ * Shows progress bars for each stat and loading states while fetching data.
+ * Used on the main dashboard to show character progression.
+ */
+
 'use client'
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader } from '../ui/card'
@@ -11,8 +20,17 @@ type StatsCardProps = {
   userId: string;
 }
 
+/**
+ * Component that displays character statistics
+ * 
+ * Shows health, mana, and experience with animated progress bars.
+ * Displays character name and level. Handles loading states gracefully.
+ * 
+ * @param {StatsCardProps} props - Component props
+ * @returns {JSX.Element} Stats card with progress bars
+ */
 const StatsCard = ({client, userId}: StatsCardProps) => {
-  const { stats } = useUserStats(client, userId);
+  const { stats, refresh } = useUserStats(client, userId);
   const [loading, setLoading] = useState(true)
 
     React.useEffect(() => {
@@ -20,6 +38,14 @@ const StatsCard = ({client, userId}: StatsCardProps) => {
           setLoading(false)
       }
   }, [stats])
+
+  // Expose refresh function via window for external access
+  React.useEffect(() => {
+    (window as any).refreshStats = refresh;
+    return () => {
+      delete (window as any).refreshStats;
+    };
+  }, [refresh])
 
   return (
     <Card className="bg-card/95 backdrop-blur-sm border-border shadow-lg hover:shadow-xl transition-all duration-300 group">

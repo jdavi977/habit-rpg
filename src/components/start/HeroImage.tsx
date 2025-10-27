@@ -1,3 +1,23 @@
+/**
+ * @fileoverview Landing page hero image component
+ * @module components/start/HeroImage
+ * 
+ * Displays the character image with cyber-themed decorations:
+ * - Corner borders and animated corner dots
+ * - Scanning line animations
+ * - Targeting crosshair effects
+ * - Status indicators
+ * - Hover effects with scale animation
+ */
+
+/**
+ * Hero image component with cyber decorations
+ * 
+ * Displays character image with animated cyber-themed effects including
+ * scanlines, crosshairs, and status indicators. Creates futuristic aesthetic.
+ * 
+ * @returns {JSX.Element} Hero image with animated decorations
+ */
 const HeroImage = () => {
   return (
     <div className="w-full max-w-lg relative flex justify-center">

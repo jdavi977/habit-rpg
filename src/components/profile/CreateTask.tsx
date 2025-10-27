@@ -1,3 +1,17 @@
+/**
+ * @fileoverview Task creation modal component
+ * @module components/profile/CreateTask
+ * 
+ * A comprehensive modal form for creating new tasks with:
+ * - Title and description inputs
+ * - Difficulty selection (Easy, Medium, Hard)
+ * - Date picker for start date
+ * - Repeat options (Does Not Repeat, Daily, Weekly, Monthly, Every Weekday)
+ * - Modal overlay with portal rendering
+ * 
+ * Uses cyber-themed styling for a futuristic UI experience.
+ */
+
 "use client";
 import { useState } from "react";
 import { createPortal } from "react-dom";
@@ -17,6 +31,17 @@ type CreateTaskProps = {
   userId?: string;
 };
 
+/**
+ * Modal component for creating new tasks
+ * 
+ * Provides a full-featured form for task creation with validation,
+ * RRULE generation for recurring tasks, and portal-based modal rendering.
+ * 
+ * @param {SupabaseClient} client - Authenticated Supabase client
+ * @param {string} userId - Optional user ID for task creation
+ * 
+ * @returns {JSX.Element} Render modal trigger button and portal
+ */
 const CreateTask = ({ client, userId }: CreateTaskProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [title, setTitle] = useState("");

@@ -1,8 +1,27 @@
+/**
+ * @fileoverview User settings page
+ * @module app/settings/page
+ * 
+ * Allows users to configure:
+ * - Daily reset time preferences
+ * - Timezone settings
+ * 
+ * Protected route for authenticated users.
+ */
+
 "use client"
 import useAuthClient from '@/components/hooks/useAuthClient';
 import SettingsCard from '@/components/settings/SettingsCard';
 import { Settings } from 'lucide-react';
 
+/**
+ * User settings page
+ * 
+ * Configuration page where users can set their daily reset time
+ * and timezone. Displays SettingsCard component for rollover management.
+ * 
+ * @returns {JSX.Element} Settings page with configuration options
+ */
 const UserSettings = () => {
   const { client, userId } = useAuthClient();
 

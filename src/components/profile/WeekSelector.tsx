@@ -1,3 +1,17 @@
+/**
+ * @fileoverview Week selector navigation component
+ * @module components/profile/WeekSelector
+ * 
+ * Provides week-based navigation for tasks with:
+ * - Current week display with dates
+ * - Day-of-week buttons
+ * - Today button for quick navigation
+ * - Month boundary handling (handles weeks that span two months)
+ * 
+ * Calculates which days of the month belong to the current week,
+ * including edge cases where the week spans across month boundaries.
+ */
+
 "use client"
 import React, { useState } from "react";
 import { Button } from "../ui/button";
@@ -16,6 +30,17 @@ type WeekSelectorProps = {
   userId: string;
 };
 
+/**
+ * Component for selecting and navigating weeks/days
+ * 
+ * Displays the current week with numbered days and allows users to
+ * click on specific days to navigate to that date's tasks.
+ * Handles month boundaries (weeks that span two months) and includes
+ * a "Today" button for quick navigation to the current day.
+ * 
+ * @param {WeekSelectorProps} props - Component props
+ * @returns {JSX.Element} Week selector with day buttons and create task button
+ */
 const WeekSelector = ({
   selectedDate,
   selectDate,

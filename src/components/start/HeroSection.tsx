@@ -1,3 +1,23 @@
+/**
+ * @fileoverview Landing page hero section component
+ * @module components/start/HeroSection
+ * 
+ * Main hero section for the landing page featuring:
+ * - Animated headline text
+ * - Welcome card with description
+ * - Statistics grid (users, tasks, success rate)
+ * 
+ * Uses staggered animations for visual appeal.
+ */
+
+/**
+ * Hero section component for landing page
+ * 
+ * Displays the main headline, welcome message, and key statistics.
+ * Uses animated text reveals and gradient styling for visual impact.
+ * 
+ * @returns {JSX.Element} Hero section with headline and stats
+ */
 const HeroSection = () => {
   return (
     <div className="w-full max-w-4xl space-y-6 md:space-y-8 lg:space-y-10 relative flex flex-col justify-center">

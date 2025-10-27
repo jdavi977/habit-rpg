@@ -1,3 +1,15 @@
+/**
+ * @fileoverview Main dashboard/home page
+ * @module app/home/page
+ * 
+ * Authenticated user dashboard featuring:
+ * - Daily reset configuration warning
+ * - Character statistics card
+ * - Today's tasks display
+ * 
+ * Protected route accessible only to signed-in users.
+ */
+
 "use client";
 import StatsCard from "@/components/profile/StatsCard";
 import CurrentTasks from "@/components/profile/CurrentTasks";
@@ -5,17 +17,16 @@ import useAuthClient from "@/components/hooks/useAuthClient";
 import WarningRollover from "@/components/profile/WarningRollover";
 
 /**
- * Home page component that displays user statistics, daily tasks, and task management
+ * Home page component - Main user dashboard
  *
- * This component serves as the main dashboard for users to:
- * - View their character stats (level, gold, mana)
- * - Manage daily tasks by day of the week
- * - Complete tasks to earn rewards
- * - Create new tasks
- * - Set daily reset time preferences
+ * Serves as the primary interface for authenticated users to:
+ * - View character stats (level, gold, mana, health)
+ * - See and complete today's tasks
+ * - Check rollover configuration status
+ * - Navigate to other sections
  *
  * @component Home
- * @returns {JSX.Element} The rendered home page with user dashboard
+ * @returns {JSX.Element} Dashboard with stats card and today's tasks
  */
 export default function Home() {
   const { client, userId } = useAuthClient();

@@ -1,13 +1,21 @@
+/**
+ * @fileoverview Daily reset time selector component
+ * @module components/profile/RolloutSelector
+ * 
+ * Allows users to configure their daily task reset time.
+ * Uses 12-hour format with AM/PM selector and saves to database.
+ * Handles time conversion between 12-hour display and 24-hour database format.
+ */
+
 'use client'
 import { useState, useEffect } from 'react'
 import { Button } from '../ui/button'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { saveUserRollover } from '@/lib/db'
 import { SupabaseClient } from '@supabase/supabase-js'
-// import { DateTime } from "luxon";
 
 /**
- * Interface that defines the shape of these props
+ * Props for the RolloutSelector component
  */
 interface TimeSelectorProp {
     onTimeChange?: (time: {hour: number, minute: number, period: 'AM' | 'PM'}) => void
@@ -18,9 +26,14 @@ interface TimeSelectorProp {
 }
 
 /**
- * RolloutSelector component where the user is able to update their daily reset time
- * @param param0 
- * @returns 
+ * Component for selecting daily task reset time
+ * 
+ * Provides a 12-hour time picker interface where users can select
+ * their preferred daily reset time (when tasks reset each day).
+ * Saves the time in 24-hour format to the database.
+ * 
+ * @param {TimeSelectorProp} props - Component props
+ * @returns {JSX.Element} Time selector UI with up/down buttons
  */
 const RolloutSelector = ({client, tz, onTimeChange, initialTime, userId} : TimeSelectorProp) => {
     // The daily reset time selected by the user

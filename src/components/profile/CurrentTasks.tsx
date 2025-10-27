@@ -1,3 +1,12 @@
+/**
+ * @fileoverview Today's tasks display component
+ * @module components/profile/CurrentTasks
+ * 
+ * Displays tasks for the current day with completion tracking.
+ * Uses useTasksByDay hook to fetch and manage today's tasks.
+ * Shows progress indicator for remaining tasks.
+ */
+
 import { SupabaseClient } from "@supabase/supabase-js";
 import React from "react";
 import useTasksByDay from "../hooks/useTasksByDay";
@@ -8,6 +17,18 @@ type CurrentTasksProps = {
   userId: string;
 };
 
+/**
+ * Component that displays and manages today's tasks
+ * 
+ * Fetches tasks for the current day using useTasksByDay hook and
+ * renders them with progress tracking. Shows encouraging messages
+ * based on completion status.
+ * 
+ * @param {SupabaseClient} client - Authenticated Supabase client
+ * @param {string} userId - User ID to fetch tasks for
+ * 
+ * @returns {JSX.Element} Today's tasks display with TaskList component
+ */
 const CurrentTasks = ({ client, userId }: CurrentTasksProps) => {
   const todayShort = new Date().toLocaleDateString("en-US", {
     weekday: "short",

@@ -1,3 +1,22 @@
+/**
+ * @fileoverview Background effects component for landing page
+ * @module components/start/BackgroundEffects
+ * 
+ * Provides subtle animated background elements for the landing page:
+ * - Grid pattern overlay
+ * - Animated scanning lines
+ * 
+ * Creates depth and visual interest without overwhelming content.
+ */
+
+/**
+ * Background effects for landing page
+ * 
+ * Renders subtle animated grid pattern and scanlines to create
+ * a cyber-themed atmosphere without distracting from content.
+ * 
+ * @returns {JSX.Element} Background effects container
+ */
 const BackgroundEffects = () => {
   return (
     <>
