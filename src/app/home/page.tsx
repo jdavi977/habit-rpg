@@ -1,21 +1,33 @@
+/**
+ * @fileoverview Main dashboard/home page
+ * @module app/home/page
+ * 
+ * Authenticated user dashboard featuring:
+ * - Daily reset configuration warning
+ * - Character statistics card
+ * - Today's tasks display
+ * 
+ * Protected route accessible only to signed-in users.
+ */
+
 "use client";
 import StatsCard from "@/components/profile/StatsCard";
 import CurrentTasks from "@/components/profile/CurrentTasks";
 import useAuthClient from "@/components/hooks/useAuthClient";
 import WarningRollover from "@/components/profile/WarningRollover";
+import TimeLeft from "@/components/profile/TimeLeft";
 
 /**
- * Home page component that displays user statistics, daily tasks, and task management
+ * Home page component - Main user dashboard
  *
- * This component serves as the main dashboard for users to:
- * - View their character stats (level, gold, mana)
- * - Manage daily tasks by day of the week
- * - Complete tasks to earn rewards
- * - Create new tasks
- * - Set daily reset time preferences
+ * Serves as the primary interface for authenticated users to:
+ * - View character stats (level, gold, mana, health)
+ * - See and complete today's tasks
+ * - Check rollover configuration status
+ * - Navigate to other sections
  *
  * @component Home
- * @returns {JSX.Element} The rendered home page with user dashboard
+ * @returns {JSX.Element} Dashboard with stats card and today's tasks
  */
 export default function Home() {
   const { client, userId } = useAuthClient();
@@ -23,18 +35,27 @@ export default function Home() {
   return (
     <div className="text-text-primary relative">
       <div className="space-y-8 py-8">
-        {/* Warning Rollover */}
-        <WarningRollover
-          client={client}
-          userId={userId}
-        />
-
+        {/* Warning Rollover and Time Left - Side by Side */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex justify-start">
+            <WarningRollover
+              client={client}
+              userId={userId}
+            />
+          </div>
+          <div className="flex justify-end">
+            <TimeLeft
+              client={client}
+              userId={userId}
+            />
+          </div>
+        </div>
+        
         {/* Stats Card */}
         <StatsCard
           client={client}
           userId={userId}
         />
-
         <CurrentTasks
           client={client}
           userId={userId}

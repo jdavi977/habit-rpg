@@ -1,3 +1,12 @@
+/**
+ * @fileoverview Task list display and management component
+ * @module components/profile/TaskList
+ * 
+ * Renders a list of tasks with completion controls, streak counters,
+ * and removal options. Shows different states (empty, loading, completed).
+ * Only allows completion/undo for current day tasks (view-only for past).
+ */
+
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Flame, CheckCircle, RotateCcw, Trash2 } from "lucide-react";
@@ -12,6 +21,16 @@ type TaskListProps = {
   loading: boolean;
 }
 
+/**
+ * Component that renders and manages task list
+ * 
+ * Displays tasks with completion controls, streak indicators, and remove buttons.
+ * Only allows task completion/undo on the current day (past days are view-only).
+ * Shows loading and empty states.
+ * 
+ * @param {TaskListProps} props - Component props
+ * @returns {JSX.Element} Task list with controls
+ */
 const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, currentDay}: TaskListProps) => {
   const [loading, setLoading] = useState(true)
 
@@ -90,7 +109,14 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, curre
                     type="button"
                     size="sm"
                     className="bg-soft-secondary hover:bg-soft-secondary/80 text-text-primary shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 min-h-[44px] min-w-[44px]"
-                    onClick={() => completeTask(task.id)}
+                    onClick={async () => {
+                      await completeTask(task.id);
+                      // Refresh stats after task completion
+                      const win = window as Window & { refreshStats?: () => void };
+                      if (win.refreshStats) {
+                        win.refreshStats();
+                      }
+                    }}
                   >
                     <CheckCircle className="h-4 w-4" />
                     <span className="ml-1">Complete</span>
@@ -100,7 +126,14 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, curre
                     type="button"
                     size="sm"
                     className="bg-soft-primary hover:bg-soft-primary/80 text-text-primary shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 min-h-[44px] min-w-[44px]"
-                    onClick={() => undoTask(task.id)}
+                    onClick={async () => {
+                      await undoTask(task.id);
+                      // Refresh stats after undoing task
+                      const win = window as Window & { refreshStats?: () => void };
+                      if (win.refreshStats) {
+                        win.refreshStats();
+                      }
+                    }}
                   >
                     <RotateCcw className="h-4 w-4" />
                     <span className="ml-1">Undo</span>

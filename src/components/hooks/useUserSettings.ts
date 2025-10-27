@@ -1,14 +1,43 @@
+/**
+ * @fileoverview User settings and preferences hook
+ * @module components/hooks/useUserSettings
+ * 
+ * Manages user preferences including timezone and daily rollover time.
+ * Fetches and converts 24-hour time format to 12-hour format for display.
+ * Used for configuring when daily tasks reset in user settings.
+ */
+
 "use client";
 import { getUserSettings } from "@/lib/db";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { useEffect, useRef, useState } from "react";
 
+/**
+ * Type definition for rollover time in 12-hour format
+ */
 type RolloverTime = {
   hour: number;
   minute: number;
   period: "AM" | "PM";
 };
 
+/**
+ * Custom hook to fetch and manage user settings
+ * 
+ * Fetches user settings from database and converts 24-hour time to 12-hour format.
+ * Includes request ID tracking to prevent stale updates. Used in settings pages
+ * to display and manage user preferences.
+ * 
+ * @param {SupabaseClient} client - Authenticated Supabase client
+ * @param {string} userId - User ID to fetch settings for
+ * @returns {Object} Object containing:
+ *   - rolloverTimeSelected: Boolean indicating if user has set a rollover time
+ *   - rolloverTime: Rollover time in 12-hour format (hour, minute, AM/PM)
+ * 
+ * @example
+ * const { rolloverTimeSelected, rolloverTime } = useUserSettings(client, userId);
+ * // rolloverTime: { hour: 9, minute: 0, period: "AM" }
+ */
 const useUserSettings = (client: SupabaseClient, userId: string) => {
   const [rolloverTimeSelected, setRolloverTimeSelected] = useState(false);
   const [rolloverTime, setRolloverTime] = useState<RolloverTime>();

@@ -1,3 +1,14 @@
+/**
+ * @fileoverview Task management card component
+ * @module components/profile/TaskCard
+ * 
+ * Main container for task management featuring:
+ * - Collapsible calendar view
+ * - Week selector for navigation
+ * - Task list with completion controls
+ * - Integration with useTasksByDay hook for state management
+ */
+
 "use client"
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -14,6 +25,15 @@ type TaskCardProps = {
   userId: string;
 };
 
+/**
+ * Main task management component
+ * 
+ * Provides calendar navigation, week selection, and task completion
+ * controls. Manages selected date state and passes it to useTasksByDay hook.
+ * 
+ * @param {TaskCardProps} props - Component props
+ * @returns {JSX.Element} Task management interface with calendar and task list
+ */
 const TaskCard = ({ client, userId }: TaskCardProps) => {
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const today = new Date();

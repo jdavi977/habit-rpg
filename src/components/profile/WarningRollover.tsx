@@ -1,3 +1,11 @@
+/**
+ * @fileoverview Daily reset time configuration warning component
+ * @module components/profile/WarningRollover
+ * 
+ * Warns users if they haven't configured their daily reset time.
+ * Shows configuration status and prompts users to set up rollover time in settings.
+ * Displays different states: configured, not configured, or loading.
+ */
 
 "use client"
 import React, { useState } from "react";
@@ -10,6 +18,16 @@ type WarningRolloverProps = {
   userId: string;
 };
 
+/**
+ * Warning component for daily reset time configuration
+ * 
+ * Checks if user has set up their daily reset time and displays
+ * appropriate warnings or confirmation messages. Guides users to settings
+ * if configuration is missing.
+ * 
+ * @param {WarningRolloverProps} props - Component props
+ * @returns {JSX.Element} Warning or confirmation message
+ */
 const WarningRollover = ({ client, userId }: WarningRolloverProps) => {
   const { rolloverTimeSelected } = useUserSettings(client, userId);
   const [loading, setLoading] = useState(true);

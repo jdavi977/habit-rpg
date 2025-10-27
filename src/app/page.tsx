@@ -1,5 +1,26 @@
+/**
+ * @fileoverview Landing page component
+ * @module app/page
+ * 
+ * The public landing page for HabitRPG featuring:
+ * - Hero section with animated headline
+ * - Hero image with cyber decorations
+ * - Feature content section
+ * 
+ * Acts as the marketing/onboarding page before authentication.
+ */
+
 import { HabitContent, HeroImage, HeroSection } from "@/components/start";
 
+/**
+ * Landing page for HabitRPG
+ * 
+ * Public-facing page that introduces users to the application.
+ * Shows hero content, feature overview, and call-to-action.
+ * No authentication required to view.
+ * 
+ * @returns {JSX.Element} Landing page with hero and content sections
+ */
 export default function Start() {
   return (
     <div className="min-h-screen text-text-primary overflow-hidden relative">
