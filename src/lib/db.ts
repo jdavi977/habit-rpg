@@ -202,6 +202,21 @@ export async function goldReward(
     .single();
 }
 
+export async function healthDeduction(
+  client: SupabaseClient,
+  userId: string,
+  currentHealth: number
+) {
+  const health = Math.max(currentHealth - 15, 0);
+
+  return client
+    .from("user_stats")
+    .update({ health: health })
+    .eq("user_id", userId)
+    .select()
+    .single();
+}
+
 /**
  * Reverses a gold reward (used when undoing task completion)
  * 
@@ -857,7 +872,7 @@ export async function saveUserRollover(
  * 
  * @param {SupabaseClient} client - Authenticated Supabase client
  * @param {string} userId - Unique identifier for the user
- * @returns {Promise<Object>} User settings object
+ * @returns {Promise<Object|null>} User settings object or null if not configured
  * 
  * @throws {Error} If database query fails
  */
@@ -866,7 +881,7 @@ export async function getUserSettings(client: SupabaseClient, userId: string) {
     .from("user_settings")
     .select()
     .eq("user_id", userId)
-    .single();
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -982,6 +997,7 @@ export async function processStreakChecking(client: SupabaseClient) {
       try {
         // Gets all tasks that are currently active ( has a streak > 0 )
         const tasks = await getActiveStreakTasks(client, user.user_id)
+        const userStats = await getUserStats(client, user.user_id)
 
         for (const task of tasks) {
           processedTasks ++;
@@ -1009,8 +1025,8 @@ export async function processStreakChecking(client: SupabaseClient) {
 
             if (shouldReset) {
               await resetTaskStreak(client, user.user_id, task.id, task.streak, "missed_deadline");
-
               resetStreaks++;
+              await healthDeduction(client, user.user_id, userStats.health)
               console.log(`Reset streak for task ${task.id} (user ${user.user_id})`);
             }
           } catch (taskError) {

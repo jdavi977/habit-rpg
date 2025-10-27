@@ -41,9 +41,11 @@ const StatsCard = ({client, userId}: StatsCardProps) => {
 
   // Expose refresh function via window for external access
   React.useEffect(() => {
-    (window as any).refreshStats = refresh;
+    // Extend Window interface to include refreshStats
+    (window as Window & { refreshStats?: () => void }).refreshStats = refresh;
     return () => {
-      delete (window as any).refreshStats;
+      const win = window as Window & { refreshStats?: () => void };
+      delete win.refreshStats;
     };
   }, [refresh])
 

@@ -15,6 +15,7 @@ import StatsCard from "@/components/profile/StatsCard";
 import CurrentTasks from "@/components/profile/CurrentTasks";
 import useAuthClient from "@/components/hooks/useAuthClient";
 import WarningRollover from "@/components/profile/WarningRollover";
+import TimeLeft from "@/components/profile/TimeLeft";
 
 /**
  * Home page component - Main user dashboard
@@ -34,18 +35,27 @@ export default function Home() {
   return (
     <div className="text-text-primary relative">
       <div className="space-y-8 py-8">
-        {/* Warning Rollover */}
-        <WarningRollover
-          client={client}
-          userId={userId}
-        />
-
+        {/* Warning Rollover and Time Left - Side by Side */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex justify-start">
+            <WarningRollover
+              client={client}
+              userId={userId}
+            />
+          </div>
+          <div className="flex justify-end">
+            <TimeLeft
+              client={client}
+              userId={userId}
+            />
+          </div>
+        </div>
+        
         {/* Stats Card */}
         <StatsCard
           client={client}
           userId={userId}
         />
-
         <CurrentTasks
           client={client}
           userId={userId}

@@ -112,8 +112,9 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, curre
                     onClick={async () => {
                       await completeTask(task.id);
                       // Refresh stats after task completion
-                      if ((window as any).refreshStats) {
-                        (window as any).refreshStats();
+                      const win = window as Window & { refreshStats?: () => void };
+                      if (win.refreshStats) {
+                        win.refreshStats();
                       }
                     }}
                   >
@@ -128,8 +129,9 @@ const TaskList = ({tasks, selectedDay, completeTask, undoTask, removeTask, curre
                     onClick={async () => {
                       await undoTask(task.id);
                       // Refresh stats after undoing task
-                      if ((window as any).refreshStats) {
-                        (window as any).refreshStats();
+                      const win = window as Window & { refreshStats?: () => void };
+                      if (win.refreshStats) {
+                        win.refreshStats();
                       }
                     }}
                   >
