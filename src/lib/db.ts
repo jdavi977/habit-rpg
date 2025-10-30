@@ -18,6 +18,17 @@ import { computeRewardMultipliers, totalExpForLevel } from "./reward";
 import { doesTaskRepeatOnDate } from "./rruleHelper";
 import { shouldStreakBeReset } from "./streakHelper";
 
+// ---------------------------------------------
+// Module constants (replace magic numbers/strings)
+// ---------------------------------------------
+const HEALTH_DEDUCTION_ON_STREAK_RESET = 15;
+const MAX_HEALTH = 100;
+const MIN_LEVEL = 1;
+const STREAK_ACTIVE_THRESHOLD = 0; // streak > 0 means active
+const DEFAULT_TIMEZONE = "UTC";
+const DATE_FORMAT_LOCALE = "en-CA"; // yields YYYY-MM-DD from Intl APIs
+const STREAK_RESET_REASON_MISSED_DEADLINE = "missed_deadline";
+
 /**
  * Calculates reward multipliers for tasks based on difficulty, streak, and level
  * 
@@ -202,16 +213,33 @@ export async function goldReward(
     .single();
 }
 
+/**
+ * Deducts user health for penalties (e.g., missed streak), with level-down on death
+ * 
+ * Decreases health by a fixed amount. If health reaches 0, the user loses a level
+ * (not below 1) and health is restored to the maximum. Returns updated stats.
+ * 
+ * @param {SupabaseClient} client - Authenticated Supabase client
+ * @param {string} userId - Unique identifier for the user
+ * @param {number} currentHealth - Current health value
+ * @returns {Promise<Object>} Updated user stats with new health
+ */
 export async function healthDeduction(
   client: SupabaseClient,
   userId: string,
   currentHealth: number
 ) {
-  const health = Math.max(currentHealth - 15, 0);
+  let newHealth = Math.max(currentHealth - HEALTH_DEDUCTION_ON_STREAK_RESET, 0);
+
+  if (newHealth === 0) {
+    const stats = await getUserStats(client, userId);
+    await decreaseLevel(client, userId, stats.level);
+    newHealth = MAX_HEALTH
+  }
 
   return client
     .from("user_stats")
-    .update({ health: health })
+    .update({ health: newHealth })
     .eq("user_id", userId)
     .select()
     .single();
@@ -449,7 +477,7 @@ export async function decreaseLevel(
   userId: string,
   level: number
 ) {
-  const newLevel = Math.max(level - 1, 1); // Ensure level doesn't go below 1
+  const newLevel = Math.max(level - 1, MIN_LEVEL); // Ensure level doesn't go below 1
   const newTotalExp = totalExpForLevel(newLevel);
 
   // update level and total_exp
@@ -956,7 +984,7 @@ export async function getActiveStreakTasks(
     .from("task")
     .select("id, rrule, date, streak")
     .eq("user_id", userId)
-    .gt("streak", 0);
+    .gt("streak", STREAK_ACTIVE_THRESHOLD);
   if (error) throw error;
   return data || [];
 }
@@ -1014,16 +1042,27 @@ export async function processStreakChecking(client: SupabaseClient) {
             // Find the last completed date
             const lastCompletion = completionDates[completionDates.length - 1];
 
-            const currentDate = new Date().toLocaleDateString('en-CA', {
-              timeZone:user.tz || 'UTC'
+            const currentDate = new Date().toLocaleDateString(DATE_FORMAT_LOCALE, {
+              timeZone: user.tz || DEFAULT_TIMEZONE
             });
 
             const shouldReset = shouldStreakBeReset(
-              task, lastCompletion, currentDate, user.rollover_time, user.tz || 'UTC', completionDates
+              task,
+              lastCompletion,
+              currentDate,
+              user.rollover_time,
+              user.tz || DEFAULT_TIMEZONE,
+              completionDates
             );
 
             if (shouldReset) {
-              await resetTaskStreak(client, user.user_id, task.id, task.streak, "missed_deadline");
+              await resetTaskStreak(
+                client,
+                user.user_id,
+                task.id,
+                task.streak,
+                STREAK_RESET_REASON_MISSED_DEADLINE
+              );
               resetStreaks++;
               await healthDeduction(client, user.user_id, userStats.health)
               console.log(`Reset streak for task ${task.id} (user ${user.user_id})`);
