@@ -881,7 +881,7 @@ export async function saveUserRollover(
   userId: string,
   rolloverTime: string
 ) {
-  return client
+  const {data, error} = await client
     .from("user_settings")
     .update({
       tz: tz,
@@ -890,6 +890,8 @@ export async function saveUserRollover(
     .eq("user_id", userId)
     .select()
     .single();
+  if (error) console.error(error.message, error.details, error.hint);
+  return data;
 }
 
 /**
