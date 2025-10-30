@@ -28,6 +28,7 @@ import {
   goldReward,
   increaseStreak,
   manaReward,
+  processStreakChecking,
   removeTaskDb,
   undoExpReward,
   undoGoldReward,
@@ -101,6 +102,8 @@ const useTasksByDay = (
   // Fetch and display tasks for the selected date
   const refresh = useCallback(async () => {
     if (!client || !userId || !selectedDay) return; // Guard: skip if required params missing
+
+    processStreakChecking(client)
     
     setLoading(true); // Show loading indicator
     try {

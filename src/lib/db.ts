@@ -1004,7 +1004,6 @@ export async function processStreakChecking(client: SupabaseClient) {
 
           try {
             // Finds the completed dates of the active tasks
-            // Incorrect
             const completionDates = await getTaskCompletionDates(client, user.user_id, task.id);
 
             // If the task has no completion dates, then we skip to the next task

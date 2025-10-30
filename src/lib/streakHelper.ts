@@ -62,19 +62,23 @@ export function getNextOccurenceAfterDate(
  */
 export function getAllOccurrencesBetween(
   rruleString: string,
-  startDate: string,
-  fromDate: string,
-  toDate: string
+  startDate: string, // task.date
+  fromDate: string, // completion date
+  toDate: string, // current date
+  userTimeZone?: string
 ): string[] {
   try {
     const [startYear, startMonth, startDay] = startDate.split("-").map(Number);
     const dtStart = new Date(Date.UTC(startYear, startMonth - 1, startDay));
 
     const [fromYear, fromMonth, fromDay] = fromDate.split("-").map(Number);
-    const fromDateObj = new Date(Date.UTC(fromYear, fromMonth - 1, fromDay));
+    console.log(fromYear, fromMonth, fromDay)
+    // Use noon UTC to avoid previous-day shifts when interpreting across timezones
+    const fromDateObj = new Date(Date.UTC(fromYear, fromMonth - 1, fromDay, 12));
 
     const [toYear, toMonth, toDay] = toDate.split("-").map(Number);
-    const toDateObj = new Date(Date.UTC(toYear, toMonth - 1, toDay));
+    // Use noon UTC to avoid next/previous-day shifts
+    const toDateObj = new Date(Date.UTC(toYear, toMonth - 1, toDay, 12));
 
     // Current format "2025-02-19T00.00.000Z"
     // Parsing the RRULE to get this format
@@ -87,9 +91,30 @@ export function getAllOccurrencesBetween(
             \nRRULE:${rruleString}`);
 
     // Returns occurences between fromDate and toDate
+
+    console.log("fdo", fromDateObj)
+    console.log("tdo", toDateObj)
+
     const occurences = rrule.between(fromDateObj, toDateObj, true);
 
-    return occurences.map((occurence) => occurence.toISOString().split("T")[0]);
+    console.log("z", occurences) // giving me 2025-10-28
+
+    // Format dates in provided user's timezone (default to system tz) as YYYY-MM-DD
+    const tz = userTimeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+    console.log("tz", tz)
+    const formatLocalDate = (date: Date): string => {
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: tz,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).format(date);
+    };
+
+    console.log("om", occurences.map(formatLocalDate))
+
+    return occurences.map(formatLocalDate);
+    
   } catch (error) {
     console.error("Error getting occurences between dates:", error);
     return [];
@@ -152,12 +177,14 @@ export function shouldStreakBeReset(
     if (!task.rrule || task.rrule === "DNR") {
       return false;
     }
-
+    
+    // Find the occurences that are expected for a streak to continue from lastCompletion to currentDate
     const expectedOccurences = getAllOccurrencesBetween(
       task.rrule,
       task.date,
       lastCompletion,
-      currentDate
+      currentDate,
+      timezone
     );
 
     const remainingOccurrences = expectedOccurences.filter(
