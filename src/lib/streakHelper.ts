@@ -1,3 +1,4 @@
+import { after } from "node:test";
 import { RRule } from "rrule";
 
 /**
@@ -10,18 +11,21 @@ import { RRule } from "rrule";
 export function getNextOccurenceAfterDate(
   rruleString: string,
   startDate: string,
-  afterDate: string
+  afterDate: string // last completed
 ): string | null {
   try {
     // Parsing the start date
+    console.log("1", startDate, afterDate)
     const [startYear, startMonth, startDay] = startDate.split("-").map(Number);
     const dtStart = new Date(Date.UTC(startYear, startMonth - 1, startDay));
+    console.log(dtStart)
 
     /// Parsing the after date
     const [afterYear, afterMonth, afterDay] = afterDate.split("-").map(Number);
     const afterDateObj = new Date(
-      Date.UTC(afterYear, afterMonth - 1, afterDay)
+      Date.UTC(afterYear, afterMonth - 1, afterDay, 12)
     );
+    console.log(afterDateObj)
 
     // If after date is before start date, return start date
     if (afterDateObj < dtStart) {
@@ -72,7 +76,7 @@ export function getAllOccurrencesBetween(
     const dtStart = new Date(Date.UTC(startYear, startMonth - 1, startDay));
 
     const [fromYear, fromMonth, fromDay] = fromDate.split("-").map(Number);
-    console.log(fromYear, fromMonth, fromDay)
+    //console.log(fromYear, fromMonth, fromDay)
     // Use noon UTC to avoid previous-day shifts when interpreting across timezones
     const fromDateObj = new Date(Date.UTC(fromYear, fromMonth - 1, fromDay, 12));
 
@@ -92,16 +96,16 @@ export function getAllOccurrencesBetween(
 
     // Returns occurences between fromDate and toDate
 
-    console.log("fdo", fromDateObj)
-    console.log("tdo", toDateObj)
+    //console.log("fdo", fromDateObj)
+    //console.log("tdo", toDateObj)
 
     const occurences = rrule.between(fromDateObj, toDateObj, true);
 
-    console.log("z", occurences) // giving me 2025-10-28
+    //console.log("z", occurences) // giving me 2025-10-28
 
     // Format dates in provided user's timezone (default to system tz) as YYYY-MM-DD
     const tz = userTimeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
-    console.log("tz", tz)
+    //console.log("tz", tz)
     const formatLocalDate = (date: Date): string => {
       return new Intl.DateTimeFormat('en-CA', {
         timeZone: tz,
@@ -111,7 +115,7 @@ export function getAllOccurrencesBetween(
       }).format(date);
     };
 
-    console.log("om", occurences.map(formatLocalDate))
+    //console.log("om", occurences.map(formatLocalDate))
 
     return occurences.map(formatLocalDate);
     
@@ -237,6 +241,8 @@ export function isConsecutiveCompletion(
       task.date,
       lastCompletion
     );
+
+    console.log("b", nextExpected)
     // if nextExpected is the same as completionDate, then tasks have been completed consecutively
     return nextExpected === completionDate;
   } catch (error) {

@@ -28,11 +28,13 @@ import {
   goldReward,
   increaseStreak,
   manaReward,
+  healthIncrease,
   processStreakChecking,
   removeTaskDb,
   undoExpReward,
   undoGoldReward,
   undoManaReward,
+  undoHealthIncrease,
 } from "@/lib/db";
 import { isConsecutiveCompletion } from "@/lib/streakHelper";
 import { SupabaseClient } from "@supabase/supabase-js";
@@ -174,7 +176,9 @@ const useTasksByDay = (
 
       // Step 3: Determine if this is a consecutive completion for streak calculation
       const lastCompletion = await getLastCompletionDate(client, userId, taskId);
+      console.log("111", lastCompletion)
       const isConsecutive = isConsecutiveCompletion(taskData, date, lastCompletion || taskData.date);
+      console.log("aaa", isConsecutive)
       
       // Step 4: Update streak (increment if consecutive, reset to 1 if not)
       await increaseStreak(client, taskId, taskData?.streak, isConsecutive)
@@ -208,6 +212,15 @@ const useTasksByDay = (
         stats?.mana,
         stats?.total_mana
       );
+
+      // Step 7.1: Increase health (capped at max health)
+      const healthResult = await healthIncrease(
+        client,
+        userId,
+        taskData?.difficulty,
+        taskData?.streak,
+        stats?.health
+      );
       
       // Step 8: Record completion in task_completions table (with mana gain for undo support)
       await dailyCompletion(
@@ -215,7 +228,8 @@ const useTasksByDay = (
         userId,
         Number(taskId),
         date,
-        manaResult.actualIncrease
+        manaResult.actualIncrease,
+        healthResult.actualIncrease
       );
       
       // Step 9: Update local state immediately for instant UI feedback
@@ -257,6 +271,8 @@ const useTasksByDay = (
         // Step 4: Save current mana and original increase for accurate reversal
         const currentMana = stats.mana;
         const manaIncrease = completedData.mana_increase;
+        const currentHealth = stats.health;
+        const healthIncrease= completedData.health_increase;
 
         // Step 5: Decrease streak by 1 (to reverse the increase from completion)
         await decreaseStreak(client, taskId, taskData?.streak);
@@ -282,6 +298,8 @@ const useTasksByDay = (
         
         // Step 8: Reverse mana reward using the actual amount that was gained
         await undoManaReward(client, userId, currentMana, manaIncrease);
+
+        await undoHealthIncrease(client, userId, currentHealth, healthIncrease)
 
         // Step 9: Update local state for instant UI feedback
         setTasks((ts) =>

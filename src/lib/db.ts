@@ -25,6 +25,7 @@ const HEALTH_DEDUCTION_ON_STREAK_RESET = 15;
 const MAX_HEALTH = 100;
 const MIN_LEVEL = 1;
 const STREAK_ACTIVE_THRESHOLD = 0; // streak > 0 means active
+const BASELINE_EXP = 0;
 const DEFAULT_TIMEZONE = "UTC";
 const DATE_FORMAT_LOCALE = "en-CA"; // yields YYYY-MM-DD from Intl APIs
 const STREAK_RESET_REASON_MISSED_DEADLINE = "missed_deadline";
@@ -237,6 +238,64 @@ export async function healthDeduction(
     newHealth = MAX_HEALTH
   }
 
+  return client
+    .from("user_stats")
+    .update({ health: newHealth })
+    .eq("user_id", userId)
+    .select()
+    .single();
+}
+
+export async function healthIncrease(
+  client: SupabaseClient,
+  userId: string,
+  difficulty: string,
+  streak: number,
+  currentHealth: number
+) {
+  const multipliers = getRewardMultipliers(difficulty, streak, 1); // Health doesn't use level multiplier
+  const increase = multipliers.gold; // reuse base increment
+  const cappedValue = Math.min(currentHealth + increase, MAX_HEALTH);
+  const actualIncrease = cappedValue - currentHealth;
+
+  await client
+    .from("user_stats")
+    .update({ health: cappedValue })
+    .eq("user_id", userId)
+    .select()
+    .single();
+
+  return {
+    actualIncrease,
+  };
+}
+
+/**
+ * Reverses a health increase by subtracting the exact amount gained
+ * 
+ * Mirrors undoManaReward behavior: takes the actual gained amount so
+ * we correctly handle cases where health was capped at MAX_HEALTH.
+ * 
+ * @param {SupabaseClient} client - Authenticated Supabase client
+ * @param {string} userId - Unique identifier for the user
+ * @param {number} health - Current health value
+ * @param {number} actualIncrease - Amount of health actually gained
+ * @returns {Promise<Object>} Updated user stats with reduced health
+ * 
+ * @throws {Error} If database update fails
+ */
+export async function undoHealthIncrease(
+  client: SupabaseClient,
+  userId: string,
+  health: number,
+  actualIncrease: number
+) {
+  if (health === null || health === undefined) {
+    console.error("Health is null or undefined, cannot undo health increase");
+    return;
+  }
+
+  const newHealth = Math.max(health - actualIncrease, 0);
   return client
     .from("user_stats")
     .update({ health: newHealth })
@@ -486,6 +545,7 @@ export async function decreaseLevel(
     .update({
       level: newLevel,
       total_exp: newTotalExp,
+      exp: BASELINE_EXP
     })
     .eq("user_id", userId)
     .select()
@@ -562,6 +622,8 @@ export async function increaseStreak(
   isConsecutive: boolean = true
 ) {
   let newStreak: number;
+
+  console.log(isConsecutive)
 
   if (isConsecutive) {
     newStreak = (currentStreak ?? 0) + 1;
@@ -699,7 +761,7 @@ export async function getLastCompletionDate(
     .from("task_completions")
     .select("date")
     .eq("user_id", userId)
-    .eq("id", parseInt(taskId))
+    .eq("task_id", parseInt(taskId))
     .order("date", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -760,7 +822,8 @@ export async function dailyCompletion(
   userId: string,
   taskId: number,
   date: string,
-  manaIncrease: number
+  manaIncrease: number,
+  healthIncrease: number
 ) {
   return client.from("task_completions").upsert(
     [
@@ -769,6 +832,7 @@ export async function dailyCompletion(
         task_id: taskId,
         date: date,
         mana_increase: manaIncrease,
+        health_increase: healthIncrease
       },
     ],
     { onConflict: "user_id, task_id, date", ignoreDuplicates: true }
