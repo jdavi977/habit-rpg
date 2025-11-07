@@ -14,74 +14,87 @@ const monsterCache = new Map<string, Monster>();
  * @param data 
  * @returns The validated monster's fields
  */
-function validateMonster(data: any): Monster {
+function validateMonster(data: unknown): Monster {
+    // Type guard: check if data is an object
+    if (typeof data !== 'object' || data === null) {
+        throw new Error(`Invalid monster: data must be an object`);
+    }
+    
+    const obj = data as Record<string, unknown>;
+    
     // 1. Check top-level required fields
-    if (!data.id || typeof data.id !== 'string') {
+    if (!obj.id || typeof obj.id !== 'string') {
         throw new Error(`Invalid monster: missing or invalid 'id' field`);
     }
     
-    if (!data.name || typeof data.name !== 'string') {
-        throw new Error(`Invalid monster ${data.id}: missing or invalid 'name' field`);
+    if (!obj.name || typeof obj.name !== 'string') {
+        throw new Error(`Invalid monster ${obj.id}: missing or invalid 'name' field`);
     }
     
     // 2. Validate stats object
-    if (!data.stats || typeof data.stats !== 'object') {
-        throw new Error(`Invalid monster ${data.id}: missing or invalid 'stats' field`);
+    if (!obj.stats || typeof obj.stats !== 'object' || obj.stats === null) {
+        throw new Error(`Invalid monster ${obj.id}: missing or invalid 'stats' field`);
     }
     
-    const stats = data.stats;
+    const stats = obj.stats as Record<string, unknown>;
     const requiredStats: (keyof CombatStats)[] = [
         'currentHP', 'maxHP', 'currentEnergy', 'maxEnergy', 'attack', 'defense'
     ];
     
     for (const stat of requiredStats) {
         if (typeof stats[stat] !== 'number') {
-            throw new Error(`Invalid monster ${data.id}: missing or invalid stat '${stat}'`);
+            throw new Error(`Invalid monster ${obj.id}: missing or invalid stat '${stat}'`);
         }
     }
     
     // Validate HP values make sense
-    if (stats.currentHP > stats.maxHP) {
-        throw new Error(`Invalid monster ${data.id}: currentHP cannot exceed maxHP`);
+    if (typeof stats.currentHP === 'number' && typeof stats.maxHP === 'number' && stats.currentHP > stats.maxHP) {
+        throw new Error(`Invalid monster ${obj.id}: currentHP cannot exceed maxHP`);
     }
     
     // 3. Validate abilities array
-    if (!Array.isArray(data.abilities)) {
-        throw new Error(`Invalid monster ${data.id}: 'abilities' must be an array`);
+    if (!Array.isArray(obj.abilities)) {
+        throw new Error(`Invalid monster ${obj.id}: 'abilities' must be an array`);
     }
     
-    if (data.abilities.length !== 4) {
-        throw new Error(`Invalid monster ${data.id}: must have exactly 4 abilities, found ${data.abilities.length}`);
+    if (obj.abilities.length !== 4) {
+        throw new Error(`Invalid monster ${obj.id}: must have exactly 4 abilities, found ${obj.abilities.length}`);
     }
     
     // 4. Validate each ability
-    data.abilities.forEach((ability: any, index: number) => {
-        if (!ability.id || typeof ability.id !== 'string') {
-            throw new Error(`Invalid monster ${data.id}: ability ${index} missing 'id'`);
+    obj.abilities.forEach((ability: unknown, index: number) => {
+        if (typeof ability !== 'object' || ability === null) {
+            throw new Error(`Invalid monster ${obj.id}: ability ${index} must be an object`);
         }
         
-        if (!ability.name || typeof ability.name !== 'string') {
-            throw new Error(`Invalid monster ${data.id}: ability ${index} missing 'name'`);
+        const abilityObj = ability as Record<string, unknown>;
+        
+        if (!abilityObj.id || typeof abilityObj.id !== 'string') {
+            throw new Error(`Invalid monster ${obj.id}: ability ${index} missing 'id'`);
         }
         
-        if (!ability.description || typeof ability.description !== 'string') {
-            throw new Error(`Invalid monster ${data.id}: ability ${index} missing 'description'`);
+        if (!abilityObj.name || typeof abilityObj.name !== 'string') {
+            throw new Error(`Invalid monster ${obj.id}: ability ${index} missing 'name'`);
         }
         
-        if (typeof ability.manaCost !== 'number' || ability.manaCost < 0) {
-            throw new Error(`Invalid monster ${data.id}: ability ${index} invalid 'manaCost'`);
+        if (!abilityObj.description || typeof abilityObj.description !== 'string') {
+            throw new Error(`Invalid monster ${obj.id}: ability ${index} missing 'description'`);
         }
         
-        if (typeof ability.cooldown !== 'number' || ability.cooldown < 0) {
-            throw new Error(`Invalid monster ${data.id}: ability ${index} invalid 'cooldown'`);
+        if (typeof abilityObj.manaCost !== 'number' || abilityObj.manaCost < 0) {
+            throw new Error(`Invalid monster ${obj.id}: ability ${index} invalid 'manaCost'`);
+        }
+        
+        if (typeof abilityObj.cooldown !== 'number' || abilityObj.cooldown < 0) {
+            throw new Error(`Invalid monster ${obj.id}: ability ${index} invalid 'cooldown'`);
         }
     });
 
     return {
-        id: data.id,
-        name: data.name,
-        stats: data.stats as CombatStats,
-        abilities: data.abilities as Ability[],
+        id: obj.id,
+        name: obj.name,
+        stats: obj.stats as CombatStats,
+        abilities: obj.abilities as Ability[],
     };
 }
 
