@@ -1,0 +1,52 @@
+{
+  "id": "skeleton",
+  "name": "Skeleton",
+  "stats": {
+    "currentHP": 60,
+    "maxHP": 60,
+    "currentEnergy": 3,
+    "maxEnergy": 3,
+    "attack": 10,
+    "defense": 4
+  },
+  "abilities": [
+    {
+      "id": "skeleton_bone_strike",
+      "name": "Bone Strike",
+      "description": "Basic skeletal attack",
+      "manaCost": 1,
+      "cooldown": 0,
+      "damage": 12,
+      "effects": [{"type": "damage", "amount": 12}]
+    },
+    {
+      "id": "skeleton_poison",
+      "name": "Poison Touch",
+      "description": "Applies poison over time",
+      "manaCost": 2,
+      "cooldown": 2,
+      "damage": 8,
+      "effects": [
+        {"type": "damage", "amount": 8},
+        {"type": "applyStatus", "status": "poison", "stacks": 1, "duration": 4}
+      ]
+    },
+    {
+      "id": "skeleton_shield",
+      "name": "Bone Armor",
+      "description": "Gains defensive shield",
+      "manaCost": 2,
+      "cooldown": 3,
+      "effects": [{"type": "applyStatus", "status": "shield", "stacks": 2, "duration": 2}]
+    },
+    {
+      "id": "skeleton_regen",
+      "name": "Undead Resilience",
+      "description": "Heals over time",
+      "manaCost": 3,
+      "cooldown": 4,
+      "effects": [{"type": "applyStatus", "status": "regeneration", "stacks": 1, "duration": 3, "perTurnAmount": 10}]
+    }
+  ]
+}
+

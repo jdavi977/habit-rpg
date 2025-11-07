@@ -1,0 +1,57 @@
+{
+  "id": "boss_skeleton_king",
+  "name": "Skeleton King",
+  "stats": {
+    "currentHP": 200,
+    "maxHP": 200,
+    "currentEnergy": 5,
+    "maxEnergy": 5,
+    "attack": 20,
+    "defense": 12
+  },
+  "abilities": [
+    {
+      "id": "sk_king_strike",
+      "name": "Royal Strike",
+      "description": "Powerful melee attack",
+      "manaCost": 2,
+      "cooldown": 0,
+      "damage": 25,
+      "effects": [{"type": "damage", "amount": 25}]
+    },
+    {
+      "id": "sk_king_curse",
+      "name": "Cursed Touch",
+      "description": "Applies poison and reduces defense",
+      "manaCost": 3,
+      "cooldown": 2,
+      "damage": 20,
+      "effects": [
+        {"type": "damage", "amount": 20},
+        {"type": "applyStatus", "status": "poison", "stacks": 2, "duration": 5}
+      ]
+    },
+    {
+      "id": "sk_king_shield_wall",
+      "name": "Bone Shield Wall",
+      "description": "Massive defensive boost",
+      "manaCost": 3,
+      "cooldown": 3,
+      "effects": [{"type": "applyStatus", "status": "shield", "stacks": 5, "duration": 3}]
+    },
+    {
+      "id": "sk_king_ultimate",
+      "name": "Death Nova",
+      "description": "Devastating area attack with multiple debuffs",
+      "manaCost": 5,
+      "cooldown": 4,
+      "damage": 40,
+      "effects": [
+        {"type": "damage", "amount": 40},
+        {"type": "applyStatus", "status": "poison", "stacks": 3, "duration": 4},
+        {"type": "applyStatus", "status": "burn", "stacks": 2, "duration": 3}
+      ]
+    }
+  ]
+}
+

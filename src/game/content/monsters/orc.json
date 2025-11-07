@@ -1,0 +1,49 @@
+{
+  "id": "orc",
+  "name": "Orc Warrior",
+  "stats": {
+    "currentHP": 80,
+    "maxHP": 80,
+    "currentEnergy": 3,
+    "maxEnergy": 3,
+    "attack": 12,
+    "defense": 6
+  },
+  "abilities": [
+    {
+      "id": "orc_cleave",
+      "name": "Cleave",
+      "description": "Heavy melee attack",
+      "manaCost": 1,
+      "cooldown": 0,
+      "damage": 15,
+      "effects": [{"type": "damage", "amount": 15}]
+    },
+    {
+      "id": "orc_rage",
+      "name": "Battle Rage",
+      "description": "Increases attack power",
+      "manaCost": 2,
+      "cooldown": 2,
+      "effects": [{"type": "buff", "amount": 5, "duration": 3}]
+    },
+    {
+      "id": "orc_smash",
+      "name": "Ground Smash",
+      "description": "Devastating area attack",
+      "manaCost": 3,
+      "cooldown": 2,
+      "damage": 25,
+      "effects": [{"type": "damage", "amount": 25}]
+    },
+    {
+      "id": "orc_heal",
+      "name": "Regenerate",
+      "description": "Heals a small amount of HP",
+      "manaCost": 2,
+      "cooldown": 3,
+      "effects": [{"type": "heal", "amount": 20}]
+    }
+  ]
+}
+
