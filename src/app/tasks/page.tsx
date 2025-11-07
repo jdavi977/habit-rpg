@@ -14,7 +14,7 @@
 "use client"
 
 import useAuthClient from "@/components/hooks/useAuthClient";
-import TaskCard from "@/components/profile/TaskCard";
+import TaskCard from "@/components/home/TaskCard";
 
 /**
  * Tasks management page

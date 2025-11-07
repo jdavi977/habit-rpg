@@ -29,7 +29,6 @@ import {
   increaseStreak,
   manaReward,
   healthIncrease,
-  processStreakChecking,
   removeTaskDb,
   undoExpReward,
   undoGoldReward,

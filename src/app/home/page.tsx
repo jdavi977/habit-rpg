@@ -11,11 +11,11 @@
  */
 
 "use client";
-import StatsCard from "@/components/profile/StatsCard";
-import CurrentTasks from "@/components/profile/CurrentTasks";
+import StatsCard from "@/components/home/StatsCard";
+import CurrentTasks from "@/components/home/CurrentTasks";
 import useAuthClient from "@/components/hooks/useAuthClient";
-import WarningRollover from "@/components/profile/WarningRollover";
-import TimeLeft from "@/components/profile/TimeLeft";
+import WarningRollover from "@/components/home/WarningRollover";
+import TimeLeft from "@/components/home/TimeLeft";
 
 /**
  * Home page component - Main user dashboard
