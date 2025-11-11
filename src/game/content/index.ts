@@ -38,7 +38,7 @@ function validateMonster(data: unknown): Monster {
     
     const stats = obj.stats as Record<string, unknown>;
     const requiredStats: (keyof CombatStats)[] = [
-        'currentHP', 'maxHP', 'currentEnergy', 'maxEnergy', 'attack', 'defense'
+        'currentHP', 'maxHP', 'currentMana', 'maxMana', 'attack', 'defense'
     ];
     
     for (const stat of requiredStats) {

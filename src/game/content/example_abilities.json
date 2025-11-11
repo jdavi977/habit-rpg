@@ -1,0 +1,147 @@
+[
+  {
+    "id": "basic_strike",
+    "name": "Basic Strike",
+    "description": "A simple melee attack dealing moderate damage",
+    "manaCost": 1,
+    "cooldown": 0,
+    "damage": 12,
+    "effects": [{"type": "damage", "amount": 12}]
+  },
+  {
+    "id": "power_strike",
+    "name": "Power Strike",
+    "description": "A heavy attack dealing high damage",
+    "manaCost": 3,
+    "cooldown": 1,
+    "damage": 25,
+    "effects": [{"type": "damage", "amount": 25}]
+  },
+  {
+    "id": "heal",
+    "name": "Heal",
+    "description": "Restores a moderate amount of health",
+    "manaCost": 2,
+    "cooldown": 2,
+    "effects": [{"type": "heal", "amount": 30}]
+  },
+  {
+    "id": "shield",
+    "name": "Defensive Stance",
+    "description": "Gains a protective shield that reduces incoming damage",
+    "manaCost": 2,
+    "cooldown": 3,
+    "effects": [{"type": "applyStatus", "status": "shield", "stacks": 2, "duration": 3}]
+  },
+  {
+    "id": "poison_strike",
+    "name": "Poison Strike",
+    "description": "Attacks and applies poison damage over time",
+    "manaCost": 2,
+    "cooldown": 2,
+    "damage": 10,
+    "effects": [
+      {"type": "damage", "amount": 10},
+      {"type": "applyStatus", "status": "poison", "stacks": 2, "duration": 4}
+    ]
+  },
+  {
+    "id": "flame_strike",
+    "name": "Flame Strike",
+    "description": "A fiery attack that burns the enemy",
+    "manaCost": 3,
+    "cooldown": 2,
+    "damage": 18,
+    "effects": [
+      {"type": "damage", "amount": 18},
+      {"type": "applyStatus", "status": "burn", "stacks": 2, "duration": 3}
+    ]
+  },
+  {
+    "id": "regeneration",
+    "name": "Regeneration",
+    "description": "Grants healing over time",
+    "manaCost": 3,
+    "cooldown": 4,
+    "effects": [{"type": "applyStatus", "status": "regeneration", "stacks": 1, "duration": 4, "perTurnAmount": 15}]
+  },
+  {
+    "id": "stun_strike",
+    "name": "Stunning Blow",
+    "description": "Attacks and stuns the enemy, preventing their next action",
+    "manaCost": 3,
+    "cooldown": 3,
+    "damage": 15,
+    "effects": [
+      {"type": "damage", "amount": 15},
+      {"type": "applyStatus", "status": "stun", "stacks": 1, "duration": 1}
+    ]
+  },
+  {
+    "id": "combo_strike",
+    "name": "Combo Strike",
+    "description": "A quick attack that scales with your attack stat",
+    "manaCost": 2,
+    "cooldown": 1,
+    "damageFormula": "8 + ATK * 1.2",
+    "effects": [{"type": "damage", "amount": 0}]
+  },
+  {
+    "id": "ultimate_heal",
+    "name": "Greater Heal",
+    "description": "Restores a large amount of health",
+    "manaCost": 4,
+    "cooldown": 4,
+    "effects": [{"type": "heal", "amount": 50}]
+  },
+  {
+    "id": "defensive_wall",
+    "name": "Defensive Wall",
+    "description": "Creates a powerful shield that lasts multiple turns",
+    "manaCost": 3,
+    "cooldown": 4,
+    "effects": [{"type": "applyStatus", "status": "shield", "stacks": 4, "duration": 4}]
+  },
+  {
+    "id": "venomous_strike",
+    "name": "Venomous Strike",
+    "description": "A deadly attack that applies heavy poison",
+    "manaCost": 3,
+    "cooldown": 3,
+    "damage": 12,
+    "effects": [
+      {"type": "damage", "amount": 12},
+      {"type": "applyStatus", "status": "poison", "stacks": 3, "duration": 5}
+    ]
+  },
+  {
+    "id": "inferno",
+    "name": "Inferno",
+    "description": "Unleashes devastating fire damage with heavy burn",
+    "manaCost": 4,
+    "cooldown": 3,
+    "damage": 28,
+    "effects": [
+      {"type": "damage", "amount": 28},
+      {"type": "applyStatus", "status": "burn", "stacks": 4, "duration": 4}
+    ]
+  },
+  {
+    "id": "quick_strike",
+    "name": "Quick Strike",
+    "description": "A fast, low-cost attack",
+    "manaCost": 0,
+    "cooldown": 0,
+    "damage": 8,
+    "effects": [{"type": "damage", "amount": 8}]
+  },
+  {
+    "id": "battle_fury",
+    "name": "Battle Fury",
+    "description": "Increases your attack power temporarily",
+    "manaCost": 2,
+    "cooldown": 3,
+    "effects": [{"type": "buff", "amount": 8, "duration": 3}]
+  }
+]
+
