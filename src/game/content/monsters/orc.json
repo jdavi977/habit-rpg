@@ -4,10 +4,11 @@
   "stats": {
     "currentHP": 80,
     "maxHP": 80,
-    "currentEnergy": 3,
-    "maxEnergy": 3,
+    "currentMana": 3,
+    "maxMana": 3,
     "attack": 12,
-    "defense": 6
+    "defense": 6,
+    "agility": 5
   },
   "abilities": [
     {
