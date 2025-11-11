@@ -17,8 +17,7 @@
       "description": "Basic attack dealing moderate damage",
       "manaCost": 1,
       "cooldown": 0,
-      "damage": 10,
-      "effects": [{"type": "damage", "amount": 10}]
+      "damage": 10
     },
     {
       "id": "goblin_dodge",
@@ -26,7 +25,7 @@
       "description": "Gains temporary shield",
       "manaCost": 2,
       "cooldown": 2,
-      "effects": [{"type": "applyStatus", "status": "shield", "stacks": 1, "duration": 2}]
+      "effects": [{"type": "applyStatus", "status": "shield", "duration": 2, "baseline": 0.1}]
     },
     {
       "id": "goblin_slash",
@@ -34,8 +33,7 @@
       "description": "Powerful attack with high damage",
       "manaCost": 3,
       "cooldown": 1,
-      "damage": 18,
-      "effects": [{"type": "damage", "amount": 18}]
+      "damage": 18
     },
     {
       "id": "goblin_frenzy",
@@ -45,8 +43,7 @@
       "cooldown": 3,
       "damage": 5,
       "effects": [
-        {"type": "damage", "amount": 5},
-        {"type": "applyStatus", "status": "burn", "stacks": 2, "duration": 3}
+        {"type": "applyStatus", "status": "burn", "duration": 3, "baseline": 0.3}
       ]
     }
   ]

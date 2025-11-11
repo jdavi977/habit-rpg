@@ -5,8 +5,7 @@
     "description": "A simple melee attack dealing moderate damage",
     "manaCost": 1,
     "cooldown": 0,
-    "damage": 12,
-    "effects": [{"type": "damage", "amount": 12}]
+    "damage": 12
   },
   {
     "id": "power_strike",
@@ -14,8 +13,7 @@
     "description": "A heavy attack dealing high damage",
     "manaCost": 3,
     "cooldown": 1,
-    "damage": 25,
-    "effects": [{"type": "damage", "amount": 25}]
+    "damage": 25
   },
   {
     "id": "heal",
@@ -23,7 +21,7 @@
     "description": "Restores a moderate amount of health",
     "manaCost": 2,
     "cooldown": 2,
-    "effects": [{"type": "heal", "amount": 30}]
+    "effects": [{"type": "heal", "amount": 30, "baseline": 0.0}]
   },
   {
     "id": "shield",
@@ -31,7 +29,7 @@
     "description": "Gains a protective shield that reduces incoming damage",
     "manaCost": 2,
     "cooldown": 3,
-    "effects": [{"type": "applyStatus", "status": "shield", "stacks": 2, "duration": 3}]
+    "effects": [{"type": "applyStatus", "status": "shield", "duration": 3, "baseline": 0.1}]
   },
   {
     "id": "poison_strike",
@@ -41,8 +39,7 @@
     "cooldown": 2,
     "damage": 10,
     "effects": [
-      {"type": "damage", "amount": 10},
-      {"type": "applyStatus", "status": "poison", "stacks": 2, "duration": 4}
+      {"type": "applyStatus", "status": "poison", "duration": 4, "baseline": 0.3}
     ]
   },
   {
@@ -53,8 +50,7 @@
     "cooldown": 2,
     "damage": 18,
     "effects": [
-      {"type": "damage", "amount": 18},
-      {"type": "applyStatus", "status": "burn", "stacks": 2, "duration": 3}
+      {"type": "applyStatus", "status": "burn", "duration": 3, "baseline": 0.3}
     ]
   },
   {
@@ -63,7 +59,7 @@
     "description": "Grants healing over time",
     "manaCost": 3,
     "cooldown": 4,
-    "effects": [{"type": "applyStatus", "status": "regeneration", "stacks": 1, "duration": 4, "perTurnAmount": 15}]
+    "effects": [{"type": "applyStatus", "status": "regeneration", "duration": 4, "perTurnAmount": 15, "baseline": 0.1}]
   },
   {
     "id": "stun_strike",
@@ -73,8 +69,7 @@
     "cooldown": 3,
     "damage": 15,
     "effects": [
-      {"type": "damage", "amount": 15},
-      {"type": "applyStatus", "status": "stun", "stacks": 1, "duration": 1}
+      {"type": "applyStatus", "status": "stun", "duration": 1, "baseline": 0.4}
     ]
   },
   {
@@ -83,8 +78,7 @@
     "description": "A quick attack that scales with your attack stat",
     "manaCost": 2,
     "cooldown": 1,
-    "damageFormula": "8 + ATK * 1.2",
-    "effects": [{"type": "damage", "amount": 0}]
+    "damageFormula": "8 + ATK * 1.2"
   },
   {
     "id": "ultimate_heal",
@@ -92,7 +86,7 @@
     "description": "Restores a large amount of health",
     "manaCost": 4,
     "cooldown": 4,
-    "effects": [{"type": "heal", "amount": 50}]
+    "effects": [{"type": "heal", "amount": 50, "baseline": 0.0}]
   },
   {
     "id": "defensive_wall",
@@ -100,7 +94,7 @@
     "description": "Creates a powerful shield that lasts multiple turns",
     "manaCost": 3,
     "cooldown": 4,
-    "effects": [{"type": "applyStatus", "status": "shield", "stacks": 4, "duration": 4}]
+    "effects": [{"type": "applyStatus", "status": "shield", "duration": 4, "baseline": 0.1}]
   },
   {
     "id": "venomous_strike",
@@ -110,8 +104,7 @@
     "cooldown": 3,
     "damage": 12,
     "effects": [
-      {"type": "damage", "amount": 12},
-      {"type": "applyStatus", "status": "poison", "stacks": 3, "duration": 5}
+      {"type": "applyStatus", "status": "poison", "duration": 5, "baseline": 0.3}
     ]
   },
   {
@@ -122,8 +115,7 @@
     "cooldown": 3,
     "damage": 28,
     "effects": [
-      {"type": "damage", "amount": 28},
-      {"type": "applyStatus", "status": "burn", "stacks": 4, "duration": 4}
+      {"type": "applyStatus", "status": "burn", "duration": 4, "baseline": 0.3}
     ]
   },
   {
@@ -132,8 +124,7 @@
     "description": "A fast, low-cost attack",
     "manaCost": 0,
     "cooldown": 0,
-    "damage": 8,
-    "effects": [{"type": "damage", "amount": 8}]
+    "damage": 8
   },
   {
     "id": "battle_fury",
@@ -141,7 +132,7 @@
     "description": "Increases your attack power temporarily",
     "manaCost": 2,
     "cooldown": 3,
-    "effects": [{"type": "buff", "amount": 8, "duration": 3}]
+    "effects": [{"type": "buff", "amount": 8, "duration": 3, "baseline": 0.0}]
   }
 ]
 

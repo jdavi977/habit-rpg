@@ -17,8 +17,7 @@
       "description": "Powerful melee attack",
       "manaCost": 2,
       "cooldown": 0,
-      "damage": 25,
-      "effects": [{"type": "damage", "amount": 25}]
+      "damage": 25
     },
     {
       "id": "sk_king_curse",
@@ -28,8 +27,7 @@
       "cooldown": 2,
       "damage": 20,
       "effects": [
-        {"type": "damage", "amount": 20},
-        {"type": "applyStatus", "status": "poison", "stacks": 2, "duration": 5}
+        {"type": "applyStatus", "status": "poison", "duration": 5, "baseline": 0.3}
       ]
     },
     {
@@ -38,7 +36,7 @@
       "description": "Massive defensive boost",
       "manaCost": 3,
       "cooldown": 3,
-      "effects": [{"type": "applyStatus", "status": "shield", "stacks": 5, "duration": 3}]
+      "effects": [{"type": "applyStatus", "status": "shield", "duration": 3, "baseline": 0.1}]
     },
     {
       "id": "sk_king_ultimate",
@@ -48,9 +46,8 @@
       "cooldown": 4,
       "damage": 40,
       "effects": [
-        {"type": "damage", "amount": 40},
-        {"type": "applyStatus", "status": "poison", "stacks": 3, "duration": 4},
-        {"type": "applyStatus", "status": "burn", "stacks": 2, "duration": 3}
+        {"type": "applyStatus", "status": "poison", "duration": 4, "baseline": 0.3},
+        {"type": "applyStatus", "status": "burn", "duration": 3, "baseline": 0.3}
       ]
     }
   ]

@@ -13,8 +13,8 @@ export interface AbilityEffect {
   type: "damage" | "heal" | "applyStatus" | "buff";
   amount?: number; // damage/heal
   status?: StatusEffectType; // applyStatus
-  stacks?: number; // how many stacks to apply
   duration?: number; // how long the status lasts
+  baseline: number; // if rng > baseline, effect is allowed (baseline should be in [0, 1])
 }
 
 export type StatusEffectType =
