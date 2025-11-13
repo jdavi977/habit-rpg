@@ -99,7 +99,6 @@ export interface Action {
   type: "useAbility" | "endTurn";
   abilityId?: string; // Required if type is "useAbiity"
   targetId?: string; // Who the action targets
-  turn: number; // Which turn this action happened on
 }
 
 export interface BattleState {
