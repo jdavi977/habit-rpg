@@ -14,7 +14,7 @@ import { ActiveCharacter, Monster } from "../types";
  * Clamped between MIN_DODGE_BASELINE and MAX_DODGE_BASELINE
  * 
  * @param monster - Optional monster to get agility from
- * @param user - Optional user/character to get agility from
+ * @param player - Optional player/character to get agility from
  * @returns The dodge baseline (if RNG > this value, dodge opportunity occurs)
  * 
  * @example
@@ -23,8 +23,8 @@ import { ActiveCharacter, Monster } from "../types";
  * // 20 agility: baseline = 0.45 (55% dodge chance)
  * // 30 agility: baseline = 0.25 (75% dodge chance)
  */
-export function calculateDodgeBaseline(monster?: Monster, user?: ActiveCharacter): number {
-    const agilityStat = monster?.stats.agility || user?.stats.agility || 0;
+export function calculateDodgeBaseline(entity: Monster | ActiveCharacter): number {
+    const agilityStat = entity?.stats.agility
     
     // Calculate baseline: higher agility reduces baseline (improves dodge chance)
     const baseline = BASE_DODGE_BASELINE - (agilityStat / AGILITY_DODGE_SCALING);

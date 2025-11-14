@@ -36,6 +36,49 @@ export interface PersistentStats {
   gold: number;
 }
 
+// What's stored in the database
+export interface Character {
+  id: string;
+  player_id: string;
+  name: string;
+  class_id: string;
+  // Store persistent stats reference
+  stats_id?: string;
+}
+
+export interface StatusEffect {
+  type: StatusEffectType;
+  duration: number; // Always needed - when it expires
+  stacks?: number; // Optional - for stackable effects
+  perTurnAmount?: number; // Optional - damage/heal per turn
+  sourceAbilityId?: string; // Optional - for tracking/logging
+}
+
+export interface DodgeOpportunity {
+  isAvailable: boolean;
+  timingWindow: number;
+  rngValue: number;
+}
+
+export interface Monster {
+  id: string;
+  name: string;
+  entityType: string;
+  stats: CombatStats;
+  abilities: Ability[];
+}
+
+// What you use during gameplay (combines Character + Class + Stats)
+export interface ActiveCharacter {
+  id: string;
+  name: string;
+  entityType: string;
+  class: Class; // Full class object loaded
+  stats: CombatStats; // Current combat stats
+  // Status effects currently active
+  statusEffects?: StatusEffect[];
+}
+
 // What's used in combat (includes temporary state)
 export interface CombatStats {
   currentHP: number;
@@ -50,26 +93,6 @@ export interface CombatStats {
   defenseModifier?: number;
 }
 
-// What's stored in the database
-export interface Character {
-  id: string;
-  user_id: string;
-  name: string;
-  class_id: string;
-  // Store persistent stats reference
-  stats_id?: string;
-}
-
-// What you use during gameplay (combines Character + Class + Stats)
-export interface ActiveCharacter {
-  id: string;
-  name: string;
-  class: Class; // Full class object loaded
-  stats: CombatStats; // Current combat stats
-  // Status effects currently active
-  statusEffects?: StatusEffect[];
-}
-
 export interface Class {
   id: string; // Unique identifier (e.g., "boxer", "runner")
   name: string; // Display name (e.g., "Boxer", "Marathon Runner")
@@ -80,27 +103,6 @@ export interface Class {
   baseDefense?: number;
 }
 
-export interface StatusEffect {
-  type: StatusEffectType;
-  duration: number; // Always needed - when it expires
-  stacks?: number; // Optional - for stackable effects
-  perTurnAmount?: number; // Optional - damage/heal per turn
-  sourceAbilityId?: string; // Optional - for tracking/logging
-}
-
-export interface Monster {
-  id: string;
-  name: string;
-  stats: CombatStats;
-  abilities: Ability[];
-}
-
-export interface Action {
-  type: "useAbility" | "endTurn";
-  abilityId?: string; // Required if type is "useAbiity"
-  targetId?: string; // Who the action targets
-}
-
 export interface BattleState {
   id: string;
   status: "active" | "won" | "lost";
@@ -109,8 +111,8 @@ export interface BattleState {
   turn: number;
 }
 
-export interface DodgeOpportunity {
-  isAvailable: boolean;
-  timingWindow: number;
-  rngValue: number;
+export interface Action {
+  type: "useAbility" | "endTurn";
+  abilityId?: string; // Required if type is "useAbiity"
+  targetId?: string; // Who the action targets
 }
