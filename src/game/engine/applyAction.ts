@@ -1,6 +1,7 @@
 import {
   BASE_CRITICAL_HIT_CHANCE,
   CRITICAL_HIT_DAMAGE_MULTIPLIER,
+  DODGED_ATTACK,
 } from "../constants";
 import {
   Ability,
@@ -21,47 +22,59 @@ import { createRNG, RNG } from "./rng";
 export function applyAction(
   battleState: BattleState,
   action: Action,
-  dodgeChance?: boolean
 ): BattleState {
-  if (action.type === "endTurn") {
+  if (action.type === "endTurn" || !action.targetId) {
     return continueBattleState(battleState);
   }
 
-  const target = action?.targetId;
-  const player = battleState?.player;
-  const monster = battleState?.enemy;
+  const current = action.current;
+  const target = action.targetId;
 
-  let playerHP;
-  let monsterHP;
+  const player = battleState.player;
+  const monster = battleState.enemy;
 
-  // make function to find player ability using action.abilityId
-  const playerAbility = player.class.abilities.find(
-    (ability) => ability.id === action.abilityId
-  );
+  let damage;
 
-  // makes sure that there is an ability found else we pass turn
-  if (!playerAbility || !target) {
-    return continueBattleState(battleState);
-  }
-
-  const playerStats = player.stats;
-  const monsterStats = monster.stats;
   const rng = createRNG(battleState.id);
 
-  // Whoever has higher agility goes first in turn
-  if (playerStats.agility > monsterStats.agility) {
-    monsterHP = abilityAction(
-      "player",
-      target,
-      playerAbility,
-      player,
-      monster,
-      battleState,
-      rng
+  if (current === "player") {
+    const playerAbility = player.class.abilities.find(
+      (ability) => ability.id === action.abilityId
     );
-    //   // if monster action is an attack, we first check users agility and
-    //   // determine a baseline which determines if the user has the ability to dodge.
-    //   // if rng is > than baseline, the user gets a dodge opportunity.
+
+    if (!playerAbility || playerAbility.cooldown > 0 || playerAbility.manaCost > player.stats.currentMana) {
+      console.log(`${player.name} is unable to cast ${playerAbility?.name}`)
+      return continueBattleState(battleState);
+    } else {
+      damage = abilityAction(
+        current,
+        target,
+        playerAbility,
+        player,
+        monster,
+        battleState,
+        rng
+      )
+
+      const newHp = battleState.enemy.stats.currentHP - damage
+      const newMana = battleState.player.stats.currentMana - playerAbility.manaCost;
+
+      if (newHp <= 0) {
+        return wonBattleState(battleState);
+      } else {
+      return {                 // TODO: update cool down
+        ...battleState,
+        enemy: {
+          ...battleState.enemy,
+          stats: {
+            ...battleState.enemy.stats,
+            currentHP: newHp,
+            currentMana: newMana
+          }
+        }
+      }
+    }
+    };
   } else {
     const monsterAction = selectMonsterAction(battleState, rng);
     const monsterAbility = monster.abilities.find(
@@ -69,16 +82,36 @@ export function applyAction(
     );
     if (!monsterAbility) {
       return continueBattleState(battleState);
-    }
-    playerHP = abilityAction(
-      "monster",
-      target,
-      monsterAbility,
-      player,
-      monster,
-      battleState,
-      rng
-    );
+    } else {
+      damage = abilityAction(
+        current,
+        target,
+        monsterAbility,
+        player,
+        monster,
+        battleState,
+        rng
+      )
+
+      const newHp = battleState.player.stats.currentHP - damage
+      const newMana = battleState.enemy.stats.currentMana - monsterAbility.manaCost;
+
+      if (newHp <= 0 ) {
+        return lostBattleState(battleState)
+      } else {                 // TODO: update cool down
+          return {
+            ...battleState,
+            player: {
+              ...battleState.player,
+              stats: {
+                ...battleState.player.stats,
+                currentHP: newHp,
+                currentMana: newMana
+              }
+            }
+          } 
+        }
+    };
   }
 }
 
@@ -90,7 +123,7 @@ function abilityAction(
   monster: Monster,
   battleState: BattleState,
   rng: RNG
-) {
+): number {
   let self;
   let target;
 
@@ -105,14 +138,16 @@ function abilityAction(
   let targetHP = target.stats.currentHP;
 
   if (rng() > calculateDodgeBaseline(target)) {
-    if (target === player) {
+    // Makes sure player does not dodge own ability
+    if (target === player && targeting !== current) {
       // DODGE OPPORTUNITY
-    } else {
-      // MONSTER DODGES ATTACK
+    } else if (target === monster && targeting !== current){
+      console.log(`${monster.name} has dodged the attack!`)
+      return DODGED_ATTACK;
     }
   } else {
     // targeting self
-    if (self.entityType === targeting) {
+    if (current === targeting) {
       // apply status self
       // apply heal self
     } 
@@ -133,14 +168,5 @@ function abilityAction(
       }
     }
   }
-
-  if (targetHP <= 0) {
-    if (target === player) {
-      return wonBattleState(battleState);
-    } else {
-      return lostBattleState(battleState);
-    }
-  }
-
   return targetHP;
 }

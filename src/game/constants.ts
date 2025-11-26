@@ -18,6 +18,7 @@ export const BASE_DODGE_BASELINE = 0.85; // Base baseline: if RNG > 0.85, dodge 
 export const AGILITY_DODGE_SCALING = 50; // How much agility reduces the baseline (higher = less impact per point)
 export const MIN_DODGE_BASELINE = 0.1; // Minimum baseline (maximum 90% dodge chance)
 export const MAX_DODGE_BASELINE = 0.95; // Maximum baseline (minimum 5% dodge chance)
+export const DODGED_ATTACK = 0;
 
 // Percentage Constants
 export const FLOAT_TO_PERCENT = 100;

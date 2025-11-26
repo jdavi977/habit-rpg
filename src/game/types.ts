@@ -63,7 +63,6 @@ export interface DodgeOpportunity {
 export interface Monster {
   id: string;
   name: string;
-  entityType: string;
   stats: CombatStats;
   abilities: Ability[];
 }
@@ -72,7 +71,6 @@ export interface Monster {
 export interface ActiveCharacter {
   id: string;
   name: string;
-  entityType: string;
   class: Class; // Full class object loaded
   stats: CombatStats; // Current combat stats
   // Status effects currently active
@@ -115,4 +113,5 @@ export interface Action {
   type: "useAbility" | "endTurn";
   abilityId?: string; // Required if type is "useAbiity"
   targetId?: string; // Who the action targets
+  current: string;
 }
